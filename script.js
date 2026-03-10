@@ -1,6 +1,7 @@
 function translateText() {
   const input = document.getElementById("userInput").value;
-  fetch("https://translateapp-1.onrender.com", {
+
+  fetch("https://translateapp-1.onrender.com/translate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
