@@ -1,48 +1,75 @@
-function translateText() {
-  const input = document.getElementById("userInput").value;
-  const targetLanguage = document.getElementById("targetLanguage").value;
+function translateText(){
 
-  fetch("https://translateapp-1.onrender.com/translate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      text: input,
-      targetLanguage: targetLanguage,
-    }),
-  })
-    .then(async (response) => {
-      const text = await response.text();
+const input=document.getElementById("userInput").value
+const target=document.getElementById("targetLanguage").value
 
-      try {
-        const data = JSON.parse(text);
-        document.getElementById("output").value = data.output || "";
-        const pronunciationBox = document.getElementById("pronunciation");
-        if (pronunciationBox) {
-          pronunciationBox.value = data.pronunciation || "";
-        }
-      } catch (e) {
-        document.getElementById("output").value =
-          "Backend returned non-JSON response:\n" + text;
-        const pronunciationBox = document.getElementById("pronunciation");
-        if (pronunciationBox) {
-          pronunciationBox.value = "";
-        }
-      }
-    })
-    .catch((error) => {
-      document.getElementById("output").value = "Error: " + error;
-      const pronunciationBox = document.getElementById("pronunciation");
-      if (pronunciationBox) {
-        pronunciationBox.value = "";
-      }
-    });
+fetch("https://translateapp-1.onrender.com/translate",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+text:input,
+targetLanguage:target
+})
+
+})
+
+.then(async response=>{
+
+const text=await response.text()
+
+try{
+
+const data=JSON.parse(text)
+
+document.getElementById("output").value=data.output||""
+
+document.getElementById("pronunciation").value=data.pronunciation||""
+
 }
 
-function copyOutput() {
-  const output = document.getElementById("output");
-  output.select();
-  output.setSelectionRange(0, 99999);
-  document.execCommand("copy");
+catch(e){
+
+document.getElementById("output").value=text
+
+}
+
+})
+
+.catch(err=>{
+document.getElementById("output").value="Error: "+err
+})
+
+}
+
+
+
+function copyTranslation(){
+
+const box=document.getElementById("output")
+
+box.select()
+
+document.execCommand("copy")
+
+}
+
+
+
+function speakTranslation(){
+
+const text=document.getElementById("output").value
+
+if(!text)return
+
+const msg=new SpeechSynthesisUtterance(text)
+
+msg.rate=.65
+
+speechSynthesis.speak(msg)
+
 }
