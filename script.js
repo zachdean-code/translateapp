@@ -34,8 +34,8 @@ function renderTargetLanguageOptions(lang) {
     const option = document.createElement("option");
     option.value = value;
 
-    const labels = uiTranslations.targetLanguageOptions?.[value];
-    option.textContent = labels?.[lang] || labels?.["en"] || value;
+    const labelSet = uiTranslations.targetLanguageOptions[value];
+    option.textContent = (labelSet && (labelSet[lang] || labelSet.en)) || value;
 
     if (value === currentValue) {
       option.selected = true;
@@ -52,12 +52,7 @@ function applyLanguage(lang) {
   document.getElementById("darkModeButton").innerText = t("darkModeButton", lang);
   document.getElementById("pageTitle").innerText = t("pageTitle", lang);
   document.getElementById("pageSubtitle").innerText = t("pageSubtitle", lang);
-
-  const descriptionEl = document.getElementById("pageDescription");
-  if (descriptionEl) {
-    descriptionEl.innerText = t("pageDescription", lang);
-  }
-
+  document.getElementById("pageDescription").innerText = t("pageDescription", lang);
   document.getElementById("inputLabel").innerText = t("inputLabel", lang);
   document.getElementById("translateToLabel").innerText = t("translateToLabel", lang);
   document.getElementById("translateButton").innerText = t("translateButton", lang);
@@ -71,20 +66,11 @@ function applyLanguage(lang) {
   document.getElementById("output").placeholder = t("outputPlaceholder", lang);
   document.getElementById("pronunciation").placeholder = t("pronunciationPlaceholder", lang);
 
-  const footerProduct = document.getElementById("footerProduct");
-  if (footerProduct) footerProduct.innerText = t("footerProduct", lang);
-
-  const footerTagline = document.getElementById("footerTagline");
-  if (footerTagline) footerTagline.innerText = t("footerTagline", lang);
-
-  const footerDescriptor = document.getElementById("footerDescriptor");
-  if (footerDescriptor) footerDescriptor.innerText = t("footerDescriptor", lang);
-
-  const footerCopyright = document.getElementById("footerCopyright");
-  if (footerCopyright) footerCopyright.innerText = t("footerCopyright", lang);
-
-  const footerPatent = document.getElementById("footerPatent");
-  if (footerPatent) footerPatent.innerText = t("footerPatent", lang);
+  document.getElementById("footerProduct").innerText = t("footerProduct", lang);
+  document.getElementById("footerTagline").innerText = t("footerTagline", lang);
+  document.getElementById("footerDescriptor").innerText = t("footerDescriptor", lang);
+  document.getElementById("footerCopyright").innerText = t("footerCopyright", lang);
+  document.getElementById("footerPatent").innerText = t("footerPatent", lang);
 
   renderTargetLanguageOptions(lang);
 
@@ -99,7 +85,9 @@ function changeSiteLanguage() {
 
 function detectInitialLanguage() {
   const saved = localStorage.getItem("siteLanguage");
-  if (saved) return saved;
+  if (saved && ["en", "es", "es-419", "de", "fr", "it", "zh", "ko", "ja", "ru"].includes(saved)) {
+    return saved;
+  }
 
   const browserLang = (navigator.language || "en").toLowerCase();
 
@@ -123,12 +111,12 @@ function translateText() {
   fetch("https://translateapp-1.onrender.com/translate", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       text: input,
-      targetLanguage: target,
-    }),
+      targetLanguage: target
+    })
   })
     .then(async (response) => {
       const text = await response.text();
