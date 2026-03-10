@@ -47,7 +47,6 @@ document.getElementById("output").value="Error: "+err
 }
 
 
-
 function copyTranslation(){
 
 const box=document.getElementById("output")
@@ -59,8 +58,7 @@ document.execCommand("copy")
 }
 
 
-
-function speakTranslation(){
+function speakSlow(){
 
 const text=document.getElementById("output").value
 
@@ -68,7 +66,22 @@ if(!text)return
 
 const msg=new SpeechSynthesisUtterance(text)
 
-msg.rate=.65
+msg.rate=0.6
+
+speechSynthesis.speak(msg)
+
+}
+
+
+function speakNormal(){
+
+const text=document.getElementById("output").value
+
+if(!text)return
+
+const msg=new SpeechSynthesisUtterance(text)
+
+msg.rate=1.0
 
 speechSynthesis.speak(msg)
 
