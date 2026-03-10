@@ -8,11 +8,19 @@ function translateText() {
     },
     body: JSON.stringify({ text: input }),
   })
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById("output").innerText = data.output;
+    .then(async (response) => {
+      const text = await response.text();
+
+      try {
+        const data = JSON.parse(text);
+        document.getElementById("output").innerText = data.output || text;
+      } catch (e) {
+        document.getElementById("output").innerText =
+          "Backend returned non-JSON response:\n" + text;
+      }
     })
     .catch((error) => {
-      document.getElementById("output").innerText = "Error: " + error;
+      document.getElementById("output").innerText =
+        "Network error: " + error;
     });
 }
