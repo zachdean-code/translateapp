@@ -1,64 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Translate App</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="page">
-      <div class="card">
-        <h1>Translate App</h1>
-        <p class="subtitle">Paste text, choose the output language or dialect, and translate.</p>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Cultural Translator</title>
 
-        <label for="userInput">Text to translate</label>
-        <textarea
-          id="userInput"
-          placeholder="Type or paste text here..."
-          rows="4"
-        ></textarea>
+<style>
+body{
+font-family:Arial, Helvetica, sans-serif;
+background:#f4f6f8;
+display:flex;
+justify-content:center;
+padding:40px;
+}
 
-        <label for="targetLanguage">Translate to</label>
-        <select id="targetLanguage">
-          <option value="American English" selected>American English</option>
-          <option value="British English">British English</option>
-          <option value="Australian English">Australian English</option>
-          <option value="French">French</option>
-          <option value="German">German</option>
-          <option value="Mexican Spanish">Mexican Spanish</option>
-          <option value="LATAM Spanish">LATAM Spanish</option>
-          <option value="General Colombian Spanish">General Colombian</option>
-          <option value="Paisa Spanish (Medellín)">Paisa - Medellín</option>
-          <option value="Rolo Spanish (Bogotá)">Rolo - Bogotá</option>
-          <option value="Cali Spanish">Cali</option>
-          <option value="Santander Spanish">Santander</option>
-          <option value="Venezuelan Spanish">Venezuelan</option>
-        </select>
+.container{
+width:750px;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 4px 20px rgba(0,0,0,.08);
+}
 
-        <div class="button-row">
-          <button onclick="translateText()">Translate</button>
-          <button onclick="copyOutput()" class="secondary">Copy Translation</button>
-        </div>
+h1{
+text-align:center;
+margin-bottom:10px;
+}
 
-        <label for="output">Translation</label>
-        <textarea
-          id="output"
-          placeholder="Your translation will appear here..."
-          rows="4"
-          readonly
-        ></textarea>
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:25px;
+}
 
-        <label for="pronunciation">Pronunciation</label>
-        <textarea
-          id="pronunciation"
-          placeholder="Pronunciation guide will appear here..."
-          rows="2"
-          readonly
-        ></textarea>
-      </div>
-    </div>
+textarea{
+width:100%;
+padding:10px;
+font-size:16px;
+margin-top:5px;
+margin-bottom:20px;
+border-radius:6px;
+border:1px solid #ccc;
+resize:vertical;
+}
 
-    <script src="script.js"></script>
-  </body>
+select{
+width:100%;
+padding:10px;
+font-size:16px;
+margin-bottom:20px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px 16px;
+border:none;
+border-radius:6px;
+background:#2d7ef7;
+color:white;
+font-size:16px;
+cursor:pointer;
+margin-right:8px;
+}
+
+button.secondary{
+background:#555;
+}
+
+button.speak{
+background:#1b9a59;
+}
+
+.buttonRow{
+margin-bottom:20px;
+}
+
+label{
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Cross-Cultural Translator</h1>
+<p class="subtitle">More than translation — cross-cultural communication</p>
+
+<label>Input Text</label>
+<textarea id="userInput" rows="4"></textarea>
+
+<label>Translate To</label>
+
+<select id="targetLanguage">
+<option value="American English">American English</option>
+<option value="British English">British English</option>
+<option value="Australian English">Australian English</option>
+<option value="French">French</option>
+<option value="German">German</option>
+<option value="Mexican Spanish">Mexican Spanish</option>
+<option value="LATAM Spanish">LATAM Spanish</option>
+<option value="General Colombian Spanish">General Colombian</option>
+<option value="Paisa Spanish (Medellín)">Paisa - Medellín</option>
+<option value="Rolo Spanish (Bogotá)">Rolo - Bogotá</option>
+<option value="Cali Spanish">Cali</option>
+<option value="Santander Spanish">Santander</option>
+<option value="Venezuelan Spanish">Venezuelan</option>
+</select>
+
+<div class="buttonRow">
+
+<button onclick="translateText()">Translate</button>
+
+<button class="secondary" onclick="copyTranslation()">Copy</button>
+
+<button class="speak" onclick="speakTranslation()">Speak Slowly</button>
+
+</div>
+
+<label>Translation</label>
+<textarea id="output" rows="4" readonly></textarea>
+
+<label>Pronunciation Guide</label>
+<textarea id="pronunciation" rows="3" readonly></textarea>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
 </html>
