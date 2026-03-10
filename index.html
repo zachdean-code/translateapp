@@ -183,10 +183,31 @@ margin-bottom:25px;
 <div class="container">
 
 <div class="topBar">
-<div></div>
-<button class="darkToggle" onclick="toggleDarkMode()">🌙 Dark</button>
+
+<div style="display:flex;align-items:center;gap:10px">
+
+<label id="uiLanguageLabel" style="font-size:14px;">Site Language</label>
+
+<select id="siteLanguage" onchange="changeSiteLanguage()" style="padding:6px 10px;border-radius:6px;">
+
+<option value="en">English</option>
+<option value="es">Español</option>
+<option value="es-419">Español LATAM</option>
+<option value="de">Deutsch</option>
+<option value="fr">Français</option>
+<option value="it">Italiano</option>
+<option value="zh">中文</option>
+<option value="ko">한국어</option>
+<option value="ja">日本語</option>
+<option value="ru">Русский</option>
+
+</select>
+
 </div>
 
+<button id="darkModeButton" class="darkToggle" onclick="toggleDarkMode()">🌙 Dark</button>
+
+</div>
 <h1>Cross-Cultural Translator™</h1>
 
 <p class="subtitle">
