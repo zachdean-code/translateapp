@@ -489,5 +489,16 @@ const uiTranslations = {
       ja: "ロシア語",
       ru: "Русский"
     }
-  }
+  pronunciationToggleLabel: {
+  en: "Show Pronunciation",
+  es: "Mostrar pronunciación",
+  "es-419": "Mostrar pronunciación",
+  de: "Aussprache anzeigen",
+  fr: "Afficher la prononciation",
+  it: "Mostra pronuncia",
+  zh: "显示发音",
+  ko: "발음 표시",
+  ja: "発音を表示",
+  ru: "Показать произношение"
+}
 };
