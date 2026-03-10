@@ -3,22 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Translator</title>
+    <title>Translate App</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <input type="text" id="userInput" placeholder="Enter text" />
-    <select id="targetLanguage">
-      <option value="fr">French</option>
-      <option value="es-419">Latin American Spanish</option>
-      <option value="en-us">American English</option>
-      <option value="en-gb">British English</option>
-      <option value="en-au">Australian English</option>
-      <option value="es-es">European Spanish</option>
-      <option value="de">German</option>
-    </select>
-    <button onclick="translateText()">Translate</button>
-    <p id="output"></p>
-    <button onclick="copyOutput()">Copy</button>
+    <div class="page">
+      <div class="card">
+        <h1>Translate App</h1>
+        <p class="subtitle">Paste text, choose the output language, and translate.</p>
+
+        <label for="userInput">Text to translate</label>
+        <textarea
+          id="userInput"
+          placeholder="Type or paste text here..."
+          rows="8"
+        ></textarea>
+
+        <label for="targetLanguage">Translate to</label>
+        <select id="targetLanguage">
+          <option value="French">French</option>
+          <option value="Latin American Spanish">Latin American Spanish</option>
+          <option value="American English">American English</option>
+          <option value="British English">British English</option>
+          <option value="Australian English">Australian English</option>
+          <option value="European Spanish">European Spanish</option>
+          <option value="German">German</option>
+        </select>
+
+        <div class="button-row">
+          <button onclick="translateText()">Translate</button>
+          <button onclick="copyOutput()" class="secondary">Copy</button>
+        </div>
+
+        <label for="output">Translation</label>
+        <textarea
+          id="output"
+          placeholder="Your translation will appear here..."
+          rows="8"
+          readonly
+        ></textarea>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
