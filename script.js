@@ -17,14 +17,26 @@ function translateText() {
 
       try {
         const data = JSON.parse(text);
-        document.getElementById("output").value = data.output || text;
+        document.getElementById("output").value = data.output || "";
+        const pronunciationBox = document.getElementById("pronunciation");
+        if (pronunciationBox) {
+          pronunciationBox.value = data.pronunciation || "";
+        }
       } catch (e) {
         document.getElementById("output").value =
           "Backend returned non-JSON response:\n" + text;
+        const pronunciationBox = document.getElementById("pronunciation");
+        if (pronunciationBox) {
+          pronunciationBox.value = "";
+        }
       }
     })
     .catch((error) => {
       document.getElementById("output").value = "Error: " + error;
+      const pronunciationBox = document.getElementById("pronunciation");
+      if (pronunciationBox) {
+        pronunciationBox.value = "";
+      }
     });
 }
 
