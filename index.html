@@ -1,281 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cross-Cultural Translator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<title>Cross-Cultural Translator</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    body {
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      background: #f4f6f8;
-      display: flex;
-      justify-content: center;
-      padding: 40px;
-      transition: 0.3s;
-    }
+<link rel="stylesheet" href="style.css">
 
-    body.dark {
-      background: #121212;
-    }
-
-    .container {
-      width: 760px;
-      background: white;
-      padding: 40px;
-      border-radius: 14px;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
-      transition: 0.3s;
-    }
-
-    body.dark .container {
-      background: #1f1f1f;
-      color: white;
-    }
-
-    .topBar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .languageGroup {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .languageGroup label {
-      font-size: 14px;
-      font-weight: 600;
-      margin: 0;
-    }
-
-    h1 {
-      text-align: center;
-      font-weight: 700;
-      font-size: 38px;
-      margin: 10px 0 8px;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 18px;
-      color: #666;
-      margin: 0 0 8px;
-    }
-
-    .description {
-      text-align: center;
-      font-size: 15px;
-      color: #888;
-      margin: 0 0 30px;
-    }
-
-    body.dark .subtitle {
-      color: #bbb;
-    }
-
-    body.dark .description {
-      color: #aaa;
-    }
-
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    textarea,
-    select {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-family: "Inter", sans-serif;
-      margin-bottom: 18px;
-    }
-
-    textarea {
-      resize: vertical;
-    }
-
-    body.dark textarea,
-    body.dark select {
-      background: #2c2c2c;
-      border: 1px solid #444;
-      color: white;
-    }
-
-    button {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      font-family: "Inter", sans-serif;
-    }
-
-    .darkToggle {
-      background: #333;
-      color: white;
-    }
-
-    .translate {
-      background: #2d7ef7;
-      color: white;
-      margin-bottom: 22px;
-    }
-
-    .copy {
-      background: #555;
-      color: white;
-    }
-
-    .slow {
-      background: #1b9a59;
-      color: white;
-    }
-
-    .normal {
-      background: #e08b00;
-      color: white;
-      margin-left: 8px;
-    }
-
-    .buttonRow {
-      margin-bottom: 22px;
-    }
-
-    .sectionSpacing {
-      margin-bottom: 24px;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 35px;
-      color: #777;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    body.dark footer {
-      color: #aaa;
-    }
-
-    @media (max-width: 820px) {
-      body {
-        padding: 18px;
-      }
-
-      .container {
-        width: 100%;
-        padding: 22px;
-      }
-
-      .topBar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .darkToggle {
-        width: 100%;
-      }
-    }
-  </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="topBar">
-      <div class="languageGroup">
-        <label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
-        <select id="siteLanguage" onchange="changeSiteLanguage()" style="width:auto; min-width:220px; margin-bottom:0;">
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="es-419">Español LATAM</option>
-          <option value="de">Deutsch</option>
-          <option value="fr">Français</option>
-          <option value="it">Italiano</option>
-          <option value="zh">中文</option>
-          <option value="ko">한국어</option>
-          <option value="ja">日本語</option>
-          <option value="ru">Русский</option>
-        </select>
-      </div>
 
-      <button id="darkModeButton" class="darkToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-    </div>
+<div class="container">
 
-    <h1 id="pageTitle">Cross-Cultural Translator™</h1>
+<div class="topBar">
 
-    <p id="pageSubtitle" class="subtitle">
-      Beyond translation — real cross-cultural communication
-    </p>
+<div class="languageGroup">
+<label>Site Language</label>
 
-    <p id="pageDescription" class="description">
-      Dialect-aware translation, pronunciation guidance, and cultural clarity
-    </p>
+<select id="siteLanguage">
 
-    <label id="inputLabel" for="userInput">Input Text</label>
-    <textarea id="userInput" rows="4" placeholder="Type or paste text here..."></textarea>
+<option value="en">English</option>
+<option value="es">Español</option>
+<option value="pt">Português</option>
+<option value="fr">Français</option>
+<option value="de">Deutsch</option>
+<option value="it">Italiano</option>
+<option value="zh">中文</option>
+<option value="ja">日本語</option>
+<option value="ko">한국어</option>
+<option value="ru">Русский</option>
+<option value="ar">العربية</option>
+<option value="hi">हिन्दी</option>
+<option value="id">Bahasa Indonesia</option>
+<option value="tl">Filipino</option>
+<option value="sw">Kiswahili</option>
+<option value="am">አማርኛ</option>
+<option value="fa">فارسی</option>
+<option value="tr">Türkçe</option>
 
-    <label id="translateToLabel" for="targetLanguage">Translate To</label>
-    <select id="targetLanguage"></select>
+</select>
+</div>
 
-    <button id="translateButton" class="translate" onclick="translateText()">Translate</button>
+<button onclick="toggleDark()">🌙</button>
 
-    <div class="sectionSpacing">
-      <label id="translationLabel" for="output">Translation</label>
-      <textarea id="output" rows="4" readonly placeholder="Your translation will appear here..."></textarea>
-      <button id="copyButton" class="copy" onclick="copyTranslation()">Copy</button>
-    </div>
+</div>
 
-    <div class="sectionSpacing">
 
-<label style="display:flex;align-items:center;gap:10px">
+<h1>Cross-Cultural Translator™</h1>
 
-<input type="checkbox" id="pronToggle" onchange="togglePronunciation()">
+<p class="subtitle">
+Beyond translation — real cross-cultural communication
+</p>
 
-<span id="pronunciationToggleLabel">Show Pronunciation</span>
+
+<label>Input Text</label>
+
+<textarea id="inputText"></textarea>
+
+
+<div class="detectedBox">
+
+Detected Language:
+<span id="detectedLanguage">—</span>
+
+Confidence:
+<span id="confidence">—</span>
+
+<button onclick="changeDetected()">Change</button>
+
+</div>
+
+
+<label>Translate To</label>
+
+<input id="languageSearch" placeholder="Type language or dialect">
+
+<div id="suggestions"></div>
+
+
+<button onclick="translate()">Translate</button>
+
+
+<label>Translation</label>
+
+<textarea id="outputText" readonly></textarea>
+
+<button onclick="copy()">Copy</button>
+
+
+<label>
+
+<input type="checkbox" id="pronToggle">
+
+Show Pronunciation
 
 </label>
 
+
+<textarea id="pronunciationBox" readonly></textarea>
+
+
+<button onclick="speakSlow()">Speak Slowly</button>
+
+<button onclick="speakNormal()">Speak Normally</button>
+
+
+<footer>
+
+<strong>Cross-Cultural Translator™</strong>
+
+<br>
+
+Beyond translation — real cross-cultural communication
+
+<br>
+
+© 2026 CCTLA-TBD LLC
+
+</footer>
+
 </div>
 
-<div id="pronunciationSection" style="display:none" class="sectionSpacing">
 
-<label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
+<script src="languageCatalog.js"></script>
 
-<textarea id="pronunciation" rows="3" readonly placeholder="Pronunciation guide will appear here..."></textarea>
+<script src="script.js"></script>
 
-<button id="speakSlowButton" class="slow" onclick="speakSlow()">Speak Slowly</button>
-
-<button id="speakNormalButton" class="normal" onclick="speakNormal()">Speak Normally</button>
-
-</div>
-
-    <footer>
-      <strong id="footerProduct">Cross-Cultural Translator™</strong><br />
-      <span id="footerTagline">Beyond translation — real cross-cultural communication</span><br /><br />
-      <span id="footerDescriptor">Dialect-aware translation • Pronunciation guidance • Cultural clarity</span><br /><br />
-      <span id="footerCopyright">© 2026 CCTLA-TBD, LLC</span><br />
-      <span id="footerPatent">Patent pending.</span>
-    </footer>
-  </div>
-
-  <script src="translations.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>
