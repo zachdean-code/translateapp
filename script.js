@@ -86,3 +86,10 @@ msg.rate=1.0
 speechSynthesis.speak(msg)
 
 }
+
+
+function toggleDarkMode(){
+
+document.body.classList.toggle("dark")
+
+}
