@@ -58,6 +58,7 @@ function applyLanguage(lang) {
   document.getElementById("translateButton").innerText = t("translateButton", lang);
   document.getElementById("translationLabel").innerText = t("translationLabel", lang);
   document.getElementById("copyButton").innerText = t("copyButton", lang);
+  document.getElementById("pronunciationToggleLabel").innerText = t("pronunciationToggleLabel", lang);
   document.getElementById("pronunciationLabel").innerText = t("pronunciationLabel", lang);
   document.getElementById("speakSlowButton").innerText = t("speakSlowButton", lang);
   document.getElementById("speakNormalButton").innerText = t("speakNormalButton", lang);
@@ -161,6 +162,17 @@ function speakNormal() {
   msg.rate = 1.0;
   speechSynthesis.cancel();
   speechSynthesis.speak(msg);
+}
+
+function togglePronunciation() {
+  const section = document.getElementById("pronunciationSection");
+  const toggle = document.getElementById("pronToggle");
+
+  if (toggle.checked) {
+    section.style.display = "block";
+  } else {
+    section.style.display = "none";
+  }
 }
 
 function toggleDarkMode() {
