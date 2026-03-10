@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Cross-Cultural Translator</title>
 
 <style>
+
 body{
 font-family:Arial, Helvetica, sans-serif;
 background:#f4f6f8;
@@ -15,7 +18,7 @@ padding:40px;
 }
 
 .container{
-width:750px;
+width:760px;
 background:white;
 padding:30px;
 border-radius:10px;
@@ -80,6 +83,14 @@ label{
 font-weight:bold;
 }
 
+footer{
+text-align:center;
+margin-top:40px;
+color:#777;
+font-size:13px;
+line-height:1.6;
+}
+
 </style>
 
 </head>
@@ -89,27 +100,45 @@ font-weight:bold;
 <div class="container">
 
 <h1>Cross-Cultural Translator</h1>
-<p class="subtitle">More than translation — cross-cultural communication</p>
+
+<p class="subtitle">
+More than translation — cross-cultural communication
+</p>
 
 <label>Input Text</label>
+
 <textarea id="userInput" rows="4"></textarea>
 
 <label>Translate To</label>
 
 <select id="targetLanguage">
+
 <option value="American English">American English</option>
+
 <option value="British English">British English</option>
+
 <option value="Australian English">Australian English</option>
+
 <option value="French">French</option>
+
 <option value="German">German</option>
+
 <option value="Mexican Spanish">Mexican Spanish</option>
+
 <option value="LATAM Spanish">LATAM Spanish</option>
+
 <option value="General Colombian Spanish">General Colombian</option>
+
 <option value="Paisa Spanish (Medellín)">Paisa - Medellín</option>
+
 <option value="Rolo Spanish (Bogotá)">Rolo - Bogotá</option>
+
 <option value="Cali Spanish">Cali</option>
+
 <option value="Santander Spanish">Santander</option>
+
 <option value="Venezuelan Spanish">Venezuelan</option>
+
 </select>
 
 <div class="buttonRow">
@@ -123,14 +152,28 @@ font-weight:bold;
 </div>
 
 <label>Translation</label>
+
 <textarea id="output" rows="4" readonly></textarea>
 
 <label>Pronunciation Guide</label>
+
 <textarea id="pronunciation" rows="3" readonly></textarea>
 
 </div>
 
 <script src="script.js"></script>
+
+<footer>
+
+© 2026 CCTLA-TBD, LLC  
+<br>
+Cross-Cultural Translator™  
+<br>
+More than translation — cross-cultural communication.  
+<br>
+Patent pending.
+
+</footer>
 
 </body>
 </html>
