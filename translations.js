@@ -485,20 +485,20 @@ const uiTranslations = {
       fr: "Russe",
       it: "Russo",
       zh: "俄语",
-      ko: "러시아어",
+        ko: "러시아어",
       ja: "ロシア語",
       ru: "Русский"
+    },
+    pronunciationToggleLabel: {
+      en: "Show Pronunciation",
+      es: "Mostrar pronunciación",
+      "es-419": "Mostrar pronunciación",
+      de: "Aussprache anzeigen",
+      fr: "Afficher la prononciation",
+      it: "Mostra pronuncia",
+      zh: "显示发音",
+      ko: "발음 표시",
+      ja: "発音を表示",
+      ru: "Показать произношение"
     }
-  pronunciationToggleLabel: {
-  en: "Show Pronunciation",
-  es: "Mostrar pronunciación",
-  "es-419": "Mostrar pronunciación",
-  de: "Aussprache anzeigen",
-  fr: "Afficher la prononciation",
-  it: "Mostra pronuncia",
-  zh: "显示发音",
-  ko: "발음 표시",
-  ja: "発音を表示",
-  ru: "Показать произношение"
-}
 };
