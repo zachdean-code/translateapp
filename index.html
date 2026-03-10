@@ -1,294 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross-Cultural Translator</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
-<title>Cross-Cultural Translator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+      transition: 0.3s;
+    }
 
-<style>
+    body.dark {
+      background: #121212;
+    }
 
-*{
-box-sizing:border-box;
-}
+    .container {
+      width: 760px;
+      background: white;
+      padding: 40px;
+      border-radius: 14px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+      transition: 0.3s;
+    }
 
-body{
-font-family:'Inter',sans-serif;
-background:#f4f6f8;
-display:flex;
-justify-content:center;
-padding:40px;
-transition:.3s;
-margin:0;
-}
+    body.dark .container {
+      background: #1f1f1f;
+      color: white;
+    }
 
-body.dark{
-background:#121212;
-}
+    .topBar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
-.container{
-width:760px;
-background:white;
-padding:40px;
-border-radius:14px;
-box-shadow:0 10px 35px rgba(0,0,0,.08);
-transition:.3s;
-}
+    .languageGroup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-body.dark .container{
-background:#1f1f1f;
-color:white;
-}
+    .languageGroup label {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
 
-.topBar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      font-size: 38px;
+      margin: 10px 0 8px;
+    }
 
-h1{
-text-align:center;
-font-weight:700;
-font-size:38px;
-margin-bottom:8px;
-}
+    .subtitle {
+      text-align: center;
+      font-size: 18px;
+      color: #666;
+      margin: 0 0 8px;
+    }
 
-.subtitle{
-text-align:center;
-font-size:18px;
-color:#666;
-margin-bottom:8px;
-}
+    .description {
+      text-align: center;
+      font-size: 15px;
+      color: #888;
+      margin: 0 0 30px;
+    }
 
-.description{
-text-align:center;
-font-size:15px;
-color:#888;
-margin-bottom:30px;
-}
+    body.dark .subtitle {
+      color: #bbb;
+    }
 
-body.dark .subtitle{
-color:#bbb;
-}
+    body.dark .description {
+      color: #aaa;
+    }
 
-body.dark .description{
-color:#aaa;
-}
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
 
-textarea{
-width:100%;
-padding:14px;
-font-size:16px;
-margin-top:6px;
-margin-bottom:14px;
-border-radius:10px;
-border:1px solid #ccc;
-resize:vertical;
-font-family:'Inter',sans-serif;
-}
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-family: "Inter", sans-serif;
+      margin-bottom: 18px;
+    }
 
-body.dark textarea{
-background:#2c2c2c;
-border:1px solid #444;
-color:white;
-}
+    textarea {
+      resize: vertical;
+    }
 
-select{
-width:100%;
-padding:12px;
-font-size:16px;
-margin-bottom:20px;
-border-radius:10px;
-border:1px solid #ccc;
-font-family:'Inter',sans-serif;
-}
+    body.dark textarea,
+    body.dark select {
+      background: #2c2c2c;
+      border: 1px solid #444;
+      color: white;
+    }
 
-body.dark select{
-background:#2c2c2c;
-border:1px solid #444;
-color:white;
-}
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: "Inter", sans-serif;
+    }
 
-button{
-padding:10px 18px;
-border:none;
-border-radius:10px;
-font-size:15px;
-cursor:pointer;
-margin-top:8px;
-font-family:'Inter',sans-serif;
-}
+    .darkToggle {
+      background: #333;
+      color: white;
+    }
 
-button.translate{
-background:#2d7ef7;
-color:white;
-margin-bottom:20px;
-}
+    .translate {
+      background: #2d7ef7;
+      color: white;
+      margin-bottom: 22px;
+    }
 
-button.copy{
-background:#555;
-color:white;
-}
+    .copy {
+      background: #555;
+      color: white;
+    }
 
-button.slow{
-background:#1b9a59;
-color:white;
-}
+    .slow {
+      background: #1b9a59;
+      color: white;
+    }
 
-button.normal{
-background:#e08b00;
-color:white;
-margin-left:8px;
-}
+    .normal {
+      background: #e08b00;
+      color: white;
+      margin-left: 8px;
+    }
 
-.darkToggle{
-background:#333;
-color:white;
-border:none;
-border-radius:8px;
-padding:8px 12px;
-cursor:pointer;
-}
+    .buttonRow {
+      margin-bottom: 22px;
+    }
 
-label{
-font-weight:600;
-}
+    .sectionSpacing {
+      margin-bottom: 24px;
+    }
 
-footer{
-text-align:center;
-margin-top:35px;
-color:#777;
-font-size:13px;
-line-height:1.7;
-}
+    footer {
+      text-align: center;
+      margin-top: 35px;
+      color: #777;
+      font-size: 13px;
+      line-height: 1.7;
+    }
 
-body.dark footer{
-color:#aaa;
-}
+    body.dark footer {
+      color: #aaa;
+    }
 
-.sectionSpacing{
-margin-bottom:25px;
-}
+    @media (max-width: 820px) {
+      body {
+        padding: 18px;
+      }
 
-</style>
+      .container {
+        width: 100%;
+        padding: 22px;
+      }
 
+      .topBar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .darkToggle {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <div class="topBar">
+      <div class="languageGroup">
+        <label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
+        <select id="siteLanguage" onchange="changeSiteLanguage()" style="width:auto; min-width:220px; margin-bottom:0;">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="es-419">Español LATAM</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+          <option value="it">Italiano</option>
+          <option value="zh">中文</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="ru">Русский</option>
+        </select>
+      </div>
 
-<div class="container">
+      <button id="darkModeButton" class="darkToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+    </div>
 
-<div class="topBar">
+    <h1 id="pageTitle">Cross-Cultural Translator™</h1>
 
-<div style="display:flex;align-items:center;gap:10px">
+    <p id="pageSubtitle" class="subtitle">
+      Beyond translation — real cross-cultural communication
+    </p>
 
-<label id="uiLanguageLabel" style="font-size:14px;">Site Language</label>
+    <p id="pageDescription" class="description">
+      Dialect-aware translation, pronunciation guidance, and cultural clarity
+    </p>
 
-<select id="siteLanguage" onchange="changeSiteLanguage()" style="padding:6px 10px;border-radius:6px;">
+    <label id="inputLabel" for="userInput">Input Text</label>
+    <textarea id="userInput" rows="4" placeholder="Type or paste text here..."></textarea>
 
-<option value="en">English</option>
-<option value="es">Español</option>
-<option value="es-419">Español LATAM</option>
-<option value="de">Deutsch</option>
-<option value="fr">Français</option>
-<option value="it">Italiano</option>
-<option value="zh">中文</option>
-<option value="ko">한국어</option>
-<option value="ja">日本語</option>
-<option value="ru">Русский</option>
+    <label id="translateToLabel" for="targetLanguage">Translate To</label>
+    <select id="targetLanguage"></select>
 
-</select>
+    <button id="translateButton" class="translate" onclick="translateText()">Translate</button>
 
-</div>
+    <div class="sectionSpacing">
+      <label id="translationLabel" for="output">Translation</label>
+      <textarea id="output" rows="4" readonly placeholder="Your translation will appear here..."></textarea>
+      <button id="copyButton" class="copy" onclick="copyTranslation()">Copy</button>
+    </div>
 
-<button id="darkModeButton" class="darkToggle" onclick="toggleDarkMode()">🌙 Dark</button>
+    <div class="sectionSpacing">
+      <label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
+      <textarea id="pronunciation" rows="3" readonly placeholder="Pronunciation guide will appear here..."></textarea>
+      <button id="speakSlowButton" class="slow" onclick="speakSlow()">Speak Slowly</button>
+      <button id="speakNormalButton" class="normal" onclick="speakNormal()">Speak Normally</button>
+    </div>
 
-</div>
-<h1>Cross-Cultural Translator™</h1>
+    <footer>
+      <strong id="footerProduct">Cross-Cultural Translator™</strong><br />
+      <span id="footerTagline">Beyond translation — real cross-cultural communication</span><br /><br />
+      <span id="footerDescriptor">Dialect-aware translation • Pronunciation guidance • Cultural clarity</span><br /><br />
+      <span id="footerCopyright">© 2026 CCTLA-TBD, LLC</span><br />
+      <span id="footerPatent">Patent pending.</span>
+    </footer>
+  </div>
 
-<p class="subtitle">
-Beyond translation — real cross-cultural communication
-</p>
-
-<p class="description">
-Dialect-aware translation, pronunciation guidance, and cultural clarity
-</p>
-
-<label>Input Text</label>
-<textarea id="userInput" rows="4"></textarea>
-
-<label>Translate To</label>
-
-<select id="targetLanguage">
-<option value="American English">American English</option>
-<option value="British English">British English</option>
-<option value="Australian English">Australian English</option>
-<option value="French">French</option>
-<option value="German">German</option>
-<option value="Italian">Italian</option>
-<option value="Mexican Spanish">Mexican Spanish</option>
-<option value="LATAM Spanish">LATAM Spanish</option>
-<option value="General Colombian Spanish">General Colombian</option>
-<option value="Paisa Spanish (Medellín)">Paisa - Medellín</option>
-<option value="Rolo Spanish (Bogotá)">Rolo - Bogotá</option>
-<option value="Cali Spanish">Cali</option>
-<option value="Santander Spanish">Santander</option>
-<option value="Venezuelan Spanish">Venezuelan</option>
-<option value="Chinese">Chinese</option>
-<option value="Korean">Korean</option>
-<option value="Japanese">Japanese</option>
-<option value="Russian">Russian</option>
-</select>
-
-<button class="translate" onclick="translateText()">Translate</button>
-
-<div class="sectionSpacing">
-
-<label>Translation</label>
-
-<textarea id="output" rows="4" readonly></textarea>
-
-<button class="copy" onclick="copyTranslation()">Copy</button>
-
-</div>
-
-<div class="sectionSpacing">
-
-<label>Pronunciation Guide</label>
-
-<textarea id="pronunciation" rows="3" readonly></textarea>
-
-<button class="slow" onclick="speakSlow()">Speak Slowly</button>
-
-<button class="normal" onclick="speakNormal()">Speak Normally</button>
-
-</div>
-
-<footer>
-
-<strong>Cross-Cultural Translator™</strong>
-<br>
-
-Beyond translation — real cross-cultural communication
-<br><br>
-
-Dialect-aware translation • Pronunciation guidance • Cultural clarity
-<br><br>
-
-© 2026 CCTLA-TBD, LLC
-<br>
-
-Patent pending.
-
-</footer>
-
-</div>
-
-<script src="script.js"></script>
-
+  <script src="translations.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
