@@ -2,17 +2,47 @@ function toggleDark(){
 document.body.classList.toggle("dark")
 }
 
-function translate(){
+async function translate(){
 
-let input=document.getElementById("inputText").value
+let text=document.getElementById("inputText").value
 
-if(!input)return
+let target=document.getElementById("languageSearch").value
 
-document.getElementById("outputText").value="Demo translation output"
+if(!text)return
 
-document.getElementById("detectedLanguage").innerText="Spanish"
+try{
 
-document.getElementById("confidence").innerText="92%"
+let response=await fetch("https://YOUR-RENDER-SERVICE.onrender.com/translate",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+text:text,
+target:target
+})
+
+})
+
+let data=await response.json()
+
+document.getElementById("outputText").value=data.translation
+
+document.getElementById("detectedLanguage").innerText="Detected automatically"
+
+document.getElementById("confidence").innerText="—"
+
+}catch(err){
+
+console.error(err)
+
+alert("Translation error")
+
+}
+
 }
 
 function copy(){
@@ -22,21 +52,25 @@ let text=document.getElementById("outputText")
 text.select()
 
 document.execCommand("copy")
+
 }
 
 function speakSlow(){
 
 console.log("slow speech")
+
 }
 
 function speakNormal(){
 
 console.log("normal speech")
+
 }
 
 function changeDetected(){
 
-alert("manual language selection coming soon")
+alert("Manual language selection coming soon")
+
 }
 
 let search=document.getElementById("languageSearch")
