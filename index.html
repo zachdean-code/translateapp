@@ -1,21 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cross-Cultural Translator</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross-Cultural Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="container">
-<h1>Cross-Cultural Translator™</h1>
-<textarea id="userInput" placeholder="Type text here..."></textarea>
-<select id="targetLanguage"></select>
-<button onclick="translateText()">Translate</button>
-<textarea id="output" readonly></textarea>
-<script src="languageCatalog.js"></script>
-<script src="translations.js"></script>
-<script src="script.js"></script>
-</div>
+  <div class="container">
+    <div class="topBar">
+      <div class="languageGroup">
+        <label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
+        <select id="siteLanguage" class="miniSelect">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="ru">Русский</option>
+          <option value="ar">العربية</option>
+          <option value="hi">हिन्दी</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="tl">Filipino</option>
+          <option value="sw">Kiswahili</option>
+          <option value="am">አማርኛ</option>
+          <option value="fa">فارسی</option>
+          <option value="tr">Türkçe</option>
+        </select>
+      </div>
+
+      <button id="darkModeButton" class="darkToggle" type="button">🌙 Dark</button>
+    </div>
+
+    <h1 id="pageTitle">Cross-Cultural Translator™</h1>
+    <p id="pageSubtitle" class="subtitle">Beyond translation — real cross-cultural communication</p>
+    <p id="pageDescription" class="description">Dialect-aware translation, pronunciation guidance, and cultural clarity</p>
+
+    <label id="inputLabel" for="userInput">Input Text</label>
+    <textarea id="userInput" rows="5" placeholder="Type or paste text here..."></textarea>
+
+    <div id="detectedCard" class="detectedCard hidden">
+      <div class="detectedRow"><span class="detectedKey" id="detectedLanguageLabel">Detected Language</span><span id="detectedLanguageValue">—</span></div>
+      <div class="detectedRow"><span class="detectedKey" id="detectedDialectLabel">Detected Dialect</span><span id="detectedDialectValue">—</span></div>
+      <div class="detectedRow"><span class="detectedKey" id="confidenceLabel">Confidence</span><span id="detectedConfidenceValue">—</span></div>
+      <div class="detectedActions">
+        <button type="button" id="keepDetectedButton" class="secondaryAction">Keep</button>
+        <button type="button" id="changeDetectedButton" class="secondaryAction">Change</button>
+      </div>
+    </div>
+
+    <div id="changeDetectedWrap" class="hidden sectionSpacing">
+      <label id="changeDetectedLabel" for="detectedSearch">Change Detected Language</label>
+      <div class="searchWrap">
+        <input id="detectedSearch" type="text" autocomplete="off" placeholder="Type language or dialect..." />
+        <div id="detectedSuggestions" class="suggestions"></div>
+      </div>
+    </div>
+
+    <label id="translateToLabel" for="targetSearch">Translate To</label>
+    <div class="searchWrap">
+      <input id="targetSearch" type="text" autocomplete="off" placeholder="Type language or dialect..." />
+      <div id="targetSuggestions" class="suggestions"></div>
+    </div>
+
+    <button id="translateButton" class="primaryButton" type="button">Translate</button>
+
+    <label id="translationLabel" for="output">Translation</label>
+    <textarea id="output" rows="5" readonly placeholder="Your translation will appear here..."></textarea>
+    <button id="copyButton" class="copyButton" type="button">Copy</button>
+
+    <div class="toggleRow">
+      <input type="checkbox" id="pronToggle" />
+      <label id="pronunciationToggleLabel" for="pronToggle">Show Pronunciation</label>
+    </div>
+
+    <div id="pronunciationSection" class="hidden">
+      <label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
+      <textarea id="pronunciation" rows="4" readonly placeholder="Pronunciation guide will appear here..."></textarea>
+      <div class="buttonRow">
+        <button id="speakSlowButton" class="slowButton" type="button">Speak Slowly</button>
+        <button id="speakNormalButton" class="normalButton" type="button">Speak Normally</button>
+      </div>
+    </div>
+
+    <footer>
+      <strong id="footerProduct">Cross-Cultural Translator™</strong>
+      <div id="footerTagline">Beyond translation — real cross-cultural communication</div>
+      <div id="footerDescriptor">Dialect-aware translation • Pronunciation guidance • Cultural clarity</div>
+      <div id="footerCopyright">© 2026 CCTLA-TBD, LLC</div>
+      <div id="footerPatent">Patent pending.</div>
+    </footer>
+  </div>
+
+  <script src="translations.js"></script>
+  <script src="languageCatalog.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
