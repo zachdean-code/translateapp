@@ -243,11 +243,28 @@
     </div>
 
     <div class="sectionSpacing">
-      <label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
-      <textarea id="pronunciation" rows="3" readonly placeholder="Pronunciation guide will appear here..."></textarea>
-      <button id="speakSlowButton" class="slow" onclick="speakSlow()">Speak Slowly</button>
-      <button id="speakNormalButton" class="normal" onclick="speakNormal()">Speak Normally</button>
-    </div>
+
+<label style="display:flex;align-items:center;gap:10px">
+
+<input type="checkbox" id="pronToggle" onchange="togglePronunciation()">
+
+<span id="pronunciationToggleLabel">Show Pronunciation</span>
+
+</label>
+
+</div>
+
+<div id="pronunciationSection" style="display:none" class="sectionSpacing">
+
+<label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
+
+<textarea id="pronunciation" rows="3" readonly placeholder="Pronunciation guide will appear here..."></textarea>
+
+<button id="speakSlowButton" class="slow" onclick="speakSlow()">Speak Slowly</button>
+
+<button id="speakNormalButton" class="normal" onclick="speakNormal()">Speak Normally</button>
+
+</div>
 
     <footer>
       <strong id="footerProduct">Cross-Cultural Translator™</strong><br />
