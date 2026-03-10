@@ -38,7 +38,7 @@
 
         <div class="button-row">
           <button onclick="translateText()">Translate</button>
-          <button onclick="copyOutput()" class="secondary">Copy</button>
+          <button onclick="copyOutput()" class="secondary">Copy Translation</button>
         </div>
 
         <label for="output">Translation</label>
@@ -46,6 +46,14 @@
           id="output"
           placeholder="Your translation will appear here..."
           rows="8"
+          readonly
+        ></textarea>
+
+        <label for="pronunciation">Pronunciation</label>
+        <textarea
+          id="pronunciation"
+          placeholder="Pronunciation guide will appear here..."
+          rows="6"
           readonly
         ></textarea>
       </div>
