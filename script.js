@@ -19,22 +19,101 @@ const targetLanguageValues = [
   "Russian"
 ];
 
+function t(key, lang) {
+  if (!uiTranslations[key]) return key;
+  return uiTranslations[key][lang] || uiTranslations[key]["en"] || key;
+}
+
 function renderTargetLanguageOptions(lang) {
   const select = document.getElementById("targetLanguage");
-  const selectedValue = select.value || "American English";
-  const labels = (translations[lang] || translations.en).targetLanguageOptions;
+  const currentValue = select.value || "American English";
 
   select.innerHTML = "";
 
   targetLanguageValues.forEach((value) => {
     const option = document.createElement("option");
     option.value = value;
-    option.textContent = labels[value] || value;
-    if (value === selectedValue) {
+
+    const labels = uiTranslations.targetLanguageOptions?.[value];
+    option.textContent = labels?.[lang] || labels?.["en"] || value;
+
+    if (value === currentValue) {
       option.selected = true;
     }
+
     select.appendChild(option);
   });
+}
+
+function applyLanguage(lang) {
+  document.documentElement.lang = lang;
+
+  document.getElementById("uiLanguageLabel").innerText = t("uiLanguageLabel", lang);
+  document.getElementById("darkModeButton").innerText = t("darkModeButton", lang);
+  document.getElementById("pageTitle").innerText = t("pageTitle", lang);
+  document.getElementById("pageSubtitle").innerText = t("pageSubtitle", lang);
+
+  const descriptionEl = document.getElementById("pageDescription");
+  if (descriptionEl) {
+    descriptionEl.innerText = t("pageDescription", lang);
+  }
+
+  document.getElementById("inputLabel").innerText = t("inputLabel", lang);
+  document.getElementById("translateToLabel").innerText = t("translateToLabel", lang);
+  document.getElementById("translateButton").innerText = t("translateButton", lang);
+  document.getElementById("translationLabel").innerText = t("translationLabel", lang);
+  document.getElementById("copyButton").innerText = t("copyButton", lang);
+  document.getElementById("pronunciationLabel").innerText = t("pronunciationLabel", lang);
+  document.getElementById("speakSlowButton").innerText = t("speakSlowButton", lang);
+  document.getElementById("speakNormalButton").innerText = t("speakNormalButton", lang);
+
+  document.getElementById("userInput").placeholder = t("inputPlaceholder", lang);
+  document.getElementById("output").placeholder = t("outputPlaceholder", lang);
+  document.getElementById("pronunciation").placeholder = t("pronunciationPlaceholder", lang);
+
+  const footerProduct = document.getElementById("footerProduct");
+  if (footerProduct) footerProduct.innerText = t("footerProduct", lang);
+
+  const footerTagline = document.getElementById("footerTagline");
+  if (footerTagline) footerTagline.innerText = t("footerTagline", lang);
+
+  const footerDescriptor = document.getElementById("footerDescriptor");
+  if (footerDescriptor) footerDescriptor.innerText = t("footerDescriptor", lang);
+
+  const footerCopyright = document.getElementById("footerCopyright");
+  if (footerCopyright) footerCopyright.innerText = t("footerCopyright", lang);
+
+  const footerPatent = document.getElementById("footerPatent");
+  if (footerPatent) footerPatent.innerText = t("footerPatent", lang);
+
+  renderTargetLanguageOptions(lang);
+
+  document.getElementById("siteLanguage").value = lang;
+  localStorage.setItem("siteLanguage", lang);
+}
+
+function changeSiteLanguage() {
+  const lang = document.getElementById("siteLanguage").value;
+  applyLanguage(lang);
+}
+
+function detectInitialLanguage() {
+  const saved = localStorage.getItem("siteLanguage");
+  if (saved) return saved;
+
+  const browserLang = (navigator.language || "en").toLowerCase();
+
+  if (browserLang.startsWith("es-419")) return "es-419";
+  if (browserLang.startsWith("es")) return "es";
+  if (browserLang.startsWith("de")) return "de";
+  if (browserLang.startsWith("fr")) return "fr";
+  if (browserLang.startsWith("it")) return "it";
+  if (browserLang.startsWith("zh")) return "zh";
+  if (browserLang.startsWith("ko")) return "ko";
+  if (browserLang.startsWith("ja")) return "ja";
+  if (browserLang.startsWith("ru")) return "ru";
+
+  return "en";
 }
 
 function translateText() {
@@ -72,12 +151,14 @@ function translateText() {
 function copyTranslation() {
   const box = document.getElementById("output");
   box.select();
+  box.setSelectionRange(0, 99999);
   document.execCommand("copy");
 }
 
 function speakSlow() {
   const text = document.getElementById("output").value;
   if (!text) return;
+
   const msg = new SpeechSynthesisUtterance(text);
   msg.rate = 0.6;
   speechSynthesis.cancel();
@@ -87,6 +168,7 @@ function speakSlow() {
 function speakNormal() {
   const text = document.getElementById("output").value;
   if (!text) return;
+
   const msg = new SpeechSynthesisUtterance(text);
   msg.rate = 1.0;
   speechSynthesis.cancel();
@@ -99,62 +181,6 @@ function toggleDarkMode() {
     "darkMode",
     document.body.classList.contains("dark") ? "on" : "off"
   );
-}
-
-function applyLanguage(lang) {
-  const t = translations[lang] || translations["en"];
-
-  document.documentElement.lang = lang;
-  document.getElementById("uiLanguageLabel").innerText = t.uiLanguageLabel;
-  document.getElementById("darkModeButton").innerText = t.darkModeButton;
-  document.getElementById("pageTitle").innerText = t.pageTitle;
-  document.getElementById("pageSubtitle").innerText = t.pageSubtitle;
-  document.getElementById("inputLabel").innerText = t.inputLabel;
-  document.getElementById("translateToLabel").innerText = t.translateToLabel;
-  document.getElementById("translateButton").innerText = t.translateButton;
-  document.getElementById("copyButton").innerText = t.copyButton;
-  document.getElementById("speakSlowButton").innerText = t.speakSlowButton;
-  document.getElementById("speakNormalButton").innerText = t.speakNormalButton;
-  document.getElementById("translationLabel").innerText = t.translationLabel;
-  document.getElementById("pronunciationLabel").innerText = t.pronunciationLabel;
-  document.getElementById("footerLine1").innerText = t.footerLine1;
-  document.getElementById("footerLine2").innerText = t.footerLine2;
-  document.getElementById("footerLine3").innerText = t.footerLine3;
-  document.getElementById("footerLine4").innerText = t.footerLine4;
-  document.getElementById("userInput").placeholder = t.userInputPlaceholder;
-  document.getElementById("output").placeholder = t.outputPlaceholder;
-  document.getElementById("pronunciation").placeholder = t.pronunciationPlaceholder;
-
-  renderTargetLanguageOptions(lang);
-
-  document.getElementById("siteLanguage").value = lang;
-  localStorage.setItem("siteLanguage", lang);
-}
-
-function changeSiteLanguage() {
-  const lang = document.getElementById("siteLanguage").value;
-  applyLanguage(lang);
-}
-
-function detectInitialLanguage() {
-  const saved = localStorage.getItem("siteLanguage");
-  if (saved && translations[saved]) {
-    return saved;
-  }
-
-  const browserLang = (navigator.language || "en").toLowerCase();
-
-  if (browserLang.startsWith("es-419")) return "es-419";
-  if (browserLang.startsWith("es")) return "es";
-  if (browserLang.startsWith("de")) return "de";
-  if (browserLang.startsWith("fr")) return "fr";
-  if (browserLang.startsWith("it")) return "it";
-  if (browserLang.startsWith("zh")) return "zh";
-  if (browserLang.startsWith("ko")) return "ko";
-  if (browserLang.startsWith("ja")) return "ja";
-  if (browserLang.startsWith("ru")) return "ru";
-
-  return "en";
 }
 
 window.addEventListener("DOMContentLoaded", () => {
