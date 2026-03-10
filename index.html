@@ -46,15 +46,16 @@
     <label id="inputLabel" for="userInput">Input Text</label>
     <textarea id="userInput" rows="5" placeholder="Type or paste text here..."></textarea>
 
-    <div id="detectedCard" class="detectedCard hidden">
-      <div class="detectedRow"><span class="detectedKey" id="detectedLanguageLabel">Detected Language</span><span id="detectedLanguageValue">—</span></div>
-      <div class="detectedRow"><span class="detectedKey" id="detectedDialectLabel">Detected Dialect</span><span id="detectedDialectValue">—</span></div>
-      <div class="detectedRow"><span class="detectedKey" id="confidenceLabel">Confidence</span><span id="detectedConfidenceValue">—</span></div>
-      <div class="detectedActions">
-        <button type="button" id="keepDetectedButton" class="secondaryAction">Keep</button>
-        <button type="button" id="changeDetectedButton" class="secondaryAction">Change</button>
-      </div>
-    </div>
+<div id="detectedCard" class="detectedCard hidden">
+
+  <div id="detectedLanguageDialect"></div>
+
+  <div class="detectedButtons">
+    <button id="keepDetectedButton">Keep</button>
+    <button id="changeDetectedButton">Change</button>
+  </div>
+
+</div>
 
     <div id="changeDetectedWrap" class="hidden sectionSpacing">
       <label id="changeDetectedLabel" for="detectedSearch">Change Detected Language</label>
