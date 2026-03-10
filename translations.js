@@ -11,6 +11,7 @@ const uiTranslations = {
     en: "Dialect-aware translation, pronunciation guidance, and cultural clarity",
     es: "Traducción con conciencia dialectal, guía de pronunciación y claridad cultural"
   },
+
   uiLanguageLabel: {
     en: "Site Language",
     es: "Idioma del sitio"
@@ -19,22 +20,49 @@ const uiTranslations = {
     en: "🌙 Dark",
     es: "🌙 Oscuro"
   },
+
   inputLabel: {
     en: "Input Text",
     es: "Texto de entrada"
   },
-  detectedLanguageLabel: {
-    en: "Detected Language",
-    es: "Idioma detectado"
+  inputPlaceholder: {
+    en: "",
+    es: ""
   },
-  detectedDialectLabel: {
-    en: "Detected Dialect",
-    es: "Dialecto detectado"
+
+  changeDetectedLabel: {
+    en: "Change Detected Language",
+    es: "Cambiar idioma detectado"
   },
-  confidenceLabel: {
-    en: "Confidence",
-    es: "Confianza"
+
+  translateToLabel: {
+    en: "Translate To",
+    es: "Traducir a"
   },
+  targetSearchPlaceholder: {
+    en: "",
+    es: ""
+  },
+
+  translateButton: {
+    en: "Translate",
+    es: "Traducir"
+  },
+
+  translationLabel: {
+    en: "Translation",
+    es: "Traducción"
+  },
+  outputPlaceholder: {
+    en: "",
+    es: ""
+  },
+
+  copyButton: {
+    en: "Copy",
+    es: "Copiar"
+  },
+
   keepDetectedButton: {
     en: "Keep",
     es: "Mantener"
@@ -43,26 +71,7 @@ const uiTranslations = {
     en: "Change",
     es: "Cambiar"
   },
-  changeDetectedLabel: {
-    en: "Change Detected Language",
-    es: "Cambiar idioma detectado"
-  },
-  translateToLabel: {
-    en: "Translate To",
-    es: "Traducir a"
-  },
-  translateButton: {
-    en: "Translate",
-    es: "Traducir"
-  },
-  translationLabel: {
-    en: "Translation",
-    es: "Traducción"
-  },
-  copyButton: {
-    en: "Copy",
-    es: "Copiar"
-  },
+
   pronunciationToggleLabel: {
     en: "Show Pronunciation",
     es: "Mostrar pronunciación"
@@ -71,14 +80,20 @@ const uiTranslations = {
     en: "Pronunciation Guide",
     es: "Guía de pronunciación"
   },
-  speakSlowButton: {
-    en: "Speak Slowly",
-    es: "Hablar despacio"
+  pronunciationPlaceholder: {
+    en: "",
+    es: ""
   },
+
   speakNormalButton: {
     en: "Speak Normally",
     es: "Hablar normal"
   },
+  speakSlowButton: {
+    en: "Speak Slowly",
+    es: "Hablar despacio"
+  },
+
   footerProduct: {
     en: "Cross-Cultural Translator™",
     es: "Traductor Intercultural™"
@@ -101,7 +116,7 @@ const uiTranslations = {
   }
 };
 
-function t(key, lang){
+function t(key, lang) {
   const group = uiTranslations[key] || {};
-  return group[lang] || group.en || key;
+  return group[lang] ?? group.en ?? "";
 }
