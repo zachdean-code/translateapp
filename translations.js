@@ -488,8 +488,8 @@ const uiTranslations = {
       ko: "러시아어",
       ja: "ロシア語",
       ru: "Русский"
-    },     
-  }
+    }     
+  },
 
   pronunciationToggleLabel: {
     en: "Show Pronunciation",
