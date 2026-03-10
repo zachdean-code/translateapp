@@ -3,8 +3,12 @@ const API_URL = "https://translateapp-1.onrender.com/translate";
 let detectedSelection = null;
 let targetSelection = null;
 
-function applyLanguage(lang){
+let targetActiveIndex = -1;
+let detectedActiveIndex = -1;
+
+function applyLanguage(lang) {
   document.documentElement.lang = lang;
+
   document.getElementById("uiLanguageLabel").innerText = t("uiLanguageLabel", lang);
   document.getElementById("darkModeButton").innerText = t("darkModeButton", lang);
   document.getElementById("pageTitle").innerText = t("pageTitle", lang);
@@ -30,182 +34,327 @@ function applyLanguage(lang){
   document.getElementById("footerDescriptor").innerText = t("footerDescriptor", lang);
   document.getElementById("footerCopyright").innerText = t("footerCopyright", lang);
   document.getElementById("footerPatent").innerText = t("footerPatent", lang);
+
   localStorage.setItem("siteLanguage", lang);
 }
 
-function toggleDarkMode(){
+function toggleDarkMode() {
   document.body.classList.toggle("dark");
-  localStorage.setItem("darkMode", document.body.classList.contains("dark") ? "on" : "off");
+  localStorage.setItem(
+    "darkMode",
+    document.body.classList.contains("dark") ? "on" : "off"
+  );
 }
 
-function findMatches(value){
+function findMatches(value) {
   const q = value.trim().toLowerCase();
-  if(!q) return languageCatalog.slice(0, 12);
-  return languageCatalog.filter(item => {
-    if(item.label.toLowerCase().includes(q)) return true;
-    return item.aliases.some(alias => alias.toLowerCase().includes(q));
+
+  if (!q) {
+    return languageCatalog.slice(0, 12);
+  }
+
+  return languageCatalog.filter((item) => {
+    if (item.label.toLowerCase().includes(q)) return true;
+    return item.aliases.some((alias) => alias.toLowerCase().includes(q));
   }).slice(0, 12);
 }
 
-function renderSuggestions(container, matches, onPick){
+function renderSuggestions(container, matches, onPick, type) {
   container.innerHTML = "";
-  if(!matches.length){
+
+  if (!matches.length) {
     container.style.display = "none";
+    if (type === "target") targetActiveIndex = -1;
+    if (type === "detected") detectedActiveIndex = -1;
     return;
   }
-  matches.forEach(item => {
+
+  matches.forEach((item, index) => {
     const div = document.createElement("div");
     div.className = "suggestionItem";
     div.innerText = item.label;
+    div.dataset.index = String(index);
+
     div.onclick = () => onPick(item);
+
+    div.onmouseenter = () => {
+      if (type === "target") targetActiveIndex = index;
+      if (type === "detected") detectedActiveIndex = index;
+      highlightActiveSuggestion(container, type);
+    };
+
     container.appendChild(div);
   });
+
   container.style.display = "block";
+
+  if (type === "target") {
+    targetActiveIndex = -1;
+  }
+  if (type === "detected") {
+    detectedActiveIndex = -1;
+  }
 }
 
-function setupSearch(inputId, suggestionId, onPick){
+function highlightActiveSuggestion(container, type) {
+  const items = container.querySelectorAll(".suggestionItem");
+  const activeIndex = type === "target" ? targetActiveIndex : detectedActiveIndex;
+
+  items.forEach((item, index) => {
+    if (index === activeIndex) {
+      item.style.background = document.body.classList.contains("dark") ? "#3a3a3a" : "#e8eef8";
+    } else {
+      item.style.background = "";
+    }
+  });
+
+  if (activeIndex >= 0 && items[activeIndex]) {
+    items[activeIndex].scrollIntoView({ block: "nearest" });
+  }
+}
+
+function closeSuggestions(container, type) {
+  container.style.display = "none";
+  if (type === "target") targetActiveIndex = -1;
+  if (type === "detected") detectedActiveIndex = -1;
+}
+
+function setupSearch(inputId, suggestionId, onPick, type) {
   const input = document.getElementById(inputId);
   const box = document.getElementById(suggestionId);
 
   input.addEventListener("focus", () => {
-    renderSuggestions(box, findMatches(input.value), onPick);
+    renderSuggestions(box, findMatches(input.value), onPick, type);
   });
 
   input.addEventListener("input", () => {
-    renderSuggestions(box, findMatches(input.value), onPick);
+    renderSuggestions(box, findMatches(input.value), onPick, type);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    const matches = findMatches(input.value);
+    const isTarget = type === "target";
+
+    if (box.style.display !== "block" && ["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+      renderSuggestions(box, matches, onPick, type);
+    }
+
+    if (!matches.length) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (isTarget) {
+        targetActiveIndex = (targetActiveIndex + 1) % matches.length;
+      } else {
+        detectedActiveIndex = (detectedActiveIndex + 1) % matches.length;
+      }
+      highlightActiveSuggestion(box, type);
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (isTarget) {
+        targetActiveIndex = targetActiveIndex <= 0 ? matches.length - 1 : targetActiveIndex - 1;
+      } else {
+        detectedActiveIndex = detectedActiveIndex <= 0 ? matches.length - 1 : detectedActiveIndex - 1;
+      }
+      highlightActiveSuggestion(box, type);
+    }
+
+    if (e.key === "Enter") {
+      const activeIndex = isTarget ? targetActiveIndex : detectedActiveIndex;
+      if (box.style.display === "block" && activeIndex >= 0 && matches[activeIndex]) {
+        e.preventDefault();
+        onPick(matches[activeIndex]);
+      }
+    }
+
+    if (e.key === "Escape") {
+      closeSuggestions(box, type);
+    }
   });
 
   document.addEventListener("click", (e) => {
-    if(!input.contains(e.target) && !box.contains(e.target)){
-      box.style.display = "none";
+    if (!input.contains(e.target) && !box.contains(e.target)) {
+      closeSuggestions(box, type);
     }
   });
 }
 
-function detectInput(text){
+function detectInput(text) {
   const lower = text.toLowerCase();
 
-  if(/[\u0600-\u06FF]/.test(text)){
+  if (/[\u0600-\u06FF]/.test(text)) {
     return { language: "Arabic", dialect: "Arabic — Modern Standard", confidence: "91%" };
   }
-  if(/[\u0400-\u04FF]/.test(text)){
+  if (/[\u0400-\u04FF]/.test(text)) {
     return { language: "Russian", dialect: "Russian", confidence: "95%" };
   }
-  if(/[\u3040-\u30ff]/.test(text)){
+  if (/[\u3040-\u30ff]/.test(text)) {
     return { language: "Japanese", dialect: "Japanese", confidence: "97%" };
   }
-  if(/[\u4e00-\u9fff]/.test(text)){
+  if (/[\u4e00-\u9fff]/.test(text)) {
     return { language: "Chinese", dialect: "Chinese", confidence: "96%" };
   }
-  if(/[\uAC00-\uD7AF]/.test(text)){
+  if (/[\uAC00-\uD7AF]/.test(text)) {
     return { language: "Korean", dialect: "Korean", confidence: "97%" };
   }
-  if(lower.includes("parce") || lower.includes("quiubo") || lower.includes("qué más pues")){
+  if (
+    lower.includes("parce") ||
+    lower.includes("quiubo") ||
+    lower.includes("qué más pues")
+  ) {
     return { language: "Spanish", dialect: "Spanish — Paisa (Medellín)", confidence: "94%" };
   }
-  if(lower.includes("che ") || lower.includes("boludo") || lower.includes("vení") || lower.includes("sos ")){
+  if (
+    lower.includes("che ") ||
+    lower.includes("boludo") ||
+    lower.includes("vení") ||
+    lower.includes("sos ")
+  ) {
     return { language: "Spanish", dialect: "Spanish — Argentine", confidence: "93%" };
   }
-  if(lower.includes("weón") || lower.includes("huevon") || lower.includes("po ")){
+  if (
+    lower.includes("weón") ||
+    lower.includes("huevon") ||
+    lower.includes(" po ") ||
+    lower.endsWith(" po")
+  ) {
     return { language: "Spanish", dialect: "Spanish — Chilean", confidence: "88%" };
   }
-  if(lower.includes("órale") || lower.includes("wey") || lower.includes("no manches")){
+  if (
+    lower.includes("órale") ||
+    lower.includes("wey") ||
+    lower.includes("no manches")
+  ) {
     return { language: "Spanish", dialect: "Spanish — Mexican", confidence: "91%" };
   }
-  if(lower.includes("bacano") || lower.includes("qué más")){
+  if (lower.includes("bacano") || lower.includes("qué más")) {
     return { language: "Spanish", dialect: "Spanish — LATAM (Neutral)", confidence: "74%" };
   }
-  if(/[áéíóúñ¿¡]/i.test(text)){
+  if (/[áéíóúñ¿¡]/i.test(text)) {
     return { language: "Spanish", dialect: "Spanish — LATAM (Neutral)", confidence: "78%" };
   }
+
   return { language: "English", dialect: "English — American", confidence: "63%" };
 }
 
-function updateDetection(){
+function updateDetection() {
   const text = document.getElementById("userInput").value.trim();
   const card = document.getElementById("detectedCard");
-  if(!text){
+
+  if (!text) {
     card.classList.add("hidden");
+    document.getElementById("changeDetectedWrap").classList.add("hidden");
+    detectedSelection = null;
     return;
   }
-  if(!detectedSelection){
+
+  if (!detectedSelection) {
     detectedSelection = detectInput(text);
   }
+
   document.getElementById("detectedLanguageValue").innerText = detectedSelection.language;
   document.getElementById("detectedDialectValue").innerText = detectedSelection.dialect;
   document.getElementById("detectedConfidenceValue").innerText = detectedSelection.confidence;
+
   card.classList.remove("hidden");
 }
 
-function toggleDetectedChange(){
-  document.getElementById("changeDetectedWrap").classList.toggle("hidden");
-}
-
-function keepDetected(){
+function keepDetected() {
   document.getElementById("changeDetectedWrap").classList.add("hidden");
+  document.getElementById("detectedSearch").value = "";
+  closeSuggestions(document.getElementById("detectedSuggestions"), "detected");
+  updateDetection();
 }
 
-async function translateText(){
-  const input = document.getElementById("userInput").value.trim();
-  const target = targetSelection ? targetSelection.label : document.getElementById("targetSearch").value.trim();
+function toggleDetectedChange() {
+  const wrap = document.getElementById("changeDetectedWrap");
+  wrap.classList.toggle("hidden");
 
-  if(!input || !target){
+  if (!wrap.classList.contains("hidden")) {
+    document.getElementById("detectedSearch").focus();
+  } else {
+    document.getElementById("detectedSearch").value = "";
+    closeSuggestions(document.getElementById("detectedSuggestions"), "detected");
+  }
+}
+
+async function translateText() {
+  const input = document.getElementById("userInput").value.trim();
+  const target = targetSelection
+    ? targetSelection.label
+    : document.getElementById("targetSearch").value.trim();
+
+  if (!input || !target) {
     alert("Please enter text and choose a target language.");
     return;
   }
 
-  try{
-    const response = await fetch(API_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         text: input,
         target: target
       })
     });
 
     const data = await response.json();
-    document.getElementById("output").value = data.output || data.translation || "Translation error";
-    document.getElementById("pronunciation").value = document.getElementById("output").value || "";
-  }catch(err){
-    document.getElementById("output").value = "Translation error";
+
+    if (!response.ok) {
+      document.getElementById("output").value = data.error || "Translation error";
+      return;
+    }
+
+    document.getElementById("output").value = data.output || data.translation || "";
+    document.getElementById("pronunciation").value = data.output || data.translation || "";
+  } catch (err) {
+    document.getElementById("output").value = "Network or server error";
   }
 }
 
-function copyTranslation(){
+function copyTranslation() {
   const output = document.getElementById("output");
   output.select();
   output.setSelectionRange(0, 99999);
   document.execCommand("copy");
 }
 
-function togglePronunciation(){
-  document.getElementById("pronunciationSection").classList.toggle("hidden", !document.getElementById("pronToggle").checked);
+function togglePronunciation() {
+  const isChecked = document.getElementById("pronToggle").checked;
+  document.getElementById("pronunciationSection").classList.toggle("hidden", !isChecked);
 }
 
-function speak(rate){
+function speak(rate) {
   const text = document.getElementById("output").value.trim();
-  if(!text) return;
+  if (!text) return;
+
   speechSynthesis.cancel();
+
   const msg = new SpeechSynthesisUtterance(text);
   msg.rate = rate;
   speechSynthesis.speak(msg);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if(localStorage.getItem("darkMode") === "on"){
+  if (localStorage.getItem("darkMode") === "on") {
     document.body.classList.add("dark");
   }
+
   const savedLang = localStorage.getItem("siteLanguage") || "en";
   document.getElementById("siteLanguage").value = savedLang;
   applyLanguage(savedLang);
 
   document.getElementById("siteLanguage").addEventListener("change", (e) => applyLanguage(e.target.value));
   document.getElementById("darkModeButton").addEventListener("click", toggleDarkMode);
+
   document.getElementById("userInput").addEventListener("input", () => {
     detectedSelection = null;
     updateDetection();
   });
+
   document.getElementById("keepDetectedButton").addEventListener("click", keepDetected);
   document.getElementById("changeDetectedButton").addEventListener("click", toggleDetectedChange);
   document.getElementById("translateButton").addEventListener("click", translateText);
@@ -217,8 +366,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSearch("targetSearch", "targetSuggestions", (item) => {
     targetSelection = item;
     document.getElementById("targetSearch").value = item.label;
-    document.getElementById("targetSuggestions").style.display = "none";
-  });
+    closeSuggestions(document.getElementById("targetSuggestions"), "target");
+  }, "target");
 
   setupSearch("detectedSearch", "detectedSuggestions", (item) => {
     detectedSelection = {
@@ -226,9 +375,10 @@ document.addEventListener("DOMContentLoaded", () => {
       dialect: item.label,
       confidence: "Manual"
     };
+
     document.getElementById("detectedSearch").value = item.label;
-    document.getElementById("detectedSuggestions").style.display = "none";
+    closeSuggestions(document.getElementById("detectedSuggestions"), "detected");
     updateDetection();
     document.getElementById("changeDetectedWrap").classList.add("hidden");
-  });
+  }, "detected");
 });
