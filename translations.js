@@ -98,14 +98,6 @@ const uiTranslations = {
     en: "Cross-Cultural Translator™",
     es: "Traductor Intercultural™"
   },
-  footerTagline: {
-    en: "Beyond translation — real cross-cultural communication",
-    es: "Más allá de la traducción — comunicación intercultural real"
-  },
-  footerDescriptor: {
-    en: "Dialect-aware translation • Pronunciation guidance • Cultural clarity",
-    es: "Traducción con conciencia dialectal • Guía de pronunciación • Claridad cultural"
-  },
   footerCopyright: {
     en: "© 2026 CCTLA-TBD, LLC",
     es: "© 2026 CCTLA-TBD, LLC"

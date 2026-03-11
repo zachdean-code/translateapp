@@ -54,6 +54,15 @@ body.dark .container{
   font-size:14px;
 }
 
+.darkToggle{
+  background:#111827;
+  color:white;
+}
+
+body.dark .darkToggle{
+  background:#374151;
+}
+
 body.dark .miniSelect{
   background:#111827;
   color:#f3f4f6;
@@ -155,6 +164,11 @@ button{
   margin-bottom:16px;
 }
 
+.secondaryButton{
+  background:#4b5563;
+  color:white;
+}
+
 .slowButton{
   background:#15803d;
   color:white;
@@ -185,6 +199,37 @@ button{
 
 .hidden{
   display:none !important;
+}
+
+.detectedCard{
+  background:#eef2ff;
+  border:1px solid #c7d2fe;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:14px;
+}
+
+body.dark .detectedCard{
+  background:#1e293b;
+  border-color:#334155;
+}
+
+.detectedHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+#detectedLanguageDialect{
+  font-weight:600;
+}
+
+.detectedButtons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 #usageNote{

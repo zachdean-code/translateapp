@@ -1,100 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cross-Cultural Translator</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross-Cultural Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
+  <div class="container">
+    <div class="topBar">
+      <div class="languageGroup">
+        <label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
+        <select id="siteLanguage" class="miniSelect">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
 
-<div class="container">
+      <button id="darkModeButton" class="darkToggle" type="button">🌙 Dark</button>
+    </div>
 
-<div class="topBar">
+    <h1 id="pageTitle">Cross-Cultural Translator™</h1>
+    <p id="pageSubtitle" class="subtitle">Beyond translation — real cross-cultural communication</p>
+    <p id="pageDescription" class="description">Dialect-aware translation, pronunciation guidance, and cultural clarity</p>
 
-<div class="languageGroup">
-<label for="siteLanguage">Site Language</label>
-<select id="siteLanguage" class="miniSelect">
-<option value="en">English</option>
-<option value="es">Español</option>
-</select>
-</div>
+    <div class="translatorRow">
+      <div class="inputColumn">
+        <label id="inputLabel" for="userInput">Input Text</label>
+        <textarea id="userInput" rows="6" placeholder=""></textarea>
 
-<button id="darkModeButton">🌙 Dark</button>
+        <div id="detectedCard" class="detectedCard hidden">
+          <div class="detectedHeader">
+            <div id="detectedLanguageDialect">Detected Language and Dialect: English — American</div>
+            <div class="detectedButtons">
+              <button id="keepDetectedButton" class="secondaryButton" type="button">Keep</button>
+              <button id="changeDetectedButton" class="secondaryButton" type="button">Change</button>
+            </div>
+          </div>
+        </div>
 
-</div>
+        <div id="changeDetectedWrap" class="hidden">
+          <label id="changeDetectedLabel" for="detectedSearch">Change Detected Language</label>
+          <input id="detectedSearch" type="text" autocomplete="off" />
+          <div id="detectedSuggestions" class="suggestions"></div>
+        </div>
 
-<h1>Cross-Cultural Translator™</h1>
+        <label id="translateToLabel" for="targetSearch">Translate To</label>
+        <input id="targetSearch" type="text" autocomplete="off" placeholder="" />
+        <div id="targetSuggestions" class="suggestions"></div>
 
-<p class="subtitle">
-Beyond translation — real cross-cultural communication
-</p>
+        <button id="translateButton" class="primaryButton" type="button">Translate</button>
+      </div>
 
-<p class="description">
-Dialect-aware translation, pronunciation guidance, and cultural clarity
-</p>
+      <div class="outputColumn">
+        <label id="translationLabel" for="output">Translation</label>
+        <textarea id="output" rows="6" readonly placeholder=""></textarea>
 
+        <button id="copyButton" class="copyButton" type="button">Copy</button>
 
-<div class="translatorRow">
+        <div id="usageNoteSection" class="hidden">
+          <label id="usageNoteLabel" for="usageNote">Usage Note</label>
+          <textarea id="usageNote" rows="3" readonly></textarea>
+        </div>
 
-<!-- LEFT COLUMN -->
+        <div class="toggleRow">
+          <input type="checkbox" id="pronToggle" />
+          <label id="pronunciationToggleLabel" for="pronToggle">Show Pronunciation</label>
+        </div>
 
-<div class="inputColumn">
+        <div id="pronunciationSection" class="hidden">
+          <label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
+          <textarea id="pronunciation" rows="4" readonly placeholder=""></textarea>
 
-  <label for="userInput">Input Text</label>
-  <textarea id="userInput" rows="6"></textarea>
+          <div class="buttonRow">
+            <button id="speakSlowButton" class="slowButton" type="button">Speak Slowly</button>
+            <button id="speakNormalButton" class="normalButton" type="button">Speak Normally</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <label for="targetSearch">Translate To</label>
-  <input id="targetSearch" type="text">
-  <div id="targetSuggestions" class="suggestions"></div>
+    <footer>
+      <strong id="footerProduct">Cross-Cultural Translator™</strong>
+      <div id="footerCopyright">© 2026 CCTLA-TBD, LLC</div>
+      <div id="footerPatent">Patent pending.</div>
+    </footer>
+  </div>
 
-  <button id="translateButton" class="primaryButton">Translate</button>
-
-</div>
-
-<!-- RIGHT COLUMN -->
-<div class="outputColumn">
-
-<label for="output">Translation</label>
-<textarea id="output" rows="6" readonly></textarea>
-
-<button id="copyButton" class="copyButton">Copy</button>
-
-<div id="usageNoteSection" class="hidden">
-<label>Usage Note</label>
-<textarea id="usageNote" rows="3" readonly></textarea>
-</div>
-
-<div class="toggleRow">
-<input type="checkbox" id="pronToggle">
-<label>Show Pronunciation</label>
-</div>
-
-<div id="pronunciationSection" class="hidden">
-<label>Pronunciation Guide</label>
-<textarea id="pronunciation" rows="4" readonly></textarea>
-
-<div class="buttonRow">
-<button id="speakSlowButton" class="slowButton">Speak Slowly</button>
-<button id="speakNormalButton" class="normalButton">Speak Normally</button>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="translations.js"></script>
-<script src="languageCatalog.js"></script>
-<script src="script.js"></script>
-
+  <script src="translations.js"></script>
+  <script src="languageCatalog.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
