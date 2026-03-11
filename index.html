@@ -19,97 +19,73 @@
 <div class="topBar">
 
 <div class="languageGroup">
-<label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
-
+<label for="siteLanguage">Site Language</label>
 <select id="siteLanguage" class="miniSelect">
 <option value="en">English</option>
 <option value="es">Español</option>
 </select>
+</div>
+
+<button id="darkModeButton">🌙 Dark</button>
 
 </div>
 
-<button id="darkModeButton" class="darkToggle">🌙 Dark</button>
+<h1>Cross-Cultural Translator™</h1>
 
-</div>
-
-<h1 id="pageTitle">Cross-Cultural Translator™</h1>
-
-<p id="pageSubtitle" class="subtitle">
+<p class="subtitle">
 Beyond translation — real cross-cultural communication
 </p>
 
-<p id="pageDescription" class="description">
+<p class="description">
 Dialect-aware translation, pronunciation guidance, and cultural clarity
 </p>
 
-<label id="inputLabel" for="userInput">Input Text</label>
 
-<textarea id="userInput" rows="5"></textarea>
+<div class="translatorRow">
 
-<div id="detectedCard" class="detectedCard hidden">
+<!-- LEFT COLUMN -->
 
-<div id="detectedLanguageDialect"></div>
+<div class="inputColumn">
 
-<div class="detectedButtons">
-<button id="keepDetectedButton">Keep</button>
-<button id="changeDetectedButton">Change</button>
-</div>
+<label for="userInput">Input Text</label>
+<textarea id="userInput" rows="6"></textarea>
 
-</div>
-
-<div id="changeDetectedWrap" class="hidden">
-
-<label id="changeDetectedLabel" for="detectedSearch">
-Change Detected Language
-</label>
-
-<input id="detectedSearch" type="text">
-
-</div>
-
-<label id="translateToLabel" for="targetSearch">Translate To</label>
-
+<label for="targetSearch">Translate To</label>
 <input id="targetSearch" type="text">
 
 <button id="translateButton" class="primaryButton">Translate</button>
 
-<label id="translationLabel" for="output">Translation</label>
+</div>
 
-<textarea id="output" rows="5" readonly></textarea>
+
+<!-- RIGHT COLUMN -->
+
+<div class="outputColumn">
+
+<label for="output">Translation</label>
+<textarea id="output" rows="6" readonly></textarea>
 
 <button id="copyButton" class="copyButton">Copy</button>
 
-<!-- Usage Note -->
-
 <div id="usageNoteSection" class="hidden">
-
 <label>Usage Note</label>
-
 <textarea id="usageNote" rows="3" readonly></textarea>
-
 </div>
 
 <div class="toggleRow">
-
 <input type="checkbox" id="pronToggle">
-
-<label id="pronunciationToggleLabel">
-Show Pronunciation
-</label>
-
+<label>Show Pronunciation</label>
 </div>
 
 <div id="pronunciationSection" class="hidden">
-
-<label id="pronunciationLabel">Pronunciation Guide</label>
-
+<label>Pronunciation Guide</label>
 <textarea id="pronunciation" rows="4" readonly></textarea>
 
 <div class="buttonRow">
-
 <button id="speakSlowButton" class="slowButton">Speak Slowly</button>
-
 <button id="speakNormalButton" class="normalButton">Speak Normally</button>
+</div>
+</div>
 
 </div>
 
