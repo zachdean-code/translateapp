@@ -1,107 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cross-Cultural Translator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="container">
-    <div class="topBar">
-      <div class="languageGroup">
-        <label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
-        <select id="siteLanguage" class="miniSelect">
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="pt">Português</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="it">Italiano</option>
-          <option value="zh">中文</option>
-          <option value="ja">日本語</option>
-          <option value="ko">한국어</option>
-          <option value="ru">Русский</option>
-          <option value="ar">العربية</option>
-          <option value="hi">हिन्दी</option>
-          <option value="id">Bahasa Indonesia</option>
-          <option value="tl">Filipino</option>
-          <option value="sw">Kiswahili</option>
-          <option value="am">አማርኛ</option>
-          <option value="fa">فارسی</option>
-          <option value="tr">Türkçe</option>
-        </select>
-      </div>
+const API_URL = "https://translateapp-1.onrender.com/translate";
 
-      <button id="darkModeButton" class="darkToggle" type="button">🌙 Dark</button>
-    </div>
+async function translateText(){
 
-    <h1 id="pageTitle">Cross-Cultural Translator™</h1>
-    <p id="pageSubtitle" class="subtitle">Beyond translation — real cross-cultural communication</p>
-    <p id="pageDescription" class="description">Dialect-aware translation, pronunciation guidance, and cultural clarity</p>
+const input = document.getElementById("userInput").value.trim();
+const target = document.getElementById("targetSearch").value.trim();
 
-    <label id="inputLabel" for="userInput">Input Text</label>
-    <textarea id="userInput" rows="5" placeholder="Type or paste text here..."></textarea>
+if(!input || !target){
+alert("Enter text and choose a language.");
+return;
+}
 
-<div id="detectedCard" class="detectedCard hidden">
+const response = await fetch(API_URL,{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+text:input,
+target:target
+})
+});
 
-  <div id="detectedLanguageDialect"></div>
+const data = await response.json();
 
-  <div class="detectedButtons">
-    <button id="keepDetectedButton">Keep</button>
-    <button id="changeDetectedButton">Change</button>
-  </div>
+const translation = data.translation_text || "";
+const usageNote = data.usage_note || "";
+const pronunciation = data.pronunciation_guide || "";
 
-</div>
+document.getElementById("output").value = translation;
 
-    <div id="changeDetectedWrap" class="hidden sectionSpacing">
-      <label id="changeDetectedLabel" for="detectedSearch">Change Detected Language</label>
-      <div class="searchWrap">
-        <input id="detectedSearch" type="text" autocomplete="off" placeholder="Type language or dialect..." />
-        <div id="detectedSuggestions" class="suggestions"></div>
-      </div>
-    </div>
+/* usage note */
 
-    <label id="translateToLabel" for="targetSearch">Translate To</label>
-    <div class="searchWrap">
-      <input id="targetSearch" type="text" autocomplete="off" placeholder="Type language or dialect..." />
-      <div id="targetSuggestions" class="suggestions"></div>
-    </div>
+const usageSection = document.getElementById("usageNoteSection");
+const usageBox = document.getElementById("usageNote");
 
-    <button id="translateButton" class="primaryButton" type="button">Translate</button>
+if(data.show_usage_note && usageNote){
 
-    <label id="translationLabel" for="output">Translation</label>
-    <textarea id="output" rows="5" readonly placeholder="Your translation will appear here..."></textarea>
-    <button id="copyButton" class="copyButton" type="button">Copy</button>
+usageBox.value = usageNote;
+usageSection.classList.remove("hidden");
 
-    <div class="toggleRow">
-      <input type="checkbox" id="pronToggle" />
-      <label id="pronunciationToggleLabel" for="pronToggle">Show Pronunciation</label>
-    </div>
+}else{
 
-    <div id="pronunciationSection" class="hidden">
-      <label id="pronunciationLabel" for="pronunciation">Pronunciation Guide</label>
-      <textarea id="pronunciation" rows="4" readonly placeholder="Pronunciation guide will appear here..."></textarea>
-      <div class="buttonRow">
-        <button id="speakSlowButton" class="slowButton" type="button">Speak Slowly</button>
-        <button id="speakNormalButton" class="normalButton" type="button">Speak Normally</button>
-      </div>
-    </div>
+usageSection.classList.add("hidden");
+usageBox.value="";
 
-    <footer>
-      <strong id="footerProduct">Cross-Cultural Translator™</strong>
-      <div id="footerTagline">Beyond translation — real cross-cultural communication</div>
-      <div id="footerDescriptor">Dialect-aware translation • Pronunciation guidance • Cultural clarity</div>
-      <div id="footerCopyright">© 2026 CCTLA-TBD, LLC</div>
-      <div id="footerPatent">Patent pending.</div>
-    </footer>
-  </div>
+}
 
-  <script src="translations.js"></script>
-  <script src="languageCatalog.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+/* pronunciation */
+
+const pronSection = document.getElementById("pronunciationSection");
+const pronToggle = document.getElementById("pronToggle");
+
+if(pronToggle.checked && data.show_pronunciation){
+
+document.getElementById("pronunciation").value = pronunciation;
+pronSection.classList.remove("hidden");
+
+}else{
+
+pronSection.classList.add("hidden");
+
+}
+
+}
+
+function togglePronunciation(){
+
+const checked = document.getElementById("pronToggle").checked;
+
+if(!checked){
+
+document.getElementById("pronunciationSection").classList.add("hidden");
+
+}
+
+}
+
+function copyTranslation(){
+
+const output = document.getElementById("output");
+
+output.select();
+document.execCommand("copy");
+
+}
+
+function speak(rate){
+
+const text = document.getElementById("output").value.trim();
+if(!text) return;
+
+speechSynthesis.cancel();
+
+const msg = new SpeechSynthesisUtterance(text);
+msg.rate = rate;
+
+speechSynthesis.speak(msg);
+
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+document.getElementById("translateButton")
+.addEventListener("click",translateText);
+
+document.getElementById("copyButton")
+.addEventListener("click",copyTranslation);
+
+document.getElementById("pronToggle")
+.addEventListener("change",togglePronunciation);
+
+document.getElementById("speakNormalButton")
+.addEventListener("click",()=>speak(1.0));
+
+document.getElementById("speakSlowButton")
+.addEventListener("click",()=>speak(0.6));
+
+});
