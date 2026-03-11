@@ -1,273 +1,281 @@
-*{
-  box-sizing:border-box;
+const API_URL = "https://translateapp-1.onrender.com/translate";
+
+let detectedSelection = null;
+let targetSelection = null;
+
+let targetActiveIndex = -1;
+
+function toggleDarkMode(){
+  document.body.classList.toggle("dark");
 }
 
-body{
-  margin:0;
-  font-family:Inter,sans-serif;
-  background:#f4f6f8;
-  color:#111827;
-  display:flex;
-  justify-content:center;
-  padding:20px;
-  transition:background .2s ease,color .2s ease;
-}
+function findMatches(value){
+  const q=value.trim().toLowerCase();
 
-body.dark{
-  background:#111827;
-  color:#f3f4f6;
-}
-
-.container{
-  width:min(1150px,100%);
-  background:white;
-  padding:28px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
-  transition:background .2s ease,color .2s ease;
-}
-
-body.dark .container{
-  background:#1f2937;
-}
-
-.topBar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:16px;
-  margin-bottom:16px;
-}
-
-.languageGroup{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.miniSelect{
-  padding:8px 10px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  background:white;
-  font-size:14px;
-}
-
-body.dark .miniSelect{
-  background:#111827;
-  color:#f3f4f6;
-  border-color:#4b5563;
-}
-
-h1{
-  text-align:center;
-  margin:10px 0;
-  font-size:3rem;
-  line-height:1.1;
-}
-
-.subtitle{
-  text-align:center;
-  color:#4b5563;
-  font-size:1.15rem;
-  margin:0 0 8px;
-}
-
-.description{
-  text-align:center;
-  color:#6b7280;
-  font-size:1.1rem;
-  margin:0 0 28px;
-}
-
-body.dark .subtitle{
-  color:#d1d5db;
-}
-
-body.dark .description{
-  color:#9ca3af;
-}
-
-.translatorRow{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:28px;
-  align-items:start;
-}
-
-.inputColumn,
-.outputColumn{
-  display:flex;
-  flex-direction:column;
-}
-
-label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:8px;
-}
-
-textarea,
-input{
-  width:100%;
-  padding:12px 14px;
-  margin-bottom:14px;
-  border-radius:10px;
-  border:1px solid #d1d5db;
-  font-size:15px;
-  font-family:Inter,sans-serif;
-  background:white;
-  color:#111827;
-}
-
-textarea{
-  resize:vertical;
-  min-height:160px;
-}
-
-body.dark textarea,
-body.dark input{
-  background:#111827;
-  color:#f3f4f6;
-  border-color:#4b5563;
-}
-
-button{
-  padding:10px 14px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  font-family:Inter,sans-serif;
-  font-size:14px;
-}
-
-.primaryButton{
-  background:#2563eb;
-  color:white;
-  margin-bottom:16px;
-}
-
-.copyButton{
-  background:#444;
-  color:white;
-  margin-bottom:16px;
-}
-
-.slowButton{
-  background:#15803d;
-  color:white;
-}
-
-.normalButton{
-  background:#b45309;
-  color:white;
-}
-
-.buttonRow{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.toggleRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.toggleRow input[type="checkbox"]{
-  width:auto;
-  margin:0;
-}
-
-.hidden{
-  display:none !important;
-}
-
-#usageNote{
-  background:#fff7ed;
-  border:1px solid #f59e0b;
-}
-
-body.dark #usageNote{
-  background:#3b2a12;
-  color:#fef3c7;
-  border-color:#f59e0b;
-}
-
-.suggestions{
-  display:none;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  background:white;
-  margin-top:-6px;
-  margin-bottom:14px;
-  overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,.08);
-}
-
-body.dark .suggestions{
-  background:#111827;
-  border-color:#4b5563;
-}
-
-.suggestionItem{
-  padding:10px 12px;
-  cursor:pointer;
-  border-bottom:1px solid #e5e7eb;
-}
-
-.suggestionItem:last-child{
-  border-bottom:none;
-}
-
-.suggestionItem:hover{
-  background:#f3f4f6;
-}
-
-body.dark .suggestionItem{
-  border-bottom-color:#374151;
-}
-
-body.dark .suggestionItem:hover{
-  background:#374151;
-}
-
-footer{
-  margin-top:28px;
-  text-align:center;
-  color:#6b7280;
-  font-size:13px;
-  line-height:1.6;
-}
-
-body.dark footer{
-  color:#9ca3af;
-}
-
-footer strong{
-  display:block;
-  margin-bottom:4px;
-}
-
-@media (max-width: 900px){
-  .translatorRow{
-    grid-template-columns:1fr;
+  if(!q){
+    return languageCatalog.slice(0,12);
   }
 
-  h1{
-    font-size:2.2rem;
+  return languageCatalog.filter(item=>{
+    if(item.label.toLowerCase().includes(q)) return true;
+    return item.aliases.some(a=>a.toLowerCase().includes(q));
+  }).slice(0,12);
+}
+
+function renderSuggestions(container,matches,onPick){
+  container.innerHTML="";
+
+  if(!matches.length){
+    container.style.display="none";
+    return;
   }
 
-  .container{
-    padding:20px;
+  matches.forEach((item,index)=>{
+    const div=document.createElement("div");
+    div.className="suggestionItem";
+    div.innerText=item.label;
+
+    div.onclick=()=>onPick(item);
+
+    container.appendChild(div);
+  });
+
+  container.style.display="block";
+}
+
+function setupSearch(){
+  const input=document.getElementById("targetSearch");
+  const box=document.getElementById("targetSuggestions");
+
+  if(!input || !box) return;
+
+  input.addEventListener("focus",()=>{
+    renderSuggestions(box,findMatches(input.value),(item)=>{
+      targetSelection=item;
+      input.value=item.label;
+      box.style.display="none";
+    });
+  });
+
+  input.addEventListener("input",()=>{
+    renderSuggestions(box,findMatches(input.value),(item)=>{
+      targetSelection=item;
+      input.value=item.label;
+      box.style.display="none";
+    });
+  });
+}
+
+function detectInput(text){
+  const lower=text.toLowerCase();
+
+  if(
+    lower.includes("parce") ||
+    lower.includes("quiubo") ||
+    lower.includes("qué más pues")
+  ){
+    return "Spanish — Paisa (Medellín)";
   }
 
-  .topBar{
-    flex-direction:column;
-    align-items:flex-start;
+  if(
+    lower.includes("che ") ||
+    lower.includes("boludo")
+  ){
+    return "Spanish — Argentine";
+  }
+
+  if(
+    lower.includes("órale") ||
+    lower.includes("wey")
+  ){
+    return "Spanish — Mexican";
+  }
+
+  if(/[áéíóúñ¿¡]/i.test(text)){
+    return "Spanish — LATAM";
+  }
+
+  return "English — American";
+}
+
+function updateDetection(){
+  const text=document.getElementById("userInput").value.trim();
+  const card=document.getElementById("detectedCard");
+
+  if(!card) return;
+
+  if(!text){
+    card.classList.add("hidden");
+    return;
+  }
+
+  const detected=detectInput(text);
+  detectedSelection = detected;
+
+  const label=document.getElementById("detectedLanguageDialect");
+  if(label){
+    label.innerText=
+    "Detected Language and Dialect: "+detected;
+  }
+
+  card.classList.remove("hidden");
+}
+
+function keepDetected(){
+  const wrap=document.getElementById("changeDetectedWrap");
+  if(wrap){
+    wrap.classList.add("hidden");
   }
 }
+
+function toggleDetectedChange(){
+  const wrap=document.getElementById("changeDetectedWrap");
+  if(wrap){
+    wrap.classList.toggle("hidden");
+  }
+}
+
+async function translateText(){
+
+  const input=document.getElementById("userInput").value.trim();
+
+  const target=targetSelection
+  ?targetSelection.label
+  :document.getElementById("targetSearch").value.trim();
+
+  if(!input || !target){
+    alert("Enter text and choose a language.");
+    return;
+  }
+
+  try{
+
+    const response=await fetch(API_URL,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        text:input,
+        target:target,
+        source:detectedSelection || ""
+      })
+    });
+
+    const data=await response.json();
+
+    if(!response.ok){
+      document.getElementById("output").value=data.error || "Translation error";
+      return;
+    }
+
+    const translation = data.translation_text || "";
+    const usageNote = data.usage_note || "";
+    const pronunciation = data.pronunciation_guide || "";
+
+    document.getElementById("output").value = translation;
+
+    const usageSection=document.getElementById("usageNoteSection");
+    const usageBox=document.getElementById("usageNote");
+
+    if(usageSection && usageBox){
+      if(data.show_usage_note && usageNote){
+        usageBox.value=usageNote;
+        usageSection.classList.remove("hidden");
+      }else{
+        usageSection.classList.add("hidden");
+        usageBox.value="";
+      }
+    }
+
+    const pronSection=document.getElementById("pronunciationSection");
+    const pronToggle=document.getElementById("pronToggle");
+    const pronBox=document.getElementById("pronunciation");
+
+    if(pronSection && pronToggle && pronBox){
+      if(pronToggle.checked && data.show_pronunciation){
+        pronBox.value=pronunciation;
+        pronSection.classList.remove("hidden");
+      }else{
+        pronSection.classList.add("hidden");
+        pronBox.value="";
+      }
+    }
+
+  }catch(err){
+
+    document.getElementById("output").value="Network error";
+
+  }
+}
+
+function copyTranslation(){
+  const output=document.getElementById("output");
+  output.select();
+  document.execCommand("copy");
+}
+
+function togglePronunciation(){
+  const checked=document.getElementById("pronToggle").checked;
+
+  const section=document
+  .getElementById("pronunciationSection");
+
+  if(section){
+    section.classList.toggle("hidden",!checked);
+  }
+}
+
+function speak(rate){
+  const text=document.getElementById("output").value.trim();
+  if(!text) return;
+
+  speechSynthesis.cancel();
+
+  const msg=new SpeechSynthesisUtterance(text);
+  msg.rate=rate;
+
+  speechSynthesis.speak(msg);
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  document
+  .getElementById("darkModeButton")
+  ?.addEventListener("click",toggleDarkMode);
+
+  document
+  .getElementById("userInput")
+  ?.addEventListener("input",updateDetection);
+
+  document
+  .getElementById("translateButton")
+  ?.addEventListener("click",translateText);
+
+  document
+  .getElementById("copyButton")
+  ?.addEventListener("click",copyTranslation);
+
+  document
+  .getElementById("pronToggle")
+  ?.addEventListener("change",togglePronunciation);
+
+  document
+  .getElementById("speakSlowButton")
+  ?.addEventListener("click",()=>speak(0.6));
+
+  document
+  .getElementById("speakNormalButton")
+  ?.addEventListener("click",()=>speak(1));
+
+  document
+  .getElementById("keepDetectedButton")
+  ?.addEventListener("click",keepDetected);
+
+  document
+  .getElementById("changeDetectedButton")
+  ?.addEventListener("click",toggleDetectedChange);
+
+  setupSearch();
+
+});
