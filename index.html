@@ -1,117 +1,125 @@
-const API_URL = "https://translateapp-1.onrender.com/translate";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Cultural Translator</title>
 
-async function translateText(){
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-const input = document.getElementById("userInput").value.trim();
-const target = document.getElementById("targetSearch").value.trim();
+<link rel="stylesheet" href="style.css">
+</head>
 
-if(!input || !target){
-alert("Enter text and choose a language.");
-return;
-}
+<body>
 
-const response = await fetch(API_URL,{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({
-text:input,
-target:target
-})
-});
+<div class="container">
 
-const data = await response.json();
+<div class="topBar">
 
-const translation = data.translation_text || "";
-const usageNote = data.usage_note || "";
-const pronunciation = data.pronunciation_guide || "";
+<div class="languageGroup">
+<label id="uiLanguageLabel" for="siteLanguage">Site Language</label>
 
-document.getElementById("output").value = translation;
+<select id="siteLanguage" class="miniSelect">
+<option value="en">English</option>
+<option value="es">Español</option>
+</select>
 
-/* usage note */
+</div>
 
-const usageSection = document.getElementById("usageNoteSection");
-const usageBox = document.getElementById("usageNote");
+<button id="darkModeButton" class="darkToggle">🌙 Dark</button>
 
-if(data.show_usage_note && usageNote){
+</div>
 
-usageBox.value = usageNote;
-usageSection.classList.remove("hidden");
+<h1 id="pageTitle">Cross-Cultural Translator™</h1>
 
-}else{
+<p id="pageSubtitle" class="subtitle">
+Beyond translation — real cross-cultural communication
+</p>
 
-usageSection.classList.add("hidden");
-usageBox.value="";
+<p id="pageDescription" class="description">
+Dialect-aware translation, pronunciation guidance, and cultural clarity
+</p>
 
-}
+<label id="inputLabel" for="userInput">Input Text</label>
 
-/* pronunciation */
+<textarea id="userInput" rows="5"></textarea>
 
-const pronSection = document.getElementById("pronunciationSection");
-const pronToggle = document.getElementById("pronToggle");
+<div id="detectedCard" class="detectedCard hidden">
 
-if(pronToggle.checked && data.show_pronunciation){
+<div id="detectedLanguageDialect"></div>
 
-document.getElementById("pronunciation").value = pronunciation;
-pronSection.classList.remove("hidden");
+<div class="detectedButtons">
+<button id="keepDetectedButton">Keep</button>
+<button id="changeDetectedButton">Change</button>
+</div>
 
-}else{
+</div>
 
-pronSection.classList.add("hidden");
+<div id="changeDetectedWrap" class="hidden">
 
-}
+<label id="changeDetectedLabel" for="detectedSearch">
+Change Detected Language
+</label>
 
-}
+<input id="detectedSearch" type="text">
 
-function togglePronunciation(){
+</div>
 
-const checked = document.getElementById("pronToggle").checked;
+<label id="translateToLabel" for="targetSearch">Translate To</label>
 
-if(!checked){
+<input id="targetSearch" type="text">
 
-document.getElementById("pronunciationSection").classList.add("hidden");
+<button id="translateButton" class="primaryButton">Translate</button>
 
-}
+<label id="translationLabel" for="output">Translation</label>
 
-}
+<textarea id="output" rows="5" readonly></textarea>
 
-function copyTranslation(){
+<button id="copyButton" class="copyButton">Copy</button>
 
-const output = document.getElementById("output");
+<!-- Usage Note -->
 
-output.select();
-document.execCommand("copy");
+<div id="usageNoteSection" class="hidden">
 
-}
+<label>Usage Note</label>
 
-function speak(rate){
+<textarea id="usageNote" rows="3" readonly></textarea>
 
-const text = document.getElementById("output").value.trim();
-if(!text) return;
+</div>
 
-speechSynthesis.cancel();
+<div class="toggleRow">
 
-const msg = new SpeechSynthesisUtterance(text);
-msg.rate = rate;
+<input type="checkbox" id="pronToggle">
 
-speechSynthesis.speak(msg);
+<label id="pronunciationToggleLabel">
+Show Pronunciation
+</label>
 
-}
+</div>
 
-document.addEventListener("DOMContentLoaded",()=>{
+<div id="pronunciationSection" class="hidden">
 
-document.getElementById("translateButton")
-.addEventListener("click",translateText);
+<label id="pronunciationLabel">Pronunciation Guide</label>
 
-document.getElementById("copyButton")
-.addEventListener("click",copyTranslation);
+<textarea id="pronunciation" rows="4" readonly></textarea>
 
-document.getElementById("pronToggle")
-.addEventListener("change",togglePronunciation);
+<div class="buttonRow">
 
-document.getElementById("speakNormalButton")
-.addEventListener("click",()=>speak(1.0));
+<button id="speakSlowButton" class="slowButton">Speak Slowly</button>
 
-document.getElementById("speakSlowButton")
-.addEventListener("click",()=>speak(0.6));
+<button id="speakNormalButton" class="normalButton">Speak Normally</button>
 
-});
+</div>
+
+</div>
+
+</div>
+
+<script src="translations.js"></script>
+<script src="languageCatalog.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
