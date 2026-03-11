@@ -28,8 +28,6 @@ async function translateText() {
 
   document.getElementById("output").value = translation;
 
-  /* Usage Note */
-
   const usageSection = document.getElementById("usageNoteSection");
   const usageBox = document.getElementById("usageNote");
 
@@ -40,8 +38,6 @@ async function translateText() {
     usageSection.classList.add("hidden");
     usageBox.value = "";
   }
-
-  /* Pronunciation */
 
   const pronSection = document.getElementById("pronunciationSection");
   const pronToggle = document.getElementById("pronToggle");
@@ -56,7 +52,6 @@ async function translateText() {
 
 function togglePronunciation() {
   const checked = document.getElementById("pronToggle").checked;
-
   if (!checked) {
     document.getElementById("pronunciationSection").classList.add("hidden");
   }
@@ -81,23 +76,25 @@ function speak(rate) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  document
-    .getElementById("translateButton")
-    .addEventListener("click", translateText);
 
-  document
-    .getElementById("copyButton")
-    .addEventListener("click", copyTranslation);
+  document.getElementById("translateButton")
+  .addEventListener("click", translateText);
 
-  document
-    .getElementById("pronToggle")
-    .addEventListener("change", togglePronunciation);
+  document.getElementById("copyButton")
+  .addEventListener("click", copyTranslation);
 
-  document
-    .getElementById("speakNormalButton")
-    .addEventListener("click", () => speak(1.0));
+  document.getElementById("pronToggle")
+  .addEventListener("change", togglePronunciation);
 
-  document
-    .getElementById("speakSlowButton")
-    .addEventListener("click", () => speak(0.6));
+  document.getElementById("speakNormalButton")
+  .addEventListener("click", () => speak(1.0));
+
+  document.getElementById("speakSlowButton")
+  .addEventListener("click", () => speak(0.6));
+
+  document.getElementById("darkModeButton")
+  .addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+  });
+
 });
