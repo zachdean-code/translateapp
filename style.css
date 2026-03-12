@@ -1,303 +1,127 @@
-*{
-  box-sizing:border-box;
-}
+const uiTranslations = {
+  pageTitle: {
+    en: "Cross-Cultural Translator™",
+    es: "Traductor Intercultural™",
+    pt: "Tradutor Intercultural™",
+    fr: "Traducteur interculturel™",
+    de: "Interkultureller Übersetzer™",
+    it: "Traduttore interculturale™",
+    zh: "跨文化翻译器™",
+    ja: "異文化翻訳ツール™",
+    ko: "문화 간 번역기™",
+    ru: "Межкультурный переводчик™",
+    ar: "مترجم بين الثقافات™",
+    hi: "क्रॉस-कल्चरल ट्रांसलेटर™",
+    id: "Penerjemah Lintas Budaya™",
+    tl: "Cross-Cultural Translator™",
+    sw: "Mtafsiri wa Tamaduni Tofauti™",
+    am: "የባህል መሻገሪያ ተርጓሚ™",
+    fa: "مترجم میان‌فرهنگی™",
+    tr: "Kültürlerarası Çevirmen™"
+  },
 
-body{
-  margin:0;
-  font-family:Inter,sans-serif;
-  background:#f4f6f8;
-  color:#111827;
-  display:flex;
-  justify-content:center;
-  padding:20px;
-  transition:background .2s ease,color .2s ease;
-}
+  pageSubtitle: {
+    en: "Beyond translation — real cross-cultural communication",
+    es: "Más allá de la traducción — comunicación intercultural real"
+  },
 
-body.dark{
-  background:#111827;
-  color:#f3f4f6;
-}
+  pageDescription: {
+    en: "Dialect-aware translation, pronunciation guidance, and cultural clarity",
+    es: "Traducción con conciencia dialectal, guía de pronunciación y claridad cultural"
+  },
 
-.container{
-  width:min(1150px,100%);
-  background:white;
-  padding:28px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
-  transition:background .2s ease,color .2s ease;
-}
+  uiLanguageLabel: {
+    en: "Site Language",
+    es: "Idioma del sitio"
+  },
 
-body.dark .container{
-  background:#1f2937;
-}
+  darkModeButton: {
+    en: "🌙 Dark",
+    es: "🌙 Oscuro"
+  },
 
-.topBar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:16px;
-  margin-bottom:16px;
-}
+  inputLabel: {
+    en: "Input Text",
+    es: "Texto de entrada"
+  },
 
-.languageGroup{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
+  inputPlaceholder: {
+    en: "",
+    es: ""
+  },
 
-.darkToggle,
-.miniSelect{
-  padding:8px 10px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  background:white;
-  font-size:14px;
-  color:#111827;
-}
+  translateToLabel: {
+    en: "Translate To",
+    es: "Traducir a"
+  },
 
-body.dark .darkToggle,
-body.dark .miniSelect{
-  background:#111827;
-  color:#f3f4f6;
-  border-color:#4b5563;
-}
+  targetSearchPlaceholder: {
+    en: "",
+    es: ""
+  },
 
-h1{
-  text-align:center;
-  margin:10px 0;
-  font-size:3rem;
-  line-height:1.1;
-}
+  translateButton: {
+    en: "Translate",
+    es: "Traducir"
+  },
 
-.subtitle{
-  text-align:center;
-  color:#4b5563;
-  font-size:1.15rem;
-  margin:0 0 8px;
-}
+  translationLabel: {
+    en: "Translation",
+    es: "Traducción"
+  },
 
-.description{
-  text-align:center;
-  color:#6b7280;
-  font-size:1.1rem;
-  margin:0 0 28px;
-}
+  outputPlaceholder: {
+    en: "",
+    es: ""
+  },
 
-body.dark .subtitle{
-  color:#d1d5db;
-}
+  copyButton: {
+    en: "Copy",
+    es: "Copiar"
+  },
 
-body.dark .description{
-  color:#9ca3af;
-}
+  pronunciationToggleLabel: {
+    en: "Show Pronunciation",
+    es: "Mostrar pronunciación"
+  },
 
-.translatorRow{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:28px;
-  align-items:start;
-}
+  pronunciationLabel: {
+    en: "Pronunciation Guide",
+    es: "Guía de pronunciación"
+  },
 
-.inputColumn,
-.outputColumn{
-  display:flex;
-  flex-direction:column;
-}
+  pronunciationPlaceholder: {
+    en: "",
+    es: ""
+  },
 
-label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:8px;
-}
+  speakNormalButton: {
+    en: "Speak Normally",
+    es: "Hablar normal"
+  },
 
-textarea,
-input{
-  width:100%;
-  padding:12px 14px;
-  margin-bottom:14px;
-  border-radius:10px;
-  border:1px solid #d1d5db;
-  font-size:15px;
-  font-family:Inter,sans-serif;
-  background:white;
-  color:#111827;
-}
+  speakSlowButton: {
+    en: "Speak Slowly",
+    es: "Hablar despacio"
+  },
 
-textarea{
-  resize:vertical;
-  min-height:160px;
-}
+  footerProduct: {
+    en: "Cross-Cultural Translator™",
+    es: "Traductor Intercultural™"
+  },
 
-body.dark textarea,
-body.dark input{
-  background:#111827;
-  color:#f3f4f6;
-  border-color:#4b5563;
-}
+  footerCopyright: {
+    en: "© 2026 CCTLA-TBD, LLC",
+    es: "© 2026 CCTLA-TBD, LLC"
+  },
 
-button{
-  padding:10px 14px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  font-family:Inter,sans-serif;
-  font-size:14px;
-}
-
-.primaryButton{
-  background:#2563eb;
-  color:white;
-  margin-bottom:16px;
-}
-
-.copyButton{
-  background:#444;
-  color:white;
-  margin-bottom:16px;
-}
-
-.slowButton{
-  background:#15803d;
-  color:white;
-}
-
-.normalButton{
-  background:#b45309;
-  color:white;
-}
-
-.buttonRow{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.toggleRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.toggleRow input[type="checkbox"]{
-  width:auto;
-  margin:0;
-}
-
-.hidden{
-  display:none !important;
-}
-
-#usageNote{
-  background:#fff7ed;
-  border:1px solid #f59e0b;
-}
-
-body.dark #usageNote{
-  background:#3b2a12;
-  color:#fef3c7;
-  border-color:#f59e0b;
-}
-
-.detectedCard{
-  margin-bottom:14px;
-  padding:14px;
-  border-radius:12px;
-  background:rgba(37,99,235,0.06);
-  border:1px solid rgba(37,99,235,0.18);
-}
-
-body.dark .detectedCard{
-  background:rgba(59,130,246,0.08);
-  border-color:rgba(96,165,250,0.25);
-}
-
-.detectedButtons{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-
-.suggestions{
-  display:none;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  background:white;
-  margin-top:-6px;
-  margin-bottom:14px;
-  overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,.08);
-}
-
-body.dark .suggestions{
-  background:#111827;
-  border-color:#4b5563;
-}
-
-.suggestionItem{
-  padding:10px 12px;
-  cursor:pointer;
-  border-bottom:1px solid #e5e7eb;
-}
-
-.suggestionItem:last-child{
-  border-bottom:none;
-}
-
-.suggestionItem:hover{
-  background:#f3f4f6;
-}
-
-.suggestionItem.active{
-  background:#e5e7eb;
-}
-
-body.dark .suggestionItem{
-  border-bottom-color:#374151;
-}
-
-body.dark .suggestionItem:hover{
-  background:#374151;
-}
-
-body.dark .suggestionItem.active{
-  background:#374151;
-}
-
-footer{
-  margin-top:28px;
-  text-align:center;
-  color:#6b7280;
-  font-size:13px;
-  line-height:1.6;
-}
-
-body.dark footer{
-  color:#9ca3af;
-}
-
-footer strong{
-  display:block;
-  margin-bottom:4px;
-}
-
-@media (max-width: 900px){
-  .translatorRow{
-    grid-template-columns:1fr;
+  footerPatent: {
+    en: "Patent pending.",
+    es: "Patente en trámite."
   }
+};
 
-  h1{
-    font-size:2.2rem;
-  }
-
-  .container{
-    padding:20px;
-  }
-
-  .topBar{
-    flex-direction:column;
-    align-items:flex-start;
-  }
+function t(key, lang) {
+  const group = uiTranslations[key] || {};
+  return group[lang] ?? group.en ?? "";
 }
