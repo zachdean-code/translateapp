@@ -197,15 +197,30 @@ function spanishToEnglishPhonetics(text) {
   const words = text.split(/\s+/);
 
   return words
-    .map((w) => {
-      const word = normalizeSpanishWord(w);
+    .map((raw) => {
 
-      return word
+      let word = normalizeSpanishWord(raw);
+
+      // special handling for word endings
+      if (word.endsWith("e")) {
+        word = word.slice(0, -1) + "ay";
+      }
+
+      if (word.endsWith("o")) {
+        word = word.slice(0, -1) + "oh";
+      }
+
+      word = word
         .replace(/a/g, "ah")
         .replace(/e/g, "eh")
         .replace(/i/g, "ee")
         .replace(/o/g, "oh")
         .replace(/u/g, "oo");
+
+      // readability: break syllables visually
+      word = word.replace(/([aeiou]{2,})/g, "-$1");
+
+      return word.toUpperCase();
     })
     .join(" ");
 }
