@@ -35,6 +35,8 @@ function applyLanguage(lang) {
   safeText("speakSlowButton", t("speakSlowButton", lang));
   safeText("footerProduct", t("footerProduct", lang));
   safeText("footerCopyright", t("footerCopyright", lang));
+  safeText("footerPatent", t("footerPatent", lang));
+
   safePlaceholder("userInput", t("inputPlaceholder", lang));
   safePlaceholder("targetSearch", t("targetSearchPlaceholder", lang));
   safePlaceholder("output", t("outputPlaceholder", lang));
@@ -75,6 +77,10 @@ function highlightActive(container) {
   items.forEach((item, index) => {
     item.classList.toggle("activeSuggestion", index === targetActiveIndex);
   });
+
+  if (targetActiveIndex >= 0 && items[targetActiveIndex]) {
+    items[targetActiveIndex].scrollIntoView({ block: "nearest" });
+  }
 }
 
 function renderSuggestions(container, matches, onPick) {
@@ -100,7 +106,6 @@ function renderSuggestions(container, matches, onPick) {
 }
 
 function setupSearch(inputId, suggestionId, onPick) {
-function setupSearch(inputId, suggestionId, onPick) {
   const input = document.getElementById(inputId);
   const box = document.getElementById(suggestionId);
 
@@ -115,7 +120,10 @@ function setupSearch(inputId, suggestionId, onPick) {
   input.addEventListener("keydown", (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      if (!targetMatches.length) return;
+      if (!targetMatches.length) {
+        renderSuggestions(box, findMatches(input.value), onPick);
+        if (!targetMatches.length) return;
+      }
       targetActiveIndex = (targetActiveIndex + 1) % targetMatches.length;
       highlightActive(box);
     }
@@ -152,6 +160,12 @@ function setupSearch(inputId, suggestionId, onPick) {
 function detectInput(text) {
   const lower = text.toLowerCase();
 
+  if (/[\u0600-\u06FF]/.test(text)) return "arabic";
+  if (/[\u0400-\u04FF]/.test(text)) return "russian";
+  if (/[\u3040-\u30ff]/.test(text)) return "japanese";
+  if (/[\u4e00-\u9fff]/.test(text)) return "chinese";
+  if (/[\uAC00-\uD7AF]/.test(text)) return "korean";
+
   if (/[áéíóúñ¿¡]/i.test(text)) return "spanish";
 
   if (
@@ -170,7 +184,6 @@ function spanishToEnglishPhonetics(text) {
 
   return words
     .map((raw) => {
-
       let word = raw
         .toLowerCase()
         .replace(/[¡!¿?.,;:()"']/g, "")
@@ -185,7 +198,27 @@ function spanishToEnglishPhonetics(text) {
         .replace(/qu/g, "k")
         .replace(/gue/g, "geh")
         .replace(/gui/g, "gee")
-        .replace(/j/g, "h");
+        .replace(/ge/g, "heh")
+        .replace(/gi/g, "hee")
+        .replace(/j/g, "h")
+        .replace(/ce/g, "seh")
+        .replace(/ci/g, "see")
+        .replace(/z/g, "s")
+        .replace(/v/g, "b");
+
+      word = word
+        .replace(/que\b/g, "kay")
+        .replace(/ca\b/g, "kah")
+        .replace(/co\b/g, "koh")
+        .replace(/e\b/g, "eh")
+        .replace(/o\b/g, "oh");
+
+      word = word
+        .replace(/a/g, "ah")
+        .replace(/e/g, "eh")
+        .replace(/i/g, "ee")
+        .replace(/o/g, "oh")
+        .replace(/u/g, "oo");
 
       return word;
     })
@@ -230,13 +263,23 @@ async function translateText() {
 
     const data = await response.json();
 
+    if (!response.ok) {
+      document.getElementById("output").value =
+        data.error || "Translation error";
+      return;
+    }
+
     let translated = data.output || "";
+
+    translated = translated
+      .replace(/^[A-Za-zÀ-ÿ\s()\-—]+:\s*/, "")
+      .trim()
+      .replace(/^["“”']+|["“”']+$/g, "");
 
     document.getElementById("output").value = translated;
 
     const pronunciation = buildPronunciation(translated, target);
     document.getElementById("pronunciation").value = pronunciation;
-
   } catch (err) {
     document.getElementById("output").value = "Network or server error";
   }
@@ -245,6 +288,7 @@ async function translateText() {
 function copyTranslation() {
   const output = document.getElementById("output");
   output.select();
+  output.setSelectionRange(0, 99999);
   document.execCommand("copy");
 }
 
@@ -268,13 +312,11 @@ function speak(rate) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
   if (localStorage.getItem("darkMode") === "on") {
     document.body.classList.add("dark");
   }
 
   const browserLang = navigator.language.slice(0, 2);
-
   const savedLang =
     localStorage.getItem("siteLanguage") ||
     (browserLang === "es" ? "es" : "en");
@@ -319,5 +361,4 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("targetSearch").value = item.label;
     closeSuggestions(document.getElementById("targetSuggestions"));
   });
-
 });
