@@ -25,7 +25,7 @@
     </select>
   </div>
 
-  <button id="darkModeButton" class="darkToggle">🌙 Dark</button>
+  <button id="darkModeButton" class="darkToggle" type="button">🌙 Dark</button>
 </div>
 
 <h1 id="pageTitle">Cross-Cultural Translator™</h1>
@@ -45,7 +45,8 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
     <label id="inputLabel" for="userInput">Input Text</label>
     <textarea id="userInput" rows="6"></textarea>
 
-    <div id="detectedCard" class="detectedCard hidden">
+    <!-- hidden internally, preserved for later -->
+    <div id="detectedCard" class="detectedCard hidden" aria-hidden="true">
       <div id="detectedLanguageDialect"></div>
       <div class="detectedButtons">
         <button id="keepDetectedButton" type="button">Keep</button>
@@ -53,14 +54,17 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
       </div>
     </div>
 
-    <div id="changeDetectedWrap" class="hidden">
+    <div id="changeDetectedWrap" class="hidden" aria-hidden="true">
       <label id="changeDetectedLabel" for="detectedSearch">Change Detected Language</label>
-      <input id="detectedSearch" type="text" disabled placeholder="Coming soon">
+      <input id="detectedSearch" type="text">
+      <div id="detectedSuggestions" class="suggestions"></div>
     </div>
 
     <label id="translateToLabel" for="targetSearch">Translate To</label>
-    <input id="targetSearch" type="text">
-    <div id="targetSuggestions" class="suggestions"></div>
+    <div class="searchWrap">
+      <input id="targetSearch" type="text" autocomplete="off">
+      <div id="targetSuggestions" class="suggestions"></div>
+    </div>
 
     <button id="translateButton" class="primaryButton" type="button">Translate</button>
 
@@ -73,7 +77,8 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
 
     <button id="copyButton" class="copyButton" type="button">Copy</button>
 
-    <div id="usageNoteSection" class="hidden">
+    <!-- hidden internally, preserved for later -->
+    <div id="usageNoteSection" class="hidden" aria-hidden="true">
       <label id="usageNoteLabel" for="usageNote">Usage Note</label>
       <textarea id="usageNote" rows="3" readonly></textarea>
     </div>
@@ -88,8 +93,8 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
       <textarea id="pronunciation" rows="4" readonly></textarea>
 
       <div class="buttonRow">
-        <button id="speakSlowButton" class="slowButton" type="button">Speak Slowly</button>
         <button id="speakNormalButton" class="normalButton" type="button">Speak Normally</button>
+        <button id="speakSlowButton" class="slowButton" type="button">Speak Slowly</button>
       </div>
     </div>
 
