@@ -100,6 +100,7 @@ function renderSuggestions(container, matches, onPick) {
 }
 
 function setupSearch(inputId, suggestionId, onPick) {
+function setupSearch(inputId, suggestionId, onPick) {
   const input = document.getElementById(inputId);
   const box = document.getElementById(suggestionId);
 
@@ -109,6 +110,36 @@ function setupSearch(inputId, suggestionId, onPick) {
 
   input.addEventListener("input", () => {
     renderSuggestions(box, findMatches(input.value), onPick);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!targetMatches.length) return;
+      targetActiveIndex = (targetActiveIndex + 1) % targetMatches.length;
+      highlightActive(box);
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!targetMatches.length) return;
+      targetActiveIndex =
+        targetActiveIndex <= 0
+          ? targetMatches.length - 1
+          : targetActiveIndex - 1;
+      highlightActive(box);
+    }
+
+    if (e.key === "Enter") {
+      if (targetMatches[targetActiveIndex]) {
+        e.preventDefault();
+        onPick(targetMatches[targetActiveIndex]);
+      }
+    }
+
+    if (e.key === "Escape") {
+      closeSuggestions(box);
+    }
   });
 
   document.addEventListener("click", (e) => {
