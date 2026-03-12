@@ -185,8 +185,13 @@ button{
 
 .buttonRow{
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+  gap:12px;
+  width:100%;
+}
+
+.buttonRow button{
+  flex:1;
+  text-align:center;
 }
 
 .toggleRow{
