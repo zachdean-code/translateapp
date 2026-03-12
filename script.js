@@ -35,8 +35,6 @@ function applyLanguage(lang) {
   safeText("speakSlowButton", t("speakSlowButton", lang));
   safeText("footerProduct", t("footerProduct", lang));
   safeText("footerCopyright", t("footerCopyright", lang));
-  safeText("footerPatent", t("footerPatent", lang));
-
   safePlaceholder("userInput", t("inputPlaceholder", lang));
   safePlaceholder("targetSearch", t("targetSearchPlaceholder", lang));
   safePlaceholder("output", t("outputPlaceholder", lang));
@@ -77,10 +75,6 @@ function highlightActive(container) {
   items.forEach((item, index) => {
     item.classList.toggle("activeSuggestion", index === targetActiveIndex);
   });
-
-  if (targetActiveIndex >= 0 && items[targetActiveIndex]) {
-    items[targetActiveIndex].scrollIntoView({ block: "nearest" });
-  }
 }
 
 function renderSuggestions(container, matches, onPick) {
@@ -117,36 +111,6 @@ function setupSearch(inputId, suggestionId, onPick) {
     renderSuggestions(box, findMatches(input.value), onPick);
   });
 
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (!targetMatches.length) return;
-      targetActiveIndex = (targetActiveIndex + 1) % targetMatches.length;
-      highlightActive(box);
-    }
-
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (!targetMatches.length) return;
-      targetActiveIndex =
-        targetActiveIndex <= 0
-          ? targetMatches.length - 1
-          : targetActiveIndex - 1;
-      highlightActive(box);
-    }
-
-    if (e.key === "Enter") {
-      if (targetMatches[targetActiveIndex]) {
-        e.preventDefault();
-        onPick(targetMatches[targetActiveIndex]);
-      }
-    }
-
-    if (e.key === "Escape") {
-      closeSuggestions(box);
-    }
-  });
-
   document.addEventListener("click", (e) => {
     if (!input.contains(e.target) && !box.contains(e.target)) {
       closeSuggestions(box);
@@ -156,12 +120,6 @@ function setupSearch(inputId, suggestionId, onPick) {
 
 function detectInput(text) {
   const lower = text.toLowerCase();
-
-  if (/[\u0600-\u06FF]/.test(text)) return "arabic";
-  if (/[\u0400-\u04FF]/.test(text)) return "russian";
-  if (/[\u3040-\u30ff]/.test(text)) return "japanese";
-  if (/[\u4e00-\u9fff]/.test(text)) return "chinese";
-  if (/[\uAC00-\uD7AF]/.test(text)) return "korean";
 
   if (/[áéíóúñ¿¡]/i.test(text)) return "spanish";
 
@@ -176,51 +134,29 @@ function detectInput(text) {
   return "english";
 }
 
-function normalizeSpanishWord(word) {
-  return word
-    .toLowerCase()
-    .replace(/[¡!¿?.,;:()"']/g, "")
-    .replace(/[á]/g, "a")
-    .replace(/[é]/g, "e")
-    .replace(/[í]/g, "i")
-    .replace(/[ó]/g, "o")
-    .replace(/[ú]/g, "u")
-    .replace(/ñ/g, "ny")
-    .replace(/ll/g, "y")
-    .replace(/qu/g, "k")
-    .replace(/gue/g, "ge")
-    .replace(/gui/g, "gi")
-    .replace(/j/g, "h");
-}
-
 function spanishToEnglishPhonetics(text) {
   const words = text.split(/\s+/);
 
   return words
     .map((raw) => {
 
-      let word = normalizeSpanishWord(raw);
+      let word = raw
+        .toLowerCase()
+        .replace(/[¡!¿?.,;:()"']/g, "")
+        .replace(/á/g, "ah")
+        .replace(/é/g, "eh")
+        .replace(/í/g, "ee")
+        .replace(/ó/g, "oh")
+        .replace(/ú/g, "oo")
+        .replace(/ñ/g, "ny")
+        .replace(/ll/g, "y")
+        .replace(/ch/g, "ch")
+        .replace(/qu/g, "k")
+        .replace(/gue/g, "geh")
+        .replace(/gui/g, "gee")
+        .replace(/j/g, "h");
 
-      // special handling for word endings
-      if (word.endsWith("e")) {
-        word = word.slice(0, -1) + "ay";
-      }
-
-      if (word.endsWith("o")) {
-        word = word.slice(0, -1) + "oh";
-      }
-
-      word = word
-        .replace(/a/g, "ah")
-        .replace(/e/g, "eh")
-        .replace(/i/g, "ee")
-        .replace(/o/g, "oh")
-        .replace(/u/g, "oo");
-
-      // readability: break syllables visually
-      word = word.replace(/([aeiou]{2,})/g, "-$1");
-
-      return word.toUpperCase();
+      return word;
     })
     .join(" ");
 }
@@ -263,23 +199,13 @@ async function translateText() {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      document.getElementById("output").value =
-        data.error || "Translation error";
-      return;
-    }
-
     let translated = data.output || "";
-
-    translated = translated
-      .replace(/^[A-Za-zÀ-ÿ\s()\-—]+:\s*/, "")
-      .trim()
-      .replace(/^["“”']+|["“”']+$/g, "");
 
     document.getElementById("output").value = translated;
 
     const pronunciation = buildPronunciation(translated, target);
     document.getElementById("pronunciation").value = pronunciation;
+
   } catch (err) {
     document.getElementById("output").value = "Network or server error";
   }
@@ -311,6 +237,7 @@ function speak(rate) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
   if (localStorage.getItem("darkMode") === "on") {
     document.body.classList.add("dark");
   }
@@ -325,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (siteLanguage) {
     siteLanguage.value = savedLang;
-
     siteLanguage.addEventListener("change", (e) =>
       applyLanguage(e.target.value)
     );
@@ -362,4 +288,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("targetSearch").value = item.label;
     closeSuggestions(document.getElementById("targetSuggestions"));
   });
+
 });
