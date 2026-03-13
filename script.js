@@ -1,3 +1,4 @@
+
 const API_URL = "https://translateapp-1.onrender.com/translate";
 
 let targetSelection = null;
@@ -47,6 +48,7 @@ if(s.startsWith("french")) return "french";
 if(s.startsWith("german")) return "german";
 if(s.startsWith("portuguese")) return "portuguese";
 if(s.startsWith("dutch")) return "dutch";
+
 return s;
 }
 
@@ -69,14 +71,20 @@ return {label:"Spanish — LATAM"};
 }
 
 return {label:"English — American"};
+
 }
 
 function updateDetectionCard(){
 
-const text = el("userInput").value.trim();
+const input = el("userInput");
+const card = el("detectedCard");
+
+if(!input || !card) return;
+
+const text = input.value.trim();
 
 if(!text){
-el("detectedCard").classList.add("hidden");
+card.classList.add("hidden");
 detectedSelection=null;
 confirmedInputSelection=null;
 detectionConfirmed=false;
@@ -89,65 +97,117 @@ detectedSelection = detectInput(text);
 
 const display = el("detectedLanguageDialect");
 
+if(display){
+
 if(detectionConfirmed){
 display.innerText="Input language: "+confirmedInputSelection.label;
 }else{
 display.innerText="Detected language: "+detectedSelection.label;
 }
 
-el("detectedCard").classList.remove("hidden");
+}
+
+card.classList.remove("hidden");
 
 }
 
 function confirmDetectedLanguage(){
 
+if(!detectedSelection) return;
+
 confirmedInputSelection = detectedSelection;
-detectionConfirmed=true;
+detectionConfirmed = true;
 
 updateDetectionCard();
-
-updatePronunciationAvailability();
 
 }
 
 function setupSearch(inputId,suggestionId,onPick){
 
-const input=el(inputId);
-const box=el(suggestionId);
+const input = el(inputId);
+const box = el(suggestionId);
 
 if(!input || !box) return;
 
 input.addEventListener("input",()=>{
 
-const q=input.value.toLowerCase();
+const q = input.value.toLowerCase();
 
-const matches=languageCatalog
+const matches = languageCatalog
 .filter(item=>{
 return item.label.toLowerCase().includes(q)
-|| item.aliases.some(a=>a.toLowerCase().includes(q))
+|| item.aliases.some(a=>a.toLowerCase().includes(q));
 })
 .slice(0,12);
 
 box.innerHTML="";
 
-matches.forEach(item=>{
-const div=document.createElement("div");
+targetMatches = matches;
+targetActiveIndex = -1;
+
+matches.forEach((item,index)=>{
+
+const div = document.createElement("div");
 div.className="suggestionItem";
 div.innerText=item.label;
-div.onclick=()=>onPick(item);
+
+div.addEventListener("mousedown",(e)=>{
+e.preventDefault();
+onPick(item);
+box.style.display="none";
+});
+
 box.appendChild(div);
-});
-
-box.style.display=matches.length?"block":"none";
 
 });
+
+box.style.display = matches.length ? "block":"none";
+
+});
+
+input.addEventListener("keydown",(e)=>{
+
+if(!targetMatches.length) return;
+
+if(e.key==="ArrowDown"){
+e.preventDefault();
+targetActiveIndex=(targetActiveIndex+1)%targetMatches.length;
+highlight(box);
+}
+
+if(e.key==="ArrowUp"){
+e.preventDefault();
+targetActiveIndex=(targetActiveIndex<=0)?targetMatches.length-1:targetActiveIndex-1;
+highlight(box);
+}
+
+if(e.key==="Enter"){
+e.preventDefault();
+const item = targetMatches[targetActiveIndex];
+if(item){
+onPick(item);
+box.style.display="none";
+}
+}
+
+});
+
+function highlight(box){
+
+const items = box.querySelectorAll(".suggestionItem");
+
+items.forEach((item,i)=>{
+item.classList.toggle("activeSuggestion",i===targetActiveIndex);
+});
+
+}
 
 }
 
 function getPronunciationPairState(inputLabel,targetLabel){
 
-const inputBase=parseBaseLanguage(inputLabel);
-const targetBase=parseBaseLanguage(targetLabel);
+const inputBase = parseBaseLanguage(inputLabel);
+const targetBase = parseBaseLanguage(targetLabel);
 
 if(inputBase===targetBase){
 return {mode:"hidden"};
@@ -227,9 +287,9 @@ return text;
 
 async function translateText(){
 
-const input=el("userInput").value.trim();
+const input = el("userInput").value.trim();
 
-const target=targetSelection
+const target = targetSelection
 ? targetSelection.label
 : el("targetSearch").value.trim();
 
@@ -255,7 +315,7 @@ const data=await response.json();
 let translated=data.output||"";
 
 translated=translated
-.replace(/^[A-Za-zÀ-ÿ\s()-—]+:\s*/,"")
+.replace(/^[A-Za-zÀ-ÿ\s()\-—]+:\s*/,"")
 .trim();
 
 el("output").value=translated;
@@ -281,17 +341,17 @@ document.execCommand("copy");
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-el("darkModeButton").addEventListener("click",()=>{
+el("darkModeButton")?.addEventListener("click",()=>{
 document.body.classList.toggle("dark");
 });
 
-el("translateButton").addEventListener("click",translateText);
+el("translateButton")?.addEventListener("click",translateText);
 
-el("copyButton").addEventListener("click",copyTranslation);
+el("copyButton")?.addEventListener("click",copyTranslation);
 
-el("keepDetectedButton").addEventListener("click",confirmDetectedLanguage);
+el("keepDetectedButton")?.addEventListener("click",confirmDetectedLanguage);
 
-el("userInput").addEventListener("input",()=>{
+el("userInput")?.addEventListener("input",()=>{
 updateDetectionCard();
 });
 
