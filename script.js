@@ -77,33 +77,6 @@ function findMatches(value){
     .slice(0,12);
 }
 
-function closeSuggestions(container,type){
-  if(!container) return;
-
-  container.style.display = "none";
-
-  if(type === "target"){
-    targetMatches = [];
-    targetActiveIndex = -1;
-  }else{
-    detectedMatches = [];
-    detectedActiveIndex = -1;
-  }
-}
-
-function highlightActive(container,type){
-  const items = container.querySelectorAll(".suggestionItem");
-  const idx = type === "target" ? targetActiveIndex : detectedActiveIndex;
-
-  items.forEach((node,i) => {
-    node.classList.toggle("activeSuggestion", i === idx);
-  });
-
-  if(idx >= 0 && items[idx]){
-    items[idx].scrollIntoView({ block:"nearest" });
-  }
-}
-
 function renderSuggestions(container,matches,onPick,type){
   container.innerHTML = "";
 
@@ -149,65 +122,6 @@ function setupSearch(inputId,suggestionId,onPick,type){
 
   input.addEventListener("input",() => {
     renderSuggestions(box,findMatches(input.value),onPick,type);
-  });
-
-  input.addEventListener("keydown",(e) => {
-    const matches = type === "target" ? targetMatches : detectedMatches;
-
-    if(e.key === "ArrowDown"){
-      e.preventDefault();
-
-      if(!matches.length){
-        renderSuggestions(box,findMatches(input.value),onPick,type);
-        return;
-      }
-
-      if(type === "target"){
-        targetActiveIndex = (targetActiveIndex + 1) % matches.length;
-      }else{
-        detectedActiveIndex = (detectedActiveIndex + 1) % matches.length;
-      }
-
-      highlightActive(box,type);
-      return;
-    }
-
-    if(e.key === "ArrowUp"){
-      e.preventDefault();
-
-      if(!matches.length) return;
-
-      if(type === "target"){
-        targetActiveIndex = targetActiveIndex <= 0 ? matches.length - 1 : targetActiveIndex - 1;
-      }else{
-        detectedActiveIndex = detectedActiveIndex <= 0 ? matches.length - 1 : detectedActiveIndex - 1;
-      }
-
-      highlightActive(box,type);
-      return;
-    }
-
-    if(e.key === "Enter"){
-      const idx = type === "target" ? targetActiveIndex : detectedActiveIndex;
-
-      if(matches[idx]){
-        e.preventDefault();
-        onPick(matches[idx]);
-        box.style.display = "none";
-      }
-
-      return;
-    }
-
-    if(e.key === "Escape"){
-      box.style.display = "none";
-    }
-  });
-
-  document.addEventListener("click",(e) => {
-    if(!input.contains(e.target) && !box.contains(e.target)){
-      closeSuggestions(box,type);
-    }
   });
 }
 
@@ -285,28 +199,6 @@ function toggleDetectedChange(){
   if(!wrap) return;
 
   wrap.classList.toggle("hidden");
-
-  if(!wrap.classList.contains("hidden")){
-    const input = el("detectedSearch");
-    const box = el("detectedSuggestions");
-
-    if(input && box){
-      input.focus();
-      renderSuggestions(box,findMatches(input.value),item => {
-        detectedSelection = item;
-        confirmedInputSelection = item;
-        detectionConfirmed = true;
-        el("detectedSearch").value = item.label;
-        el("changeDetectedWrap").classList.add("hidden");
-        updateDetectionCard();
-      },"detected");
-    }
-  }
-}
-
-function togglePronunciation(){
-  const checked = !!el("pronToggle")?.checked;
-  el("pronunciationSection")?.classList.toggle("hidden", !checked);
 }
 
 async function translateText(){
@@ -346,10 +238,6 @@ async function translateText(){
     if(el("output")){
       el("output").value = data.output || "";
     }
-
-    if(el("pronunciation")){
-      el("pronunciation").value = data.output || "";
-    }
   }catch(err){
     if(el("output")) el("output").value = "Network or server error";
   }
@@ -372,7 +260,6 @@ document.addEventListener("DOMContentLoaded",() => {
   el("darkModeButton")?.addEventListener("click",toggleDarkMode);
   el("translateButton")?.addEventListener("click",translateText);
   el("copyButton")?.addEventListener("click",copyTranslation);
-  el("pronToggle")?.addEventListener("change",togglePronunciation);
 
   el("keepDetectedButton")?.addEventListener("click",confirmDetectedLanguage);
   el("changeDetectedButton")?.addEventListener("click",toggleDetectedChange);
