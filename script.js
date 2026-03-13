@@ -225,6 +225,20 @@ function detectInput(text){
   return {label:"English — American"};
 }
 
+function confirmDetectedLanguage(){
+
+  if(!detectedSelection) return;
+
+  confirmedInputSelection={...detectedSelection};
+  detectionConfirmed=true;
+
+  el("changeDetectedWrap")?.classList.add("hidden");
+
+  el("detectedCard")?.classList.add("hidden");
+
+  updateDetectionCard();
+
+}
 function updateDetectionCard(){
 
   const input=el("userInput");
