@@ -22,22 +22,6 @@
     <select id="siteLanguage" class="miniSelect">
       <option value="en">English</option>
       <option value="es">Español</option>
-      <option value="pt">Português</option>
-      <option value="fr">Français</option>
-      <option value="de">Deutsch</option>
-      <option value="it">Italiano</option>
-      <option value="zh">中文</option>
-      <option value="ja">日本語</option>
-      <option value="ko">한국어</option>
-      <option value="ru">Русский</option>
-      <option value="ar">العربية</option>
-      <option value="hi">हिन्दी</option>
-      <option value="id">Bahasa Indonesia</option>
-      <option value="tl">Filipino</option>
-      <option value="sw">Kiswahili</option>
-      <option value="am">አማርኛ</option>
-      <option value="fa">فارسی</option>
-      <option value="tr">Türkçe</option>
     </select>
   </div>
 
@@ -61,7 +45,6 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
     <label id="inputLabel" for="userInput">Input Text</label>
     <textarea id="userInput" rows="6"></textarea>
 
-    <!-- hidden internally, preserved for later -->
     <div id="detectedCard" class="detectedCard hidden" aria-hidden="true">
       <div id="detectedLanguageDialect"></div>
       <div class="detectedButtons">
@@ -71,9 +54,11 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
     </div>
 
     <div id="changeDetectedWrap" class="hidden" aria-hidden="true">
-      <label id="changeDetectedLabel" for="detectedSearch">Change Detected Language</label>
-      <input id="detectedSearch" type="text">
-      <div id="detectedSuggestions" class="suggestions"></div>
+      <label id="changeDetectedLabel" for="detectedSearch">Change input language to:</label>
+      <div class="searchWrap">
+        <input id="detectedSearch" type="text" autocomplete="off">
+        <div id="detectedSuggestions" class="suggestions"></div>
+      </div>
     </div>
 
     <label id="translateToLabel" for="targetSearch">Translate To</label>
@@ -89,11 +74,10 @@ Dialect-aware translation, pronunciation guidance, and cultural clarity
   <div class="outputColumn">
 
     <label id="translationLabel" for="output">Translation</label>
-    <textarea id="output" rows="6" readonly></textarea>
+    <textarea id="output" rows="6" readonly tabindex="-1"></textarea>
 
     <button id="copyButton" class="copyButton" type="button">Copy</button>
 
-    <!-- hidden internally, preserved for later -->
     <div id="usageNoteSection" class="hidden" aria-hidden="true">
       <label id="usageNoteLabel" for="usageNote">Usage Note</label>
       <textarea id="usageNote" rows="3" readonly></textarea>
