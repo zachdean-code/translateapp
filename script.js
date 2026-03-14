@@ -2,6 +2,7 @@ const API_URL = "https://translateapp-1.onrender.com/translate";
 
 let detectedSelection = null;
 let confirmedInputLanguage = null;
+let confirmationMode = null; // "detected" or "chosen"
 let targetSelection = null;
 
 let targetMatches = [];
@@ -9,6 +10,7 @@ let detectedMatches = [];
 let targetActiveIndex = -1;
 let detectedActiveIndex = -1;
 
+// TEMP: move these labels into frontend catalog files later
 const TARGET_LANGUAGE_TRANSLATIONS = {
   en: {
     "American English": "American English",
@@ -84,34 +86,34 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
   }
 };
 
-function el(id){
+function el(id) {
   return document.getElementById(id);
 }
 
-function currentSiteLanguage(){
-  return el("siteLanguage")?.value || localStorage.getItem("siteLanguage") || "en";
+function isSpanishUI() {
+  return (el("siteLanguage")?.value || "en").startsWith("es");
 }
 
-function isSpanishUI(){
-  return currentSiteLanguage().startsWith("es");
-}
-
-function localizeLanguageLabel(label){
+function localizeLanguageLabel(label) {
   const lang = isSpanishUI() ? "es" : "en";
   return TARGET_LANGUAGE_TRANSLATIONS[lang][label] || label;
 }
 
-function safeTextById(id, value){
-  const node = el(id);
-  if(node) node.innerText = value;
+function normalize(value) {
+  return (value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
 }
 
-function safeTextBySelector(selector, value){
-  const node = document.querySelector(selector);
-  if(node) node.innerText = value;
+function tokenize(value) {
+  return normalize(value)
+    .split(/[\s—()\/,.:;!?-]+/)
+    .filter(Boolean);
 }
 
-function sanitizeForSpeech(text){
+function sanitizeForSpeech(text) {
   return (text || "")
     .replace(/[¿¡]/g, "")
     .replace(/[.,;:!?()"']/g, "")
@@ -119,49 +121,66 @@ function sanitizeForSpeech(text){
     .trim();
 }
 
-function setDetectedDisplay(label){
+function setDetectedDisplay(label) {
   const display = el("detectedLanguageDialect");
-  if(!display) return;
+  if (!display) return;
   display.innerText = (isSpanishUI() ? "Idioma detectado: " : "Detected language: ") + localizeLanguageLabel(label);
 }
 
-function setSelectedDisplay(label){
+function setConfirmedDisplay(label) {
   const display = el("detectedLanguageDialect");
-  if(!display) return;
-  display.innerText = (isSpanishUI() ? "Idioma de entrada seleccionado: " : "Input language selected: ") + localizeLanguageLabel(label);
-}
+  if (!display) return;
 
-function applyConfirmationButtonState(){
-  const keepBtn = el("keepDetectedButton");
-  const changeBtn = el("changeDetectedButton");
-  const row = document.querySelector(".detectedButtons");
-  if(!keepBtn || !changeBtn || !row) return;
-
-  row.style.display = "flex";
-  row.style.gap = "10px";
-  row.style.width = "100%";
-  row.style.alignItems = "center";
-
-  if(confirmedInputLanguage){
-    keepBtn.classList.add("hidden");
-    row.style.justifyContent = "flex-end";
-    changeBtn.style.padding = "6px 12px";
-    changeBtn.style.fontSize = "12px";
-    changeBtn.style.lineHeight = "1.2";
-    changeBtn.style.marginTop = "0";
-  }else{
-    keepBtn.classList.remove("hidden");
-    row.style.justifyContent = "flex-start";
-    changeBtn.style.padding = "";
-    changeBtn.style.fontSize = "";
-    changeBtn.style.lineHeight = "";
-    changeBtn.style.marginTop = "";
+  if (confirmationMode === "chosen") {
+    display.innerText = (isSpanishUI() ? "Idioma de entrada elegido: " : "Input language chosen: ") + localizeLanguageLabel(label);
+  } else {
+    display.innerText = (isSpanishUI() ? "Idioma de entrada detectado: " : "Input language detected: ") + localizeLanguageLabel(label);
   }
 }
 
-function updateTranslateState(){
+function styleConfirmationRow() {
+  const keepBtn = el("keepDetectedButton");
+  const changeBtn = el("changeDetectedButton");
+  const row = document.querySelector(".detectedButtons");
+  const card = el("detectedCard");
+  if (!keepBtn || !changeBtn || !row || !card) return;
+
+  row.style.display = "flex";
+  row.style.width = "100%";
+  row.style.alignItems = "center";
+
+  if (confirmedInputLanguage) {
+    keepBtn.classList.add("hidden");
+    row.style.justifyContent = "flex-end";
+    row.style.gap = "0";
+    row.style.marginTop = "-34px";
+    changeBtn.style.padding = "6px 12px";
+    changeBtn.style.fontSize = "12px";
+    changeBtn.style.lineHeight = "1.2";
+    changeBtn.style.background = "#6b7280";
+    changeBtn.style.color = "white";
+    changeBtn.style.borderRadius = "8px";
+    card.style.paddingTop = "14px";
+    card.style.paddingBottom = "10px";
+  } else {
+    keepBtn.classList.remove("hidden");
+    row.style.justifyContent = "flex-start";
+    row.style.gap = "10px";
+    row.style.marginTop = "10px";
+    changeBtn.style.padding = "";
+    changeBtn.style.fontSize = "";
+    changeBtn.style.lineHeight = "";
+    changeBtn.style.background = "";
+    changeBtn.style.color = "";
+    changeBtn.style.borderRadius = "";
+    card.style.paddingTop = "";
+    card.style.paddingBottom = "";
+  }
+}
+
+function updateTranslateState() {
   const button = el("translateButton");
-  if(!button) return;
+  if (!button) return;
 
   const hasInput = !!el("userInput")?.value.trim();
   const hasConfirmedLanguage = !!confirmedInputLanguage;
@@ -170,103 +189,84 @@ function updateTranslateState(){
   button.disabled = !(hasInput && hasConfirmedLanguage && hasTarget);
 }
 
-function resetConfirmedLanguage(){
+function resetConfirmedLanguage() {
   confirmedInputLanguage = null;
-  const wrap = el("changeDetectedWrap");
-  if(wrap) wrap.classList.add("hidden");
-  if(el("detectedSearch")) el("detectedSearch").value = "";
-  if(el("pronunciation")) el("pronunciation").value = "";
-  if(el("pronToggle")) el("pronToggle").checked = false;
-  if(el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
-  applyConfirmationButtonState();
+  confirmationMode = null;
+
+  el("changeDetectedWrap")?.classList.add("hidden");
+
+  if (el("detectedSearch")) el("detectedSearch").value = "";
+  if (el("pronunciation")) el("pronunciation").value = "";
+  if (el("pronToggle")) el("pronToggle").checked = false;
+  el("pronunciationSection")?.classList.add("hidden");
+
+  styleConfirmationRow();
   updateTranslateState();
 }
 
-function togglePronunciation(){
-  const checked = !!el("pronToggle")?.checked;
-  el("pronunciationSection")?.classList.toggle("hidden", !checked);
-}
-
-function normalize(value){
-  return (value || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-}
-
-function tokenize(value){
-  return normalize(value)
-    .split(/[\s—()\/,.:;!?-]+/)
-    .filter(Boolean);
-}
-
-function scoreLanguageMatch(item, query){
+function scoreLanguageMatch(item, query) {
   const q = normalize(query);
-  if(!q) return 1000;
+  if (!q) return 1000;
 
   const label = normalize(item.label);
   const aliases = (item.aliases || []).map(normalize);
 
-  if(label === q) return 0;
-  if(aliases.includes(q)) return 1;
-  if(label.startsWith(q)) return 2;
+  if (label === q) return 0;
+  if (aliases.includes(q)) return 1;
+  if (label.startsWith(q)) return 2;
 
-  for(const alias of aliases){
-    if(alias.startsWith(q)) return 3;
+  for (const alias of aliases) {
+    if (alias.startsWith(q)) return 3;
   }
 
-  for(const word of tokenize(item.label)){
-    if(word.startsWith(q)) return 4;
+  for (const word of tokenize(item.label)) {
+    if (word.startsWith(q)) return 4;
   }
 
-  for(const alias of aliases){
-    for(const word of tokenize(alias)){
-      if(word.startsWith(q)) return 5;
+  for (const alias of aliases) {
+    for (const word of tokenize(alias)) {
+      if (word.startsWith(q)) return 5;
     }
   }
 
-  if(label.includes(q)) return 6;
+  if (label.includes(q)) return 6;
 
-  for(const alias of aliases){
-    if(alias.includes(q)) return 7;
+  for (const alias of aliases) {
+    if (alias.includes(q)) return 7;
   }
 
   return 9999;
 }
 
-function findMatches(value){
+function findMatches(value) {
   const q = normalize(value);
 
-  if(!q){
+  if (!q) {
     return languageCatalog.slice(0, 12);
   }
 
   return languageCatalog
     .map(item => ({ item, score: scoreLanguageMatch(item, q) }))
     .filter(row => row.score < 9999)
-    .sort((a, b) => {
-      if(a.score !== b.score) return a.score - b.score;
-      return a.item.label.localeCompare(b.item.label);
-    })
+    .sort((a, b) => a.score !== b.score ? a.score - b.score : a.item.label.localeCompare(b.item.label))
     .map(row => row.item)
     .slice(0, 12);
 }
 
-function closeSuggestions(container, type){
-  if(!container) return;
+function closeSuggestions(container, type) {
+  if (!container) return;
   container.style.display = "none";
 
-  if(type === "target"){
+  if (type === "target") {
     targetMatches = [];
     targetActiveIndex = -1;
-  }else if(type === "detected"){
+  } else {
     detectedMatches = [];
     detectedActiveIndex = -1;
   }
 }
 
-function highlightActive(container, type){
+function highlightActive(container, type) {
   const items = container.querySelectorAll(".suggestionItem");
   const activeIndex = type === "target" ? targetActiveIndex : detectedActiveIndex;
 
@@ -274,24 +274,24 @@ function highlightActive(container, type){
     item.classList.toggle("activeSuggestion", i === activeIndex);
   });
 
-  if(activeIndex >= 0 && items[activeIndex]){
+  if (activeIndex >= 0 && items[activeIndex]) {
     items[activeIndex].scrollIntoView({ block: "nearest" });
   }
 }
 
-function renderSuggestions(container, matches, onPick, type){
-  if(!container) return;
+function renderSuggestions(container, matches, onPick, type) {
+  if (!container) return;
   container.innerHTML = "";
 
-  if(!matches.length){
+  if (!matches.length) {
     closeSuggestions(container, type);
     return;
   }
 
-  if(type === "target"){
+  if (type === "target") {
     targetMatches = matches;
     targetActiveIndex = -1;
-  }else{
+  } else {
     detectedMatches = matches;
     detectedActiveIndex = -1;
   }
@@ -313,11 +313,10 @@ function renderSuggestions(container, matches, onPick, type){
   container.style.display = "block";
 }
 
-function setupSearch(inputId, suggestionId, onPick, type){
+function setupSearch(inputId, suggestionId, onPick, type) {
   const input = el(inputId);
   const box = el(suggestionId);
-
-  if(!input || !box) return;
+  if (!input || !box) return;
 
   input.addEventListener("focus", () => {
     input.value = "";
@@ -335,13 +334,13 @@ function setupSearch(inputId, suggestionId, onPick, type){
 
   input.addEventListener("blur", () => {
     setTimeout(() => {
-      if(type === "target" && !input.value.trim() && targetSelection){
+      if (type === "target" && !input.value.trim() && targetSelection) {
         input.value = localizeLanguageLabel(targetSelection.label);
       }
-      if(type === "detected"){
-        if(!input.value.trim() && confirmedInputLanguage){
+      if (type === "detected") {
+        if (!input.value.trim() && confirmedInputLanguage) {
           input.value = localizeLanguageLabel(confirmedInputLanguage);
-        }else if(!input.value.trim() && detectedSelection){
+        } else if (!input.value.trim() && detectedSelection) {
           input.value = localizeLanguageLabel(detectedSelection.label);
         }
       }
@@ -352,85 +351,74 @@ function setupSearch(inputId, suggestionId, onPick, type){
     let matches = type === "target" ? targetMatches : detectedMatches;
     let activeIndex = type === "target" ? targetActiveIndex : detectedActiveIndex;
 
-    if(e.key === "ArrowDown"){
+    if (e.key === "ArrowDown") {
       e.preventDefault();
 
-      if(!matches.length){
+      if (!matches.length) {
         renderSuggestions(box, findMatches(input.value), onPick, type);
         matches = type === "target" ? targetMatches : detectedMatches;
-        if(!matches.length) return;
+        if (!matches.length) return;
       }
 
       activeIndex = (activeIndex + 1) % matches.length;
-      if(type === "target") targetActiveIndex = activeIndex;
+      if (type === "target") targetActiveIndex = activeIndex;
       else detectedActiveIndex = activeIndex;
+
       highlightActive(box, type);
     }
 
-    if(e.key === "ArrowUp"){
+    if (e.key === "ArrowUp") {
       e.preventDefault();
-      if(!matches.length) return;
+      if (!matches.length) return;
 
       activeIndex = activeIndex <= 0 ? matches.length - 1 : activeIndex - 1;
-      if(type === "target") targetActiveIndex = activeIndex;
+      if (type === "target") targetActiveIndex = activeIndex;
       else detectedActiveIndex = activeIndex;
+
       highlightActive(box, type);
     }
 
-    if(e.key === "Enter"){
+    if (e.key === "Enter") {
       const idx = type === "target" ? targetActiveIndex : detectedActiveIndex;
       const currentMatches = type === "target" ? targetMatches : detectedMatches;
 
-      if(currentMatches[idx]){
+      if (currentMatches[idx]) {
         e.preventDefault();
         onPick(currentMatches[idx]);
         closeSuggestions(box, type);
       }
     }
 
-    if(e.key === "Escape"){
+    if (e.key === "Escape") {
       closeSuggestions(box, type);
     }
   });
 
   document.addEventListener("click", (e) => {
-    if(!input.contains(e.target) && !box.contains(e.target)){
+    if (!input.contains(e.target) && !box.contains(e.target)) {
       closeSuggestions(box, type);
     }
   });
 }
 
-function detectInput(text){
+function detectInput(text) {
   const lower = normalize(text);
 
-  if(/[\u0600-\u06FF]/.test(text)) return { label: "Arabic — Modern Standard" };
-  if(/[\u0400-\u04FF]/.test(text)) return { label: "Russian" };
-  if(/[\u3040-\u30ff]/.test(text)) return { label: "Japanese" };
-  if(/[\u4e00-\u9fff]/.test(text)) return { label: "Chinese" };
-  if(/[\uAC00-\uD7AF]/.test(text)) return { label: "Korean" };
+  if (/[\u0600-\u06FF]/.test(text)) return { label: "Arabic — Modern Standard" };
+  if (/[\u0400-\u04FF]/.test(text)) return { label: "Russian" };
+  if (/[\u3040-\u30ff]/.test(text)) return { label: "Japanese" };
+  if (/[\u4e00-\u9fff]/.test(text)) return { label: "Chinese" };
+  if (/[\uAC00-\uD7AF]/.test(text)) return { label: "Korean" };
 
-  if(
-    lower.includes("parce") ||
-    lower.includes("parcero") ||
-    lower.includes("que mas pues") ||
-    lower.includes("quiubo")
-  ){
+  if (lower.includes("parce") || lower.includes("parcero") || lower.includes("que mas pues") || lower.includes("quiubo")) {
     return { label: "Paisa Spanish (Medellín)" };
   }
 
-  if(
-    lower.includes("sumercé") ||
-    lower.includes("sumerce") ||
-    lower.includes("bacano")
-  ){
+  if (lower.includes("sumercé") || lower.includes("sumerce") || lower.includes("bacano")) {
     return { label: "Rolo Spanish (Bogotá)" };
   }
 
-  if(
-    lower.includes("orale") ||
-    lower.includes("wey") ||
-    lower.includes("no manches")
-  ){
+  if (lower.includes("orale") || lower.includes("wey") || lower.includes("no manches")) {
     return { label: "Mexican Spanish" };
   }
 
@@ -442,24 +430,24 @@ function detectInput(text){
   ];
 
   let count = 0;
-  for(const token of tokenize(text)){
-    if(spanishSignals.includes(token)) count += 1;
+  for (const token of tokenize(text)) {
+    if (spanishSignals.includes(token)) count += 1;
   }
 
-  if(/[áéíóúñ¿¡]/i.test(text) || count >= 2){
+  if (/[áéíóúñ¿¡]/i.test(text) || count >= 2) {
     return { label: "LATAM Spanish" };
   }
 
   return { label: "American English" };
 }
 
-function updateDetection(){
+function updateDetection() {
   const text = el("userInput")?.value.trim() || "";
   const card = el("detectedCard");
 
   resetConfirmedLanguage();
 
-  if(!text){
+  if (!text) {
     detectedSelection = null;
     card?.classList.add("hidden");
     return;
@@ -468,51 +456,45 @@ function updateDetection(){
   detectedSelection = detectInput(text);
   setDetectedDisplay(detectedSelection.label);
   card?.classList.remove("hidden");
-  applyConfirmationButtonState();
+  styleConfirmationRow();
 }
 
-function keepDetected(){
-  if(!detectedSelection) return;
+function keepDetected() {
+  if (!detectedSelection) return;
+
   confirmedInputLanguage = detectedSelection.label;
-  setSelectedDisplay(confirmedInputLanguage);
-  if(el("changeDetectedWrap")) el("changeDetectedWrap").classList.add("hidden");
-  updateChangeButtonLayoutAndState();
+  confirmationMode = "detected";
+  setConfirmedDisplay(confirmedInputLanguage);
+  el("changeDetectedWrap")?.classList.add("hidden");
+  styleConfirmationRow();
   updateTranslateState();
 }
 
-function updateChangeButtonLayoutAndState(){
-  applyConfirmationButtonState();
-}
-
-function toggleDetectedChange(){
+function toggleDetectedChange() {
   const wrap = el("changeDetectedWrap");
-  if(!wrap) return;
+  if (!wrap) return;
 
   wrap.classList.toggle("hidden");
 
-  if(!wrap.classList.contains("hidden")){
+  if (!wrap.classList.contains("hidden")) {
     const input = el("detectedSearch");
-    if(input){
+    if (input) {
       input.focus();
-      renderSuggestions(
-        el("detectedSuggestions"),
-        findMatches(""),
-        (item) => {
-          confirmedInputLanguage = item.label;
-          detectedSelection = { label: item.label };
-          input.value = localizeLanguageLabel(item.label);
-          wrap.classList.add("hidden");
-          setSelectedDisplay(item.label);
-          updateChangeButtonLayoutAndState();
-          updateTranslateState();
-        },
-        "detected"
-      );
+      renderSuggestions(el("detectedSuggestions"), findMatches(""), (item) => {
+        confirmedInputLanguage = item.label;
+        confirmationMode = "chosen";
+        detectedSelection = { label: item.label };
+        input.value = localizeLanguageLabel(item.label);
+        wrap.classList.add("hidden");
+        setConfirmedDisplay(item.label);
+        styleConfirmationRow();
+        updateTranslateState();
+      }, "detected");
     }
   }
 }
 
-function englishPronunciationForSpanishReader(text){
+function englishPronunciationForSpanishReader(text) {
   const specialWords = {
     "how": "jau",
     "are": "ar",
@@ -523,9 +505,7 @@ function englishPronunciationForSpanishReader(text){
     "today": "tudei",
     "what": "uat",
     "is": "is",
-    "the": "de",
-    "good": "gud",
-    "morning": "morning"
+    "the": "de"
   };
 
   return text
@@ -533,11 +513,10 @@ function englishPronunciationForSpanishReader(text){
     .filter(Boolean)
     .map(word => {
       const clean = normalize(word).replace(/[^a-z]/g, "");
-      if(!clean) return "";
+      if (!clean) return "";
+      if (specialWords[clean]) return specialWords[clean];
 
-      if(specialWords[clean]) return specialWords[clean];
-
-      let out = clean
+      return clean
         .replace(/tion/g, "shon")
         .replace(/sion/g, "shon")
         .replace(/ough/g, "ou")
@@ -551,14 +530,12 @@ function englishPronunciationForSpanishReader(text){
         .replace(/ee/g, "i")
         .replace(/oo/g, "u")
         .replace(/ea/g, "i");
-
-      return out;
     })
     .filter(Boolean)
     .join("   ");
 }
 
-function spanishPronunciationForEnglishReader(text){
+function spanishPronunciationForEnglishReader(text) {
   const specialWords = {
     "hola": "OH-lah",
     "parcero": "par-SEH-roh",
@@ -581,9 +558,8 @@ function spanishPronunciationForEnglishReader(text){
     .filter(Boolean)
     .map(word => {
       const clean = normalize(word).replace(/[^a-z]/g, "");
-      if(!clean) return "";
-
-      if(specialWords[clean]) return specialWords[clean];
+      if (!clean) return "";
+      if (specialWords[clean]) return specialWords[clean];
 
       let out = clean
         .replace(/ñ/g, "ny")
@@ -615,42 +591,38 @@ function spanishPronunciationForEnglishReader(text){
     .join("   ");
 }
 
-function buildPronunciation(translatedText, sourceLanguage, targetLanguage){
-  if(!translatedText) return "";
+function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
+  if (!translatedText) return "";
 
   const source = normalize(sourceLanguage || "");
   const target = normalize(targetLanguage || "");
 
-  if(source.includes("spanish") && target.includes("english")){
+  if (source.includes("spanish") && target.includes("english")) {
     return englishPronunciationForSpanishReader(translatedText);
   }
 
-  if(source.includes("english") && target.includes("spanish")){
+  if (source.includes("english") && target.includes("spanish")) {
     return spanishPronunciationForEnglishReader(translatedText);
   }
 
   return "";
 }
 
-async function translateText(){
-  if(!confirmedInputLanguage){
-    alert(isSpanishUI()
-      ? "Confirma primero el idioma detectado."
-      : "Please confirm the detected language first.");
+async function translateText() {
+  if (!confirmedInputLanguage) {
+    alert(isSpanishUI() ? "Confirma primero el idioma detectado." : "Please confirm the detected language first.");
     return;
   }
 
   const input = el("userInput")?.value.trim() || "";
   const target = targetSelection?.label || "";
 
-  if(!input || !target){
-    alert(isSpanishUI()
-      ? "Escribe texto y elige un idioma."
-      : "Enter text and choose a language.");
+  if (!input || !target) {
+    alert(isSpanishUI() ? "Escribe texto y elige un idioma." : "Enter text and choose a language.");
     return;
   }
 
-  try{
+  try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -665,25 +637,25 @@ async function translateText(){
     const data = await response.json();
     const translated = data.output || "";
 
-    if(el("output")) el("output").value = translated;
-    if(el("pronunciation")) el("pronunciation").value = buildPronunciation(translated, confirmedInputLanguage, target);
+    if (el("output")) el("output").value = translated;
+    if (el("pronunciation")) el("pronunciation").value = buildPronunciation(translated, confirmedInputLanguage, target);
 
-  }catch(err){
-    if(el("output")) el("output").value = "Network error";
-    if(el("pronunciation")) el("pronunciation").value = "";
+  } catch (err) {
+    if (el("output")) el("output").value = "Network error";
+    if (el("pronunciation")) el("pronunciation").value = "";
   }
 }
 
-function copyTranslation(){
+function copyTranslation() {
   const box = el("output");
-  if(!box) return;
+  if (!box) return;
   box.select();
   document.execCommand("copy");
 }
 
-function speak(rate){
+function speak(rate) {
   const text = sanitizeForSpeech(el("output")?.value || "");
-  if(!text) return;
+  if (!text) return;
 
   speechSynthesis.cancel();
   const msg = new SpeechSynthesisUtterance(text);
@@ -691,23 +663,23 @@ function speak(rate){
   speechSynthesis.speak(msg);
 }
 
-function toggleDarkMode(){
+function toggleDarkMode() {
   document.body.classList.toggle("dark");
   const isDark = document.body.classList.contains("dark");
   localStorage.setItem("darkMode", isDark ? "on" : "off");
 
   const btn = el("darkModeButton");
-  if(btn){
+  if (btn) {
     btn.innerText = isDark
       ? (isSpanishUI() ? "🌙 Oscuro" : "🌙 Dark")
       : (isSpanishUI() ? "☀️ Claro" : "☀️ Light");
   }
 }
 
-function applySiteLanguage(lang){
+function applySiteLanguage(lang) {
   const isSpanish = lang.startsWith("es");
 
-  if(isSpanish){
+  if (isSpanish) {
     safeTextBySelector('label[for="siteLanguage"]', "Idioma del sitio");
     safeTextBySelector("h1", "Traductor Intercultural™");
     safeTextBySelector(".subtitle", "Más que traducción — comunicación intercultural real");
@@ -724,7 +696,7 @@ function applySiteLanguage(lang){
     safeTextBySelector('label[for="pronunciation"]', "Guía de pronunciación");
     safeTextById("speakNormal", "Hablar normal");
     safeTextById("speakSlow", "Hablar lento");
-  }else{
+  } else {
     safeTextBySelector('label[for="siteLanguage"]', "Site Language");
     safeTextBySelector("h1", "Cross-Cultural Translator™");
     safeTextBySelector(".subtitle", "Beyond translation — real cross-cultural communication");
@@ -744,27 +716,27 @@ function applySiteLanguage(lang){
   }
 
   const btn = el("darkModeButton");
-  if(btn){
+  if (btn) {
     const isDark = document.body.classList.contains("dark");
     btn.innerText = isDark
       ? (isSpanish ? "🌙 Oscuro" : "🌙 Dark")
       : (isSpanish ? "☀️ Claro" : "☀️ Light");
   }
 
-  if(targetSelection && el("targetSearch")){
+  if (targetSelection && el("targetSearch")) {
     el("targetSearch").value = localizeLanguageLabel(targetSelection.label);
   }
 
-  if(confirmedInputLanguage){
-    setSelectedDisplay(confirmedInputLanguage);
-  }else if(detectedSelection){
+  if (confirmedInputLanguage) {
+    setConfirmedDisplay(confirmedInputLanguage);
+  } else if (detectedSelection) {
     setDetectedDisplay(detectedSelection.label);
   }
 
-  applyConfirmationButtonState();
+  styleConfirmationRow();
 
   const footer = document.querySelector("footer");
-  if(footer){
+  if (footer) {
     footer.innerHTML = isSpanish
       ? `<strong>Traductor Intercultural™</strong>
 Más que traducción — comunicación intercultural real<br>
@@ -785,12 +757,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("siteLanguage") || "en";
   const isDark = localStorage.getItem("darkMode") === "on";
 
-  if(isDark){
+  if (isDark) {
     document.body.classList.add("dark");
   }
 
   const siteLanguage = el("siteLanguage");
-  if(siteLanguage){
+  if (siteLanguage) {
     siteLanguage.value = savedLang;
     siteLanguage.addEventListener("change", (e) => applySiteLanguage(e.target.value));
   }
@@ -805,36 +777,27 @@ document.addEventListener("DOMContentLoaded", () => {
   el("darkModeButton")?.addEventListener("click", toggleDarkMode);
   el("pronToggle")?.addEventListener("change", togglePronunciation);
   el("speakNormal")?.addEventListener("click", () => speak(1.0));
-  el("speakSlow")?.addEventListener("click", () => speak(0.6));
+  el("speakSlow")?.addEventListener("click", () => speak(0.5));
 
-  setupSearch(
-    "targetSearch",
-    "targetSuggestions",
-    (item) => {
-      targetSelection = item;
-      el("targetSearch").value = localizeLanguageLabel(item.label);
-      updateTranslateState();
-    },
-    "target"
-  );
+  setupSearch("targetSearch", "targetSuggestions", (item) => {
+    targetSelection = item;
+    el("targetSearch").value = localizeLanguageLabel(item.label);
+    updateTranslateState();
+  }, "target");
 
-  setupSearch(
-    "detectedSearch",
-    "detectedSuggestions",
-    (item) => {
-      confirmedInputLanguage = item.label;
-      detectedSelection = { label: item.label };
-      el("detectedSearch").value = localizeLanguageLabel(item.label);
-      closeSuggestions(el("detectedSuggestions"), "detected");
-      el("changeDetectedWrap")?.classList.add("hidden");
-      setSelectedDisplay(item.label);
-      updateChangeButtonLayoutAndState();
-      updateTranslateState();
-    },
-    "detected"
-  );
+  setupSearch("detectedSearch", "detectedSuggestions", (item) => {
+    confirmedInputLanguage = item.label;
+    confirmationMode = "chosen";
+    detectedSelection = { label: item.label };
+    el("detectedSearch").value = localizeLanguageLabel(item.label);
+    closeSuggestions(el("detectedSuggestions"), "detected");
+    el("changeDetectedWrap")?.classList.add("hidden");
+    setConfirmedDisplay(item.label);
+    styleConfirmationRow();
+    updateTranslateState();
+  }, "detected");
 
-  if(el("translateButton")) el("translateButton").disabled = true;
-  if(el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
-  applyConfirmationButtonState();
+  if (el("translateButton")) el("translateButton").disabled = true;
+  if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
+  styleConfirmationRow();
 });
