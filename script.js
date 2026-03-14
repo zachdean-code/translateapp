@@ -98,7 +98,15 @@ function localizeLanguageLabel(label) {
   const lang = isSpanishUI() ? "es" : "en";
   return TARGET_LANGUAGE_TRANSLATIONS[lang][label] || label;
 }
+function safeTextById(id, value) {
+  const node = el(id);
+  if (node) node.innerText = value;
+}
 
+function safeTextBySelector(selector, value) {
+  const node = document.querySelector(selector);
+  if (node) node.innerText = value;
+}
 function normalize(value) {
   return (value || "")
     .toLowerCase()
