@@ -10,6 +10,9 @@ let detectedMatches = [];
 let targetActiveIndex = -1;
 let detectedActiveIndex = -1;
 
+let targetPreviousValue = "";
+let detectedPreviousValue = "";
+
 function el(id){
   return document.getElementById(id);
 }
@@ -32,7 +35,7 @@ function toggleDarkMode(){
   document.body.classList.toggle("dark");
   localStorage.setItem(
     "darkMode",
-    document.body.classList.contains("dark") ? "on":"off"
+    document.body.classList.contains("dark") ? "on" : "off"
   );
 }
 
@@ -56,6 +59,13 @@ function scoreLanguageMatch(item,query){
     if(w.startsWith(q)) return 4;
   }
 
+  for(const a of aliases){
+    const aliasWords = tokenize(a);
+    for(const w of aliasWords){
+      if(w.startsWith(q)) return 5;
+    }
+  }
+
   return 9999;
 }
 
@@ -75,6 +85,33 @@ function findMatches(value){
     })
     .map(r => r.item)
     .slice(0,12);
+}
+
+function closeSuggestions(container,type){
+  if(!container) return;
+
+  container.style.display = "none";
+
+  if(type === "target"){
+    targetMatches = [];
+    targetActiveIndex = -1;
+  }else{
+    detectedMatches = [];
+    detectedActiveIndex = -1;
+  }
+}
+
+function highlightActive(container,type){
+  const items = container.querySelectorAll(".suggestionItem");
+  const idx = type === "target" ? targetActiveIndex : detectedActiveIndex;
+
+  items.forEach((node,i) => {
+    node.classList.toggle("activeSuggestion", i === idx);
+  });
+
+  if(idx >= 0 && items[idx]){
+    items[idx].scrollIntoView({ block:"nearest" });
+  }
 }
 
 function renderSuggestions(container,matches,onPick,type){
@@ -117,11 +154,87 @@ function setupSearch(inputId,suggestionId,onPick,type){
   if(!input || !box) return;
 
   input.addEventListener("focus",() => {
-    renderSuggestions(box,findMatches(input.value),onPick,type);
+    if(type === "target"){
+      targetPreviousValue = input.value;
+    }else{
+      detectedPreviousValue = input.value;
+    }
+
+    input.value = "";
+    renderSuggestions(box,findMatches(""),onPick,type);
   });
 
   input.addEventListener("input",() => {
     renderSuggestions(box,findMatches(input.value),onPick,type);
+  });
+
+  input.addEventListener("keydown",(e) => {
+    const matches = type === "target" ? targetMatches : detectedMatches;
+
+    if(e.key === "ArrowDown"){
+      e.preventDefault();
+
+      if(!matches.length){
+        renderSuggestions(box,findMatches(input.value),onPick,type);
+        return;
+      }
+
+      if(type === "target"){
+        targetActiveIndex = (targetActiveIndex + 1) % matches.length;
+      }else{
+        detectedActiveIndex = (detectedActiveIndex + 1) % matches.length;
+      }
+
+      highlightActive(box,type);
+      return;
+    }
+
+    if(e.key === "ArrowUp"){
+      e.preventDefault();
+
+      if(!matches.length) return;
+
+      if(type === "target"){
+        targetActiveIndex = targetActiveIndex <= 0 ? matches.length - 1 : targetActiveIndex - 1;
+      }else{
+        detectedActiveIndex = detectedActiveIndex <= 0 ? matches.length - 1 : detectedActiveIndex - 1;
+      }
+
+      highlightActive(box,type);
+      return;
+    }
+
+    if(e.key === "Enter"){
+      const idx = type === "target" ? targetActiveIndex : detectedActiveIndex;
+
+      if(matches[idx]){
+        e.preventDefault();
+        onPick(matches[idx]);
+        box.style.display = "none";
+      }
+      return;
+    }
+
+    if(e.key === "Escape"){
+      box.style.display = "none";
+      if(!input.value.trim()){
+        input.value = type === "target" ? targetPreviousValue : detectedPreviousValue;
+      }
+    }
+  });
+
+  input.addEventListener("blur",() => {
+    setTimeout(() => {
+      if(!input.value.trim()){
+        input.value = type === "target" ? targetPreviousValue : detectedPreviousValue;
+      }
+    }, 120);
+  });
+
+  document.addEventListener("click",(e) => {
+    if(!input.contains(e.target) && !box.contains(e.target)){
+      closeSuggestions(box,type);
+    }
   });
 }
 
@@ -135,11 +248,19 @@ function detectInput(text){
   if(/[\u4e00-\u9fff]/.test(text)) return { label:"Chinese — Simplified" };
   if(/[\uAC00-\uD7AF]/.test(text)) return { label:"Korean" };
 
-  if(lower.includes("parce")) return { label:"Spanish — Paisa (Medellín)" };
+  if(lower.includes("parce") || lower.includes("parcero") || lower.includes("quiubo") || lower.includes("q'hubo")){
+    return { label:"Spanish — Paisa (Medellín)" };
+  }
+
+  if(lower.includes("sumercé") || lower.includes("sumerce") || lower.includes("rolo")){
+    return { label:"Spanish — Rolo (Bogotá)" };
+  }
 
   const spanishSignals = [
     "hola","como","estas","que","para","porque","por","favor",
-    "gracias","buenos","buenas","dias","noches","tardes"
+    "gracias","buenos","buenas","dias","noches","tardes",
+    "amigo","amiga","con","sin","pero","muy","si","tambien",
+    "quiero","puedo","necesito","vamos","bien","mal"
   ];
 
   let count = 0;
@@ -156,10 +277,32 @@ function detectInput(text){
   return { label:"English — American" };
 }
 
+function styleChangeButtonAsMini(btn){
+  if(!btn) return;
+  btn.classList.remove("changeButton");
+  btn.style.background = "#6b7280";
+  btn.style.color = "white";
+  btn.style.padding = "6px 10px";
+  btn.style.fontSize = "12px";
+  btn.style.lineHeight = "1.2";
+}
+
+function styleChangeButtonAsLarge(btn){
+  if(!btn) return;
+  btn.classList.add("changeButton");
+  btn.style.background = "";
+  btn.style.color = "";
+  btn.style.padding = "";
+  btn.style.fontSize = "";
+  btn.style.lineHeight = "";
+}
+
 function updateDetectionCard(){
   const input = el("userInput");
   const card = el("detectedCard");
   const display = el("detectedLanguageDialect");
+  const keepBtn = el("keepDetectedButton");
+  const changeBtn = el("changeDetectedButton");
 
   if(!input || !card || !display) return;
 
@@ -175,9 +318,30 @@ function updateDetectionCard(){
 
   if(!detectionConfirmed){
     detectedSelection = detectInput(text);
-    display.innerText = `Detected language: ${detectedSelection.label}`;
+    display.innerText = `Input language detected: ${detectedSelection.label}`;
+
+    if(keepBtn) keepBtn.classList.remove("hidden");
+    if(changeBtn){
+      changeBtn.classList.remove("hidden");
+      changeBtn.innerText = "Change";
+      styleChangeButtonAsLarge(changeBtn);
+    }
   }else if(confirmedInputSelection){
-    display.innerText = `Input language: ${confirmedInputSelection.label}`;
+    const wasManualOverride =
+      detectedSelection &&
+      confirmedInputSelection &&
+      confirmedInputSelection.label !== detectedSelection.label;
+
+    display.innerText = wasManualOverride
+      ? `Input language selected: ${confirmedInputSelection.label}`
+      : `Input language detected: ${confirmedInputSelection.label}`;
+
+    if(keepBtn) keepBtn.classList.add("hidden");
+    if(changeBtn){
+      changeBtn.classList.remove("hidden");
+      changeBtn.innerText = "Change";
+      styleChangeButtonAsMini(changeBtn);
+    }
   }
 
   card.classList.remove("hidden");
@@ -188,7 +352,6 @@ function confirmDetectedLanguage(){
 
   confirmedInputSelection = { ...detectedSelection };
   detectionConfirmed = true;
-
   el("changeDetectedWrap")?.classList.add("hidden");
 
   updateDetectionCard();
@@ -196,9 +359,39 @@ function confirmDetectedLanguage(){
 
 function toggleDetectedChange(){
   const wrap = el("changeDetectedWrap");
-  if(!wrap) return;
+  const input = el("detectedSearch");
+  const box = el("detectedSuggestions");
+  const label = el("changeDetectedLabel");
+
+  if(!wrap || !input || !box) return;
+
+  if(label){
+    label.innerText = "Change input language to:";
+  }
 
   wrap.classList.toggle("hidden");
+
+  if(!wrap.classList.contains("hidden")){
+    input.focus();
+    input.value = "";
+    renderSuggestions(box,findMatches(""),item => {
+      detectedSelection = item;
+      confirmedInputSelection = item;
+      detectionConfirmed = true;
+      input.value = item.label;
+      el("changeDetectedWrap").classList.add("hidden");
+      updateDetectionCard();
+    },"detected");
+  }
+}
+
+function togglePronunciation(){
+  const checked = !!el("pronToggle")?.checked;
+  el("pronunciationSection")?.classList.toggle("hidden", !checked);
+}
+
+function buildBasicPronunciation(text){
+  return (text || "").trim();
 }
 
 async function translateText(){
@@ -235,8 +428,14 @@ async function translateText(){
       return;
     }
 
+    const translated = data.output || "";
+
     if(el("output")){
-      el("output").value = data.output || "";
+      el("output").value = translated;
+    }
+
+    if(el("pronunciation")){
+      el("pronunciation").value = buildBasicPronunciation(translated);
     }
   }catch(err){
     if(el("output")) el("output").value = "Network or server error";
@@ -260,6 +459,7 @@ document.addEventListener("DOMContentLoaded",() => {
   el("darkModeButton")?.addEventListener("click",toggleDarkMode);
   el("translateButton")?.addEventListener("click",translateText);
   el("copyButton")?.addEventListener("click",copyTranslation);
+  el("pronToggle")?.addEventListener("change",togglePronunciation);
 
   el("keepDetectedButton")?.addEventListener("click",confirmDetectedLanguage);
   el("changeDetectedButton")?.addEventListener("click",toggleDetectedChange);
