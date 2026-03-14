@@ -204,6 +204,11 @@ function resetConfirmedLanguage() {
   updateTranslateState();
 }
 
+function togglePronunciation() {
+  const checked = !!el("pronToggle")?.checked;
+  el("pronunciationSection")?.classList.toggle("hidden", !checked);
+}
+
 function scoreLanguageMatch(item, query) {
   const q = normalize(query);
   if (!q) return 1000;
