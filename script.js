@@ -1,316 +1,408 @@
+const API_URL = "https://translateapp-1.onrender.com/translate";
 
-const targetLanguageValues = [
-  "American English",
-  "British English",
-  "Australian English",
-  "French",
-  "German",
-  "Italian",
-  "Mexican Spanish",
-  "LATAM Spanish",
-  "General Colombian Spanish",
-  "Paisa Spanish (Medellín)",
-  "Rolo Spanish (Bogotá)",
-  "Cali Spanish",
-  "Santander Spanish",
-  "Venezuelan Spanish",
-  "Chinese",
-  "Korean",
-  "Japanese",
-  "Russian"
-];
-
-let detectedLanguage = null;
+let detectedSelection = null;
 let confirmedInputLanguage = null;
+let targetSelection = null;
 
-/* ----------------------
-   LANGUAGE OPTIONS
------------------------*/
+let targetMatches = [];
+let detectedMatches = [];
 
-function renderTargetLanguageOptions(lang) {
-  const select = document.getElementById("targetLanguage");
-  const selectedValue = select.value || "American English";
-  const labels = (translations[lang] || translations.en).targetLanguageOptions;
+let targetActiveIndex = -1;
+let detectedActiveIndex = -1;
 
-  select.innerHTML = "";
 
-  targetLanguageValues.forEach((value) => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = labels[value] || value;
-    if (value === selectedValue) {
-      option.selected = true;
-    }
-    select.appendChild(option);
+/* -------------------------
+   HELPER
+-------------------------- */
+
+function closeSuggestions(container){
+  container.style.display = "none";
+}
+
+function highlightActive(container, index){
+  const items = container.querySelectorAll(".suggestionItem");
+
+  items.forEach((item,i)=>{
+    item.classList.toggle("activeSuggestion", i===index);
   });
 }
 
-/* ----------------------
-   SIMPLE LANGUAGE DETECT
------------------------*/
 
-function detectLanguage(text){
+/* -------------------------
+   SEARCH MATCHING
+-------------------------- */
 
-  if(/[áéíóúñ¿¡]/i.test(text)){
-    return "Spanish";
+function findMatches(value){
+  const q = value.trim().toLowerCase();
+
+  if(!q){
+    return languageCatalog.slice(0,12);
   }
 
-  return "English";
+  return languageCatalog.filter(item => {
+
+    if(item.label.toLowerCase().includes(q)){
+      return true;
+    }
+
+    return item.aliases.some(a => a.toLowerCase().includes(q));
+
+  }).slice(0,12);
+}
+
+
+/* -------------------------
+   RENDER SUGGESTIONS
+-------------------------- */
+
+function renderSuggestions(container, matches, onPick, type){
+
+  container.innerHTML = "";
+
+  if(!matches.length){
+    closeSuggestions(container);
+    return;
+  }
+
+  if(type==="target"){
+    targetMatches = matches;
+    targetActiveIndex = -1;
+  }else{
+    detectedMatches = matches;
+    detectedActiveIndex = -1;
+  }
+
+  matches.forEach(item=>{
+
+    const div = document.createElement("div");
+
+    div.className = "suggestionItem";
+    div.innerText = item.label;
+
+    div.onclick = ()=>onPick(item);
+
+    container.appendChild(div);
+
+  });
+
+  container.style.display="block";
+}
+
+
+/* -------------------------
+   SEARCH SETUP
+-------------------------- */
+
+function setupSearch(inputId, suggestionId, onPick, type){
+
+  const input = document.getElementById(inputId);
+  const box = document.getElementById(suggestionId);
+
+  input.addEventListener("focus",()=>{
+    renderSuggestions(box, findMatches(input.value), onPick, type);
+  });
+
+  input.addEventListener("input",()=>{
+
+    renderSuggestions(box, findMatches(input.value), onPick, type);
+
+  });
+
+  document.addEventListener("click",(e)=>{
+
+    if(!input.contains(e.target) && !box.contains(e.target)){
+      closeSuggestions(box);
+    }
+
+  });
+
+}
+
+
+/* -------------------------
+   LANGUAGE DETECTION
+-------------------------- */
+
+function detectInput(text){
+
+  const lower = text.toLowerCase();
+
+  if(/[áéíóúñ¿¡]/i.test(text)){
+    return {label:"Spanish"};
+  }
+
+  return {label:"English"};
+
 }
 
 function updateDetection(){
 
   const text = document.getElementById("userInput").value.trim();
 
-  confirmedInputLanguage = null;
-
-  const translateButton = document.getElementById("translateButton");
-  translateButton.disabled = true;
+  const card = document.getElementById("detectedCard");
 
   if(!text){
-    detectedLanguage = null;
+
+    card.classList.add("hidden");
+
+    detectedSelection = null;
+    confirmedInputLanguage = null;
+
+    document.getElementById("translateButton").disabled = true;
+
     return;
   }
 
-  detectedLanguage = detectLanguage(text);
+  detectedSelection = detectInput(text);
 
-  const detectedBox = document.getElementById("detectedLanguageDialect");
-  if(detectedBox){
-    detectedBox.innerText = "Detected Language: " + detectedLanguage;
+  document.getElementById("detectedLanguageDialect").innerText =
+    "Detected Language: " + detectedSelection.label;
+
+  card.classList.remove("hidden");
+
+  document.getElementById("translateButton").disabled = true;
+
+}
+
+
+/* -------------------------
+   DETECTED CONFIRMATION
+-------------------------- */
+
+function keepDetected(){
+
+  confirmedInputLanguage = detectedSelection.label;
+
+  document.getElementById("translateButton").disabled = false;
+
+}
+
+function toggleDetectedChange(){
+
+  const wrap = document.getElementById("changeDetectedWrap");
+
+  wrap.classList.toggle("hidden");
+
+  if(!wrap.classList.contains("hidden")){
+    document.getElementById("detectedSearch").focus();
   }
+
 }
 
-/* ----------------------
-   CONFIRMATION LOGIC
------------------------*/
 
-function keepDetectedLanguage(){
-
-  if(!detectedLanguage) return;
-
-  confirmedInputLanguage = detectedLanguage;
-
-  const translateButton = document.getElementById("translateButton");
-  translateButton.disabled = false;
-}
-
-function changeDetectedLanguage(){
-
-  const manual = document.getElementById("detectedSearch").value;
-
-  if(!manual) return;
-
-  confirmedInputLanguage = manual;
-
-  const translateButton = document.getElementById("translateButton");
-  translateButton.disabled = false;
-}
-
-/* ----------------------
+/* -------------------------
    PRONUNCIATION
------------------------*/
+-------------------------- */
 
-function spanishForEnglishReader(text){
+function spanishPronunciation(text){
+
   return text
     .split(/\s+/)
     .filter(Boolean)
     .map(word => {
+
       return word
-        .toLowerCase()
-        .replace(/ñ/g,"ny")
-        .replace(/ll/g,"y")
-        .replace(/que/g,"kay")
-        .replace(/qui/g,"kee")
-        .replace(/ce/g,"say")
-        .replace(/ci/g,"see")
-        .replace(/a/g,"ah")
-        .replace(/e/g,"eh")
-        .replace(/i/g,"ee")
-        .replace(/o/g,"oh")
-        .replace(/u/g,"oo");
+      .toLowerCase()
+      .replace(/ñ/g,"ny")
+      .replace(/ll/g,"y")
+      .replace(/que/g,"kay")
+      .replace(/qui/g,"kee")
+      .replace(/ce/g,"say")
+      .replace(/ci/g,"see")
+      .replace(/a/g,"ah")
+      .replace(/e/g,"eh")
+      .replace(/i/g,"ee")
+      .replace(/o/g,"oh")
+      .replace(/u/g,"oo");
+
     })
     .join("   ");
+
 }
 
-function buildPronunciation(translatedText, targetLanguage){
+function buildPronunciation(text,target){
 
-  if(!translatedText) return "";
+  if(!text) return "";
 
-  const target = (targetLanguage || "").toLowerCase();
+  const lower = target.toLowerCase();
 
-  if(target.includes("spanish")){
-    return spanishForEnglishReader(translatedText);
+  if(lower.includes("spanish")){
+    return spanishPronunciation(text);
   }
 
-  if(target.includes("english")){
-    return translatedText;
+  if(lower.includes("english")){
+    return text;
   }
 
   return "";
+
 }
 
-/* ----------------------
-   TRANSLATION
------------------------*/
 
-function translateText() {
+/* -------------------------
+   TRANSLATE
+-------------------------- */
+
+async function translateText(){
 
   if(!confirmedInputLanguage){
+
     alert("Please confirm the detected language first.");
+
+    return;
+
+  }
+
+  const input = document.getElementById("userInput").value.trim();
+
+  const target = targetSelection
+    ? targetSelection.label
+    : document.getElementById("targetSearch").value;
+
+  if(!input || !target){
+    alert("Enter text and choose a language.");
     return;
   }
 
-  const input = document.getElementById("userInput").value;
-  const target = document.getElementById("targetLanguage").value;
+  try{
 
-  fetch("https://translateapp-1.onrender.com/translate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      text: input,
-      targetLanguage: target,
-      sourceLanguage: confirmedInputLanguage
-    }),
-  })
-    .then(async (response) => {
-      const text = await response.text();
-
-      try {
-        const data = JSON.parse(text);
-
-        const translated = data.output || "";
-
-        document.getElementById("output").value = translated;
-
-        const pronunciation = buildPronunciation(translated, target);
-
-        document.getElementById("pronunciation").value = pronunciation;
-
-      } catch (e) {
-        document.getElementById("output").value = text;
-        document.getElementById("pronunciation").value = "";
-      }
-    })
-    .catch((err) => {
-      document.getElementById("output").value = "Error: " + err;
-      document.getElementById("pronunciation").value = "";
+    const response = await fetch(API_URL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        text:input,
+        targetLanguage:target,
+        sourceLanguage:confirmedInputLanguage
+      })
     });
+
+    const data = await response.json();
+
+    const translated = data.output || "";
+
+    document.getElementById("output").value = translated;
+
+    const pron = buildPronunciation(translated,target);
+
+    document.getElementById("pronunciation").value = pron;
+
+  }
+  catch(err){
+
+    document.getElementById("output").value = "Network error";
+
+  }
+
 }
 
-/* ----------------------
+
+/* -------------------------
    COPY
------------------------*/
+-------------------------- */
 
-function copyTranslation() {
+function copyTranslation(){
+
   const box = document.getElementById("output");
+
   box.select();
+
   document.execCommand("copy");
+
 }
 
-/* ----------------------
+
+/* -------------------------
    SPEECH
------------------------*/
+-------------------------- */
 
-function speakSlow() {
+function speak(rate){
+
   const text = document.getElementById("output").value;
-  if (!text) return;
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.rate = 0.6;
+
+  if(!text) return;
+
   speechSynthesis.cancel();
+
+  const msg = new SpeechSynthesisUtterance(text);
+
+  msg.rate = rate;
+
   speechSynthesis.speak(msg);
+
 }
 
-function speakNormal() {
-  const text = document.getElementById("output").value;
-  if (!text) return;
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.rate = 1.0;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(msg);
-}
 
-/* ----------------------
+/* -------------------------
    DARK MODE
------------------------*/
+-------------------------- */
 
-function toggleDarkMode() {
+function toggleDarkMode(){
+
   document.body.classList.toggle("dark");
+
   localStorage.setItem(
     "darkMode",
-    document.body.classList.contains("dark") ? "on" : "off"
+    document.body.classList.contains("dark") ? "on":"off"
   );
+
 }
 
-/* ----------------------
-   UI LANGUAGE
------------------------*/
 
-function applyLanguage(lang) {
-  const t = translations[lang] || translations["en"];
-
-  document.documentElement.lang = lang;
-  document.getElementById("uiLanguageLabel").innerText = t.uiLanguageLabel;
-  document.getElementById("darkModeButton").innerText = t.darkModeButton;
-  document.getElementById("pageTitle").innerText = t.pageTitle;
-  document.getElementById("pageSubtitle").innerText = t.pageSubtitle;
-  document.getElementById("inputLabel").innerText = t.inputLabel;
-  document.getElementById("translateToLabel").innerText = t.translateToLabel;
-  document.getElementById("translateButton").innerText = t.translateButton;
-  document.getElementById("copyButton").innerText = t.copyButton;
-  document.getElementById("speakSlowButton").innerText = t.speakSlowButton;
-  document.getElementById("speakNormalButton").innerText = t.speakNormalButton;
-  document.getElementById("translationLabel").innerText = t.translationLabel;
-  document.getElementById("pronunciationLabel").innerText = t.pronunciationLabel;
-
-  renderTargetLanguageOptions(lang);
-
-  document.getElementById("siteLanguage").value = lang;
-  localStorage.setItem("siteLanguage", lang);
-}
-
-function changeSiteLanguage() {
-  const lang = document.getElementById("siteLanguage").value;
-  applyLanguage(lang);
-}
-
-/* ----------------------
-   INITIAL LANGUAGE
------------------------*/
-
-function detectInitialLanguage() {
-  const saved = localStorage.getItem("siteLanguage");
-  if (saved && translations[saved]) {
-    return saved;
-  }
-
-  const browserLang = (navigator.language || "en").toLowerCase();
-
-  if (browserLang.startsWith("es")) return "es";
-  if (browserLang.startsWith("de")) return "de";
-  if (browserLang.startsWith("fr")) return "fr";
-  if (browserLang.startsWith("it")) return "it";
-
-  return "en";
-}
-
-/* ----------------------
+/* -------------------------
    STARTUP
------------------------*/
+-------------------------- */
 
-window.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-  const input = document.getElementById("userInput");
-
-  if(input){
-    input.addEventListener("input", updateDetection);
-  }
-
-  if (localStorage.getItem("darkMode") === "on") {
+  if(localStorage.getItem("darkMode")==="on"){
     document.body.classList.add("dark");
   }
 
-  const initialLanguage = detectInitialLanguage();
-  applyLanguage(initialLanguage);
+  document.getElementById("darkModeButton")
+    .addEventListener("click",toggleDarkMode);
+
+  document.getElementById("userInput")
+    .addEventListener("input",updateDetection);
+
+  document.getElementById("keepDetectedButton")
+    .addEventListener("click",keepDetected);
+
+  document.getElementById("changeDetectedButton")
+    .addEventListener("click",toggleDetectedChange);
+
+  document.getElementById("translateButton")
+    .addEventListener("click",translateText);
+
+  document.getElementById("copyButton")
+    .addEventListener("click",copyTranslation);
+
+  document.getElementById("speakNormal")
+    .addEventListener("click",()=>speak(1.0));
+
+  document.getElementById("speakSlow")
+    .addEventListener("click",()=>speak(0.6));
+
+  setupSearch(
+    "targetSearch",
+    "targetSuggestions",
+    item=>{
+      targetSelection=item;
+      document.getElementById("targetSearch").value=item.label;
+      closeSuggestions(document.getElementById("targetSuggestions"));
+    },
+    "target"
+  );
+
+  setupSearch(
+    "detectedSearch",
+    "detectedSuggestions",
+    item=>{
+      confirmedInputLanguage=item.label;
+      document.getElementById("detectedSearch").value=item.label;
+      closeSuggestions(document.getElementById("detectedSuggestions"));
+      document.getElementById("translateButton").disabled=false;
+    },
+    "detected"
+  );
+
 });
