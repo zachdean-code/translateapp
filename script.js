@@ -446,43 +446,42 @@ function copyTranslation(){
   document.execCommand("copy");
 }
 
-el("siteLanguage")?.addEventListener("change",(e)=>{
-  const lang = e.target.value;
 
-  if(lang === "es"){
+document.addEventListener("DOMContentLoaded",() => {
+  if(localStorage.getItem("darkMode") === "on"){
+    document.body.classList.add("dark");
+  }
 
-    el("inputLabel").innerText = "Texto de entrada";
+  el("siteLanguage")?.addEventListener("change",(e)=>{
+    const lang = e.target.value;
 
-    document.querySelector('label[for="siteLanguage"]').innerText = "Idioma del sitio";
+    if(lang === "es"){
+      document.querySelector('label[for="siteLanguage"]').innerText = "Idioma del sitio";
+      el("inputLabel").innerText = "Texto de entrada";
 
-    document.querySelector("h1").innerText = "Traductor Intercultural™";
+      document.querySelector("h1").innerText = "Traductor Intercultural™";
 
-    document.querySelector(".subtitle").innerText =
-      "Más que traducción — comunicación intercultural real";
+      document.querySelector(".subtitle").innerText =
+        "Más que traducción — comunicación intercultural real";
 
-    document.querySelector(".description").innerText =
-      "Traducción con conciencia de dialectos, guía de pronunciación y claridad cultural";
+      document.querySelector(".description").innerText =
+        "Traducción con conciencia de dialectos, guía de pronunciación y claridad cultural";
 
-    document.querySelector('label[for="targetSearch"]').innerText = "Traducir a";
+      document.querySelector('label[for="targetSearch"]').innerText = "Traducir a";
+      document.querySelector('label[for="output"]').innerText = "Traducción";
+      document.querySelector('label[for="pronunciation"]').innerText = "Guía de pronunciación";
 
-    document.querySelector('label[for="output"]').innerText = "Traducción";
+      el("translateButton").innerText = "Traducir";
+      el("copyButton").innerText = "Copiar";
+      el("pronToggleLabel").innerText = "Mostrar pronunciación";
 
-    document.querySelector('label[for="pronunciation"]').innerText = "Guía de pronunciación";
+      el("speakNormal").innerText = "Hablar normal";
+      el("speakSlow").innerText = "Hablar lento";
 
-    el("translateButton").innerText = "Traducir";
+      el("darkModeButton").innerText = "🌙 Oscuro";
 
-    el("copyButton").innerText = "Copiar";
-
-    el("pronToggleLabel").innerText = "Mostrar pronunciación";
-
-    el("speakNormal").innerText = "Hablar normal";
-
-    el("speakSlow").innerText = "Hablar lento";
-
-    el("darkModeButton").innerText = "🌙 Oscuro";
-
-    const footer = document.querySelector("footer");
-    footer.innerHTML = `
+      const footer = document.querySelector("footer");
+      footer.innerHTML = `
 <strong>Traductor Intercultural™</strong>
 
 Más que traducción — comunicación intercultural real  
@@ -491,41 +490,33 @@ Traducción con conciencia de dialectos • Guía de pronunciación • Claridad
 © 2026 CCTLA-TBD, LLC  
 Patente pendiente.
 `;
+    }else{
+      document.querySelector('label[for="siteLanguage"]').innerText = "Site Language";
+      el("inputLabel").innerText = "Input Text";
 
-  }else{
+      document.querySelector("h1").innerText = "Cross-Cultural Translator™";
 
-    document.querySelector('label[for="siteLanguage"]').innerText = "Site Language";
+      document.querySelector(".subtitle").innerText =
+        "Beyond translation — real cross-cultural communication";
 
-    document.querySelector("h1").innerText = "Cross-Cultural Translator™";
+      document.querySelector(".description").innerText =
+        "Dialect-aware translation, pronunciation guidance, and cultural clarity";
 
-    document.querySelector(".subtitle").innerText =
-      "Beyond translation — real cross-cultural communication";
+      document.querySelector('label[for="targetSearch"]').innerText = "Translate To";
+      document.querySelector('label[for="output"]').innerText = "Translation";
+      document.querySelector('label[for="pronunciation"]').innerText = "Pronunciation Guide";
 
-    document.querySelector(".description").innerText =
-      "Dialect-aware translation, pronunciation guidance, and cultural clarity";
+      el("translateButton").innerText = "Translate";
+      el("copyButton").innerText = "Copy";
+      el("pronToggleLabel").innerText = "Show Pronunciation";
 
-    el("inputLabel").innerText = "Input Text";
+      el("speakNormal").innerText = "Speak Normally";
+      el("speakSlow").innerText = "Speak Slowly";
 
-    document.querySelector('label[for="targetSearch"]').innerText = "Translate To";
+      el("darkModeButton").innerText = "🌙 Dark";
 
-    document.querySelector('label[for="output"]').innerText = "Translation";
-
-    document.querySelector('label[for="pronunciation"]').innerText = "Pronunciation Guide";
-
-    el("translateButton").innerText = "Translate";
-
-    el("copyButton").innerText = "Copy";
-
-    el("pronToggleLabel").innerText = "Show Pronunciation";
-
-    el("speakNormal").innerText = "Speak Normally";
-
-    el("speakSlow").innerText = "Speak Slowly";
-
-    el("darkModeButton").innerText = "🌙 Dark";
-
-    const footer = document.querySelector("footer");
-    footer.innerHTML = `
+      const footer = document.querySelector("footer");
+      footer.innerHTML = `
 <strong>Cross-Cultural Translator™</strong>
 
 Beyond translation — real cross-cultural communication  
@@ -534,14 +525,32 @@ Dialect-aware translation • Pronunciation guidance • Cultural clarity
 © 2026 CCTLA-TBD, LLC  
 Patent pending.
 `;
-  }
-});
+    }
+  });
 
-  
+  function speakText(rate){
+    const text = el("output")?.value || "";
+    if(!text) return;
+
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = rate;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
+  }
+
   el("darkModeButton")?.addEventListener("click",toggleDarkMode);
   el("translateButton")?.addEventListener("click",translateText);
   el("copyButton")?.addEventListener("click",copyTranslation);
   el("pronToggle")?.addEventListener("change",togglePronunciation);
+
+  el("speakNormal")?.addEventListener("click",()=>{
+    speakText(1);
+  });
+
+  el("speakSlow")?.addEventListener("click",()=>{
+    speakText(0.6);
+  });
 
   el("keepDetectedButton")?.addEventListener("click",confirmDetectedLanguage);
   el("changeDetectedButton")?.addEventListener("click",toggleDetectedChange);
