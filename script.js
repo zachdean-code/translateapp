@@ -84,10 +84,6 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
   }
 };
 
-/* -------------------------
-   HELPERS
--------------------------- */
-
 function el(id){
   return document.getElementById(id);
 }
@@ -100,6 +96,11 @@ function isSpanishUI(){
   return currentSiteLanguage().startsWith("es");
 }
 
+function localizeLanguageLabel(label){
+  const lang = isSpanishUI() ? "es" : "en";
+  return TARGET_LANGUAGE_TRANSLATIONS[lang][label] || label;
+}
+
 function safeTextById(id, value){
   const node = el(id);
   if(node) node.innerText = value;
@@ -108,11 +109,6 @@ function safeTextById(id, value){
 function safeTextBySelector(selector, value){
   const node = document.querySelector(selector);
   if(node) node.innerText = value;
-}
-
-function localizeLanguageLabel(label){
-  const lang = isSpanishUI() ? "es" : "en";
-  return TARGET_LANGUAGE_TRANSLATIONS[lang][label] || label;
 }
 
 function sanitizeForSpeech(text){
@@ -135,24 +131,27 @@ function setSelectedDisplay(label){
   display.innerText = (isSpanishUI() ? "Idioma de entrada seleccionado: " : "Input language selected: ") + localizeLanguageLabel(label);
 }
 
-function updateChangeButtonLayout(){
+function applyConfirmationButtonState(){
   const keepBtn = el("keepDetectedButton");
   const changeBtn = el("changeDetectedButton");
   const row = document.querySelector(".detectedButtons");
-  if(!changeBtn || !row) return;
+  if(!keepBtn || !changeBtn || !row) return;
+
+  row.style.display = "flex";
+  row.style.gap = "10px";
+  row.style.width = "100%";
+  row.style.alignItems = "center";
 
   if(confirmedInputLanguage){
-    if(keepBtn) keepBtn.classList.add("hidden");
+    keepBtn.classList.add("hidden");
     row.style.justifyContent = "flex-end";
-    row.style.alignItems = "center";
     changeBtn.style.padding = "6px 12px";
     changeBtn.style.fontSize = "12px";
     changeBtn.style.lineHeight = "1.2";
     changeBtn.style.marginTop = "0";
   }else{
-    if(keepBtn) keepBtn.classList.remove("hidden");
-    row.style.justifyContent = "";
-    row.style.alignItems = "";
+    keepBtn.classList.remove("hidden");
+    row.style.justifyContent = "flex-start";
     changeBtn.style.padding = "";
     changeBtn.style.fontSize = "";
     changeBtn.style.lineHeight = "";
@@ -166,7 +165,7 @@ function updateTranslateState(){
 
   const hasInput = !!el("userInput")?.value.trim();
   const hasConfirmedLanguage = !!confirmedInputLanguage;
-  const hasTarget = !!(targetSelection?.label || el("targetSearch")?.value.trim());
+  const hasTarget = !!targetSelection?.label;
 
   button.disabled = !(hasInput && hasConfirmedLanguage && hasTarget);
 }
@@ -177,7 +176,9 @@ function resetConfirmedLanguage(){
   if(wrap) wrap.classList.add("hidden");
   if(el("detectedSearch")) el("detectedSearch").value = "";
   if(el("pronunciation")) el("pronunciation").value = "";
-  updateChangeButtonLayout();
+  if(el("pronToggle")) el("pronToggle").checked = false;
+  if(el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
+  applyConfirmationButtonState();
   updateTranslateState();
 }
 
@@ -185,36 +186,6 @@ function togglePronunciation(){
   const checked = !!el("pronToggle")?.checked;
   el("pronunciationSection")?.classList.toggle("hidden", !checked);
 }
-
-function closeSuggestions(container, type){
-  if(!container) return;
-  container.style.display = "none";
-
-  if(type === "target"){
-    targetMatches = [];
-    targetActiveIndex = -1;
-  }else if(type === "detected"){
-    detectedMatches = [];
-    detectedActiveIndex = -1;
-  }
-}
-
-function highlightActive(container, type){
-  const items = container.querySelectorAll(".suggestionItem");
-  const activeIndex = type === "target" ? targetActiveIndex : detectedActiveIndex;
-
-  items.forEach((item, i) => {
-    item.classList.toggle("activeSuggestion", i === activeIndex);
-  });
-
-  if(activeIndex >= 0 && items[activeIndex]){
-    items[activeIndex].scrollIntoView({ block: "nearest" });
-  }
-}
-
-/* -------------------------
-   SEARCH MATCHING
--------------------------- */
 
 function normalize(value){
   return (value || "")
@@ -245,8 +216,7 @@ function scoreLanguageMatch(item, query){
     if(alias.startsWith(q)) return 3;
   }
 
-  const words = tokenize(item.label);
-  for(const word of words){
+  for(const word of tokenize(item.label)){
     if(word.startsWith(q)) return 4;
   }
 
@@ -283,13 +253,34 @@ function findMatches(value){
     .slice(0, 12);
 }
 
-/* -------------------------
-   RENDER SUGGESTIONS
--------------------------- */
+function closeSuggestions(container, type){
+  if(!container) return;
+  container.style.display = "none";
+
+  if(type === "target"){
+    targetMatches = [];
+    targetActiveIndex = -1;
+  }else if(type === "detected"){
+    detectedMatches = [];
+    detectedActiveIndex = -1;
+  }
+}
+
+function highlightActive(container, type){
+  const items = container.querySelectorAll(".suggestionItem");
+  const activeIndex = type === "target" ? targetActiveIndex : detectedActiveIndex;
+
+  items.forEach((item, i) => {
+    item.classList.toggle("activeSuggestion", i === activeIndex);
+  });
+
+  if(activeIndex >= 0 && items[activeIndex]){
+    items[activeIndex].scrollIntoView({ block: "nearest" });
+  }
+}
 
 function renderSuggestions(container, matches, onPick, type){
   if(!container) return;
-
   container.innerHTML = "";
 
   if(!matches.length){
@@ -322,10 +313,6 @@ function renderSuggestions(container, matches, onPick, type){
   container.style.display = "block";
 }
 
-/* -------------------------
-   SEARCH SETUP
--------------------------- */
-
 function setupSearch(inputId, suggestionId, onPick, type){
   const input = el(inputId);
   const box = el(suggestionId);
@@ -344,7 +331,6 @@ function setupSearch(inputId, suggestionId, onPick, type){
 
   input.addEventListener("input", () => {
     renderSuggestions(box, findMatches(input.value), onPick, type);
-    updateTranslateState();
   });
 
   input.addEventListener("blur", () => {
@@ -383,7 +369,6 @@ function setupSearch(inputId, suggestionId, onPick, type){
 
     if(e.key === "ArrowUp"){
       e.preventDefault();
-
       if(!matches.length) return;
 
       activeIndex = activeIndex <= 0 ? matches.length - 1 : activeIndex - 1;
@@ -414,10 +399,6 @@ function setupSearch(inputId, suggestionId, onPick, type){
     }
   });
 }
-
-/* -------------------------
-   LANGUAGE DETECTION
--------------------------- */
 
 function detectInput(text){
   const lower = normalize(text);
@@ -487,19 +468,20 @@ function updateDetection(){
   detectedSelection = detectInput(text);
   setDetectedDisplay(detectedSelection.label);
   card?.classList.remove("hidden");
-  updateChangeButtonLayout();
+  applyConfirmationButtonState();
 }
-
-/* -------------------------
-   DETECTED CONFIRMATION
--------------------------- */
 
 function keepDetected(){
   if(!detectedSelection) return;
   confirmedInputLanguage = detectedSelection.label;
   setSelectedDisplay(confirmedInputLanguage);
-  updateChangeButtonLayout();
+  if(el("changeDetectedWrap")) el("changeDetectedWrap").classList.add("hidden");
+  updateChangeButtonLayoutAndState();
   updateTranslateState();
+}
+
+function updateChangeButtonLayoutAndState(){
+  applyConfirmationButtonState();
 }
 
 function toggleDetectedChange(){
@@ -521,7 +503,7 @@ function toggleDetectedChange(){
           input.value = localizeLanguageLabel(item.label);
           wrap.classList.add("hidden");
           setSelectedDisplay(item.label);
-          updateChangeButtonLayout();
+          updateChangeButtonLayoutAndState();
           updateTranslateState();
         },
         "detected"
@@ -530,16 +512,54 @@ function toggleDetectedChange(){
   }
 }
 
-/* -------------------------
-   PRONUNCIATION
--------------------------- */
+function englishPronunciationForSpanishReader(text){
+  const specialWords = {
+    "how": "jau",
+    "are": "ar",
+    "you": "yu",
+    "hello": "jelou",
+    "friend": "frend",
+    "weather": "ueder",
+    "today": "tudei",
+    "what": "uat",
+    "is": "is",
+    "the": "de",
+    "good": "gud",
+    "morning": "morning"
+  };
+
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(word => {
+      const clean = normalize(word).replace(/[^a-z]/g, "");
+      if(!clean) return "";
+
+      if(specialWords[clean]) return specialWords[clean];
+
+      let out = clean
+        .replace(/tion/g, "shon")
+        .replace(/sion/g, "shon")
+        .replace(/ough/g, "ou")
+        .replace(/augh/g, "au")
+        .replace(/th/g, "d")
+        .replace(/sh/g, "sh")
+        .replace(/ch/g, "ch")
+        .replace(/ph/g, "f")
+        .replace(/igh/g, "ai")
+        .replace(/ow/g, "au")
+        .replace(/ee/g, "i")
+        .replace(/oo/g, "u")
+        .replace(/ea/g, "i");
+
+      return out;
+    })
+    .filter(Boolean)
+    .join("   ");
+}
 
 function spanishPronunciationForEnglishReader(text){
   const specialWords = {
-    "como": "KOH-moh",
-    "estas": "ehs-TAHS",
-    "clima": "KLEE-mah",
-    "hoy": "oy",
     "hola": "OH-lah",
     "parcero": "par-SEH-roh",
     "gracias": "GRAH-syahs",
@@ -549,7 +569,11 @@ function spanishPronunciationForEnglishReader(text){
     "bano": "BAHN-yoh",
     "necesito": "neh-seh-SEE-toh",
     "hablar": "ah-BLAR",
-    "contigo": "kohn-TEE-goh"
+    "contigo": "kohn-TEE-goh",
+    "como": "KOH-moh",
+    "estas": "ehs-TAHS",
+    "clima": "KLEE-mah",
+    "hoy": "oy"
   };
 
   return text
@@ -591,50 +615,6 @@ function spanishPronunciationForEnglishReader(text){
     .join("   ");
 }
 
-function englishPronunciationForSpanishReader(text){
-  const specialWords = {
-    "how": "jau",
-    "are": "ar",
-    "you": "yu",
-    "hello": "jelou",
-    "friend": "frend",
-    "weather": "ueder",
-    "today": "tudei",
-    "what": "uat",
-    "is": "is",
-    "the": "de"
-  };
-
-  return text
-    .split(/\s+/)
-    .filter(Boolean)
-    .map(word => {
-      const clean = normalize(word).replace(/[^a-z]/g, "");
-      if(!clean) return "";
-
-      if(specialWords[clean]) return specialWords[clean];
-
-      let out = clean
-        .replace(/tion/g, "shon")
-        .replace(/sion/g, "shon")
-        .replace(/ough/g, "ou")
-        .replace(/augh/g, "au")
-        .replace(/th/g, "d")
-        .replace(/sh/g, "sh")
-        .replace(/ch/g, "ch")
-        .replace(/ph/g, "f")
-        .replace(/igh/g, "ai")
-        .replace(/ow/g, "au")
-        .replace(/ee/g, "i")
-        .replace(/oo/g, "u")
-        .replace(/ea/g, "i");
-
-      return out;
-    })
-    .filter(Boolean)
-    .join("   ");
-}
-
 function buildPronunciation(translatedText, sourceLanguage, targetLanguage){
   if(!translatedText) return "";
 
@@ -652,10 +632,6 @@ function buildPronunciation(translatedText, sourceLanguage, targetLanguage){
   return "";
 }
 
-/* -------------------------
-   TRANSLATE
--------------------------- */
-
 async function translateText(){
   if(!confirmedInputLanguage){
     alert(isSpanishUI()
@@ -665,9 +641,7 @@ async function translateText(){
   }
 
   const input = el("userInput")?.value.trim() || "";
-  const target = targetSelection
-    ? targetSelection.label
-    : (el("targetSearch")?.value.trim() || "");
+  const target = targetSelection?.label || "";
 
   if(!input || !target){
     alert(isSpanishUI()
@@ -700,21 +674,12 @@ async function translateText(){
   }
 }
 
-/* -------------------------
-   COPY
--------------------------- */
-
 function copyTranslation(){
   const box = el("output");
   if(!box) return;
-
   box.select();
   document.execCommand("copy");
 }
-
-/* -------------------------
-   SPEECH
--------------------------- */
 
 function speak(rate){
   const text = sanitizeForSpeech(el("output")?.value || "");
@@ -725,10 +690,6 @@ function speak(rate){
   msg.rate = rate;
   speechSynthesis.speak(msg);
 }
-
-/* -------------------------
-   DARK MODE
--------------------------- */
 
 function toggleDarkMode(){
   document.body.classList.toggle("dark");
@@ -742,10 +703,6 @@ function toggleDarkMode(){
       : (isSpanishUI() ? "☀️ Claro" : "☀️ Light");
   }
 }
-
-/* -------------------------
-   SITE LANGUAGE
--------------------------- */
 
 function applySiteLanguage(lang){
   const isSpanish = lang.startsWith("es");
@@ -804,7 +761,7 @@ function applySiteLanguage(lang){
     setDetectedDisplay(detectedSelection.label);
   }
 
-  updateChangeButtonLayout();
+  applyConfirmationButtonState();
 
   const footer = document.querySelector("footer");
   if(footer){
@@ -823,10 +780,6 @@ Patent pending.`;
 
   localStorage.setItem("siteLanguage", lang);
 }
-
-/* -------------------------
-   STARTUP
--------------------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("siteLanguage") || "en";
@@ -875,7 +828,7 @@ document.addEventListener("DOMContentLoaded", () => {
       closeSuggestions(el("detectedSuggestions"), "detected");
       el("changeDetectedWrap")?.classList.add("hidden");
       setSelectedDisplay(item.label);
-      updateChangeButtonLayout();
+      updateChangeButtonLayoutAndState();
       updateTranslateState();
     },
     "detected"
@@ -883,5 +836,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if(el("translateButton")) el("translateButton").disabled = true;
   if(el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
-  updateChangeButtonLayout();
+  applyConfirmationButtonState();
 });
