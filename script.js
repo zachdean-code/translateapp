@@ -447,10 +447,21 @@ function copyTranslation(){
 }
 
 document.addEventListener("DOMContentLoaded",() => {
-  if(localStorage.getItem("darkMode") === "on"){
-    document.body.classList.add("dark");
-  }
+ el("siteLanguage")?.addEventListener("change",(e)=>{
+  const lang = e.target.value;
 
+  if(lang === "es"){
+    el("inputLabel").innerText = "Texto de entrada";
+    el("translateButton").innerText = "Traducir";
+    el("copyButton").innerText = "Copiar";
+    el("pronToggleLabel").innerText = "Mostrar pronunciación";
+  }else{
+    el("inputLabel").innerText = "Input Text";
+    el("translateButton").innerText = "Translate";
+    el("copyButton").innerText = "Copy";
+    el("pronToggleLabel").innerText = "Show Pronunciation";
+  }
+});
   el("darkModeButton")?.addEventListener("click",toggleDarkMode);
   el("translateButton")?.addEventListener("click",translateText);
   el("copyButton")?.addEventListener("click",copyTranslation);
