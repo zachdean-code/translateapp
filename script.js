@@ -9,6 +9,7 @@ let targetMatches = [];
 let detectedMatches = [];
 let targetActiveIndex = -1;
 let detectedActiveIndex = -1;
+let inputManuallySelected = false;
 
 let targetPreviousValue = "";
 let detectedPreviousValue = "";
@@ -327,10 +328,7 @@ function updateDetectionCard(){
       styleChangeButtonAsLarge(changeBtn);
     }
   }else if(confirmedInputSelection){
-    const wasManualOverride =
-      detectedSelection &&
-      confirmedInputSelection &&
-      confirmedInputSelection.label !== detectedSelection.label;
+    const wasManualOverride = inputManuallySelected;
 
     display.innerText = wasManualOverride
       ? `Input language selected: ${confirmedInputSelection.label}`
@@ -348,10 +346,11 @@ function updateDetectionCard(){
 }
 
 function confirmDetectedLanguage(){
-  if(!detectedSelection) return;
+   if(!detectedSelection) return;
 
   confirmedInputSelection = { ...detectedSelection };
   detectionConfirmed = true;
+  inputManuallySelected = false;
   el("changeDetectedWrap")?.classList.add("hidden");
 
   updateDetectionCard();
@@ -361,13 +360,8 @@ function toggleDetectedChange(){
   const wrap = el("changeDetectedWrap");
   const input = el("detectedSearch");
   const box = el("detectedSuggestions");
-  const label = el("changeDetectedLabel");
 
   if(!wrap || !input || !box) return;
-
-  if(label){
-    label.innerText = "Change input language to:";
-  }
 
   wrap.classList.toggle("hidden");
 
@@ -378,6 +372,7 @@ function toggleDetectedChange(){
       detectedSelection = item;
       confirmedInputSelection = item;
       detectionConfirmed = true;
+      inputManuallySelected = true;
       input.value = item.label;
       el("changeDetectedWrap").classList.add("hidden");
       updateDetectionCard();
@@ -421,14 +416,14 @@ async function translateText(){
       body:JSON.stringify({ text:input, target:target })
     });
 
-    const data = await response.json();
+  const data = await response.json();
 
-    if(!response.ok){
-      if(el("output")) el("output").value = data.error || "Translation error";
-      return;
-    }
+if(!response.ok){
+  if(el("output")) el("output").value = data.error || "Translation error";
+  return;
+}
 
-    const translated = data.output || "";
+const translated = data.output || "";
 
     if(el("output")){
       el("output").value = translated;
@@ -480,6 +475,7 @@ document.addEventListener("DOMContentLoaded",() => {
     detectedSelection = item;
     confirmedInputSelection = item;
     detectionConfirmed = true;
+    inputManuallySelected = true;
     el("detectedSearch").value = item.label;
     el("changeDetectedWrap").classList.add("hidden");
     updateDetectionCard();
