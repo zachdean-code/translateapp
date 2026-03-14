@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Cross-Cultural Translator™",
+    "subtitle": "Beyond translation - real cross-cultural communication",
+    "description": "Dialect-aware translation, pronunciation guidance, and cultural clarity"
+  },
+  "labels": {
+    "site_language": "Site Language",
+    "input": "Input Text",
+    "detected_language": "Detected language:",
+    "input_language_selected": "Input language selected:",
+    "change_input_language_to": "Change input language to:",
+    "target": "Translate To",
+    "translation": "Translation",
+    "pronunciation": "Pronunciation Guide"
+  },
+  "buttons": {
+    "dark": "🌙 Dark",
+    "light": "☀️ Light",
+    "keep": "Keep",
+    "change": "Change",
+    "translate": "Translate",
+    "copy": "Copy",
+    "show_pronunciation": "Show Pronunciation",
+    "speak_normal": "Speak Normally",
+    "speak_slow": "Speak Slowly"
+  },
+  "messages": {
+    "confirm_detected_language_first": "Please confirm the detected language first.",
+    "enter_text_and_choose_language": "Enter text and choose a language."
+  },
+  "footer": {
+    "product": "Cross-Cultural Translator™",
+    "tagline": "Beyond translation - real cross-cultural communication",
+    "descriptor": "Dialect-aware translation - Pronunciation guidance - Cultural clarity",
+    "copyright": "© 2026 CCTLA-TBD, LLC",
+    "patent": "Patent pending."
+  }
+}

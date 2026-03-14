@@ -1,0 +1,20 @@
+{
+  "english_american": "American English",
+  "english_british": "British English",
+  "english_australian": "Australian English",
+  "french": "French",
+  "german": "German",
+  "italian": "Italian",
+  "spanish_mexican": "Mexican Spanish",
+  "spanish_latam": "LATAM Spanish",
+  "spanish_colombian_general": "General Colombian Spanish",
+  "spanish_paisa_medellin": "Paisa Spanish (Medellín)",
+  "spanish_rolo_bogota": "Rolo Spanish (Bogotá)",
+  "spanish_cali": "Cali Spanish",
+  "spanish_santander": "Santander Spanish",
+  "spanish_venezuelan": "Venezuelan Spanish",
+  "chinese": "Chinese",
+  "korean": "Korean",
+  "japanese": "Japanese",
+  "russian": "Russian"
+}

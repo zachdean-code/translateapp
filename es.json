@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Traductor Intercultural™",
+    "subtitle": "Más que traducción - comunicación intercultural real",
+    "description": "Traducción con sensibilidad dialectal, guía de pronunciación y claridad cultural"
+  },
+  "labels": {
+    "site_language": "Idioma del sitio",
+    "input": "Texto de entrada",
+    "detected_language": "Idioma detectado:",
+    "input_language_selected": "Idioma de entrada seleccionado:",
+    "change_input_language_to": "Cambiar idioma de entrada a:",
+    "target": "Traducir a",
+    "translation": "Traducción",
+    "pronunciation": "Guía de pronunciación"
+  },
+  "buttons": {
+    "dark": "🌙 Oscuro",
+    "light": "☀️ Claro",
+    "keep": "Mantener",
+    "change": "Cambiar",
+    "translate": "Traducir",
+    "copy": "Copiar",
+    "show_pronunciation": "Mostrar pronunciación",
+    "speak_normal": "Hablar normal",
+    "speak_slow": "Hablar lento"
+  },
+  "messages": {
+    "confirm_detected_language_first": "Confirma primero el idioma detectado.",
+    "enter_text_and_choose_language": "Escribe texto y elige un idioma."
+  },
+  "footer": {
+    "product": "Traductor Intercultural™",
+    "tagline": "Más que traducción - comunicación intercultural real",
+    "descriptor": "Traducción con sensibilidad dialectal - Guía de pronunciación - Claridad cultural",
+    "copyright": "© 2026 CCTLA-TBD, LLC",
+    "patent": "Patente pendiente."
+  }
+}
