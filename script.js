@@ -9,9 +9,6 @@ let detectedMatches = [];
 let targetActiveIndex = -1;
 let detectedActiveIndex = -1;
 
-let targetPreviousLabel = "";
-let detectedPreviousLabel = "";
-
 const TARGET_LANGUAGE_TRANSLATIONS = {
   en: {
     "American English": "American English",
@@ -32,23 +29,22 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
     "Korean": "Korean",
     "Japanese": "Japanese",
     "Russian": "Russian",
-
-    "English — American": "English — American",
-    "English — British": "English — British",
-    "English — Australian": "English — Australian",
-    "Spanish — LATAM (Neutral)": "Spanish — LATAM (Neutral)",
-    "Spanish — Mexican": "Spanish — Mexican",
-    "Spanish — Central American": "Spanish — Central American",
-    "Spanish — Caribbean": "Spanish — Caribbean",
-    "Spanish — Peruvian": "Spanish — Peruvian",
-    "Spanish — Argentine": "Spanish — Argentine",
-    "Spanish — Chilean": "Spanish — Chilean",
-    "Spanish — Paisa (Medellín)": "Spanish — Paisa (Medellín)",
-    "Spanish — Rolo (Bogotá)": "Spanish — Rolo (Bogotá)",
-    "Spanish — Cali": "Spanish — Cali",
-    "Spanish — Santander": "Spanish — Santander",
-    "Spanish — Venezuelan": "Spanish — Venezuelan",
-    "Spanish — General Colombian": "Spanish — General Colombian"
+    "English — American": "American English",
+    "English — British": "British English",
+    "English — Australian": "Australian English",
+    "Spanish — LATAM (Neutral)": "LATAM Spanish",
+    "Spanish — Mexican": "Mexican Spanish",
+    "Spanish — Central American": "Central American Spanish",
+    "Spanish — Caribbean": "Caribbean Spanish",
+    "Spanish — Peruvian": "Peruvian Spanish",
+    "Spanish — Argentine": "Argentine Spanish",
+    "Spanish — Chilean": "Chilean Spanish",
+    "Spanish — Paisa (Medellín)": "Paisa Spanish (Medellín)",
+    "Spanish — Rolo (Bogotá)": "Rolo Spanish (Bogotá)",
+    "Spanish — Cali": "Cali Spanish",
+    "Spanish — Santander": "Santander Spanish",
+    "Spanish — Venezuelan": "Venezuelan Spanish",
+    "Spanish — General Colombian": "General Colombian Spanish"
   },
   es: {
     "American English": "Inglés estadounidense",
@@ -69,7 +65,6 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
     "Korean": "Coreano",
     "Japanese": "Japonés",
     "Russian": "Ruso",
-
     "English — American": "Inglés estadounidense",
     "English — British": "Inglés británico",
     "English — Australian": "Inglés australiano",
@@ -128,9 +123,71 @@ function sanitizeForSpeech(text){
     .trim();
 }
 
+function setDetectedDisplay(label){
+  const display = el("detectedLanguageDialect");
+  if(!display) return;
+  display.innerText = (isSpanishUI() ? "Idioma detectado: " : "Detected language: ") + localizeLanguageLabel(label);
+}
+
+function setSelectedDisplay(label){
+  const display = el("detectedLanguageDialect");
+  if(!display) return;
+  display.innerText = (isSpanishUI() ? "Idioma de entrada seleccionado: " : "Input language selected: ") + localizeLanguageLabel(label);
+}
+
+function updateChangeButtonLayout(){
+  const keepBtn = el("keepDetectedButton");
+  const changeBtn = el("changeDetectedButton");
+  const row = document.querySelector(".detectedButtons");
+  if(!changeBtn || !row) return;
+
+  if(confirmedInputLanguage){
+    if(keepBtn) keepBtn.classList.add("hidden");
+    row.style.justifyContent = "flex-end";
+    row.style.alignItems = "center";
+    changeBtn.style.padding = "6px 12px";
+    changeBtn.style.fontSize = "12px";
+    changeBtn.style.lineHeight = "1.2";
+    changeBtn.style.marginTop = "0";
+  }else{
+    if(keepBtn) keepBtn.classList.remove("hidden");
+    row.style.justifyContent = "";
+    row.style.alignItems = "";
+    changeBtn.style.padding = "";
+    changeBtn.style.fontSize = "";
+    changeBtn.style.lineHeight = "";
+    changeBtn.style.marginTop = "";
+  }
+}
+
+function updateTranslateState(){
+  const button = el("translateButton");
+  if(!button) return;
+
+  const hasInput = !!el("userInput")?.value.trim();
+  const hasConfirmedLanguage = !!confirmedInputLanguage;
+  const hasTarget = !!(targetSelection?.label || el("targetSearch")?.value.trim());
+
+  button.disabled = !(hasInput && hasConfirmedLanguage && hasTarget);
+}
+
+function resetConfirmedLanguage(){
+  confirmedInputLanguage = null;
+  const wrap = el("changeDetectedWrap");
+  if(wrap) wrap.classList.add("hidden");
+  if(el("detectedSearch")) el("detectedSearch").value = "";
+  if(el("pronunciation")) el("pronunciation").value = "";
+  updateChangeButtonLayout();
+  updateTranslateState();
+}
+
+function togglePronunciation(){
+  const checked = !!el("pronToggle")?.checked;
+  el("pronunciationSection")?.classList.toggle("hidden", !checked);
+}
+
 function closeSuggestions(container, type){
   if(!container) return;
-
   container.style.display = "none";
 
   if(type === "target"){
@@ -153,70 +210,6 @@ function highlightActive(container, type){
   if(activeIndex >= 0 && items[activeIndex]){
     items[activeIndex].scrollIntoView({ block: "nearest" });
   }
-}
-
-function setConfirmedDisplay(label){
-  const display = el("detectedLanguageDialect");
-  if(!display) return;
-
-  const prefix = isSpanishUI() ? "Idioma de entrada: " : "Input Language: ";
-  display.innerText = prefix + localizeLanguageLabel(label);
-}
-
-function setDetectedDisplay(label){
-  const display = el("detectedLanguageDialect");
-  if(!display) return;
-
-  const prefix = isSpanishUI() ? "Idioma detectado: " : "Detected Language: ";
-  display.innerText = prefix + localizeLanguageLabel(label);
-}
-
-function applyConfirmationButtonState(){
-  const keepBtn = el("keepDetectedButton");
-  const changeBtn = el("changeDetectedButton");
-
-  if(!keepBtn || !changeBtn) return;
-
-  if(confirmedInputLanguage){
-    keepBtn.classList.add("hidden");
-    changeBtn.classList.remove("hidden");
-    changeBtn.style.padding = "6px 10px";
-    changeBtn.style.fontSize = "12px";
-  }else{
-    keepBtn.classList.remove("hidden");
-    changeBtn.classList.remove("hidden");
-    changeBtn.style.padding = "";
-    changeBtn.style.fontSize = "";
-  }
-}
-
-function updateTranslateState(){
-  const button = el("translateButton");
-  if(!button) return;
-
-  const hasInput = !!el("userInput")?.value.trim();
-  const hasConfirmedLanguage = !!confirmedInputLanguage;
-  const hasTarget = !!(targetSelection?.label || el("targetSearch")?.value.trim());
-
-  button.disabled = !(hasInput && hasConfirmedLanguage && hasTarget);
-}
-
-function resetConfirmedLanguage(){
-  confirmedInputLanguage = null;
-
-  const wrap = el("changeDetectedWrap");
-  if(wrap) wrap.classList.add("hidden");
-
-  if(el("detectedSearch")) el("detectedSearch").value = "";
-  if(el("pronunciation")) el("pronunciation").value = "";
-
-  applyConfirmationButtonState();
-  updateTranslateState();
-}
-
-function togglePronunciation(){
-  const checked = !!el("pronToggle")?.checked;
-  el("pronunciationSection")?.classList.toggle("hidden", !checked);
 }
 
 /* -------------------------
@@ -280,13 +273,13 @@ function findMatches(value){
   }
 
   return languageCatalog
-    .map((item) => ({ item, score: scoreLanguageMatch(item, q) }))
-    .filter((row) => row.score < 9999)
+    .map(item => ({ item, score: scoreLanguageMatch(item, q) }))
+    .filter(row => row.score < 9999)
     .sort((a, b) => {
       if(a.score !== b.score) return a.score - b.score;
       return a.item.label.localeCompare(b.item.label);
     })
-    .map((row) => row.item)
+    .map(row => row.item)
     .slice(0, 12);
 }
 
@@ -340,14 +333,12 @@ function setupSearch(inputId, suggestionId, onPick, type){
   if(!input || !box) return;
 
   input.addEventListener("focus", () => {
-    if(type === "target"){
-      targetPreviousLabel = targetSelection?.label || input.value || "";
-      input.value = "";
-    }else if(type === "detected"){
-      detectedPreviousLabel = confirmedInputLanguage || detectedSelection?.label || input.value || "";
-      input.value = "";
-    }
+    input.value = "";
+    renderSuggestions(box, findMatches(""), onPick, type);
+  });
 
+  input.addEventListener("click", () => {
+    input.value = "";
     renderSuggestions(box, findMatches(""), onPick, type);
   });
 
@@ -361,8 +352,12 @@ function setupSearch(inputId, suggestionId, onPick, type){
       if(type === "target" && !input.value.trim() && targetSelection){
         input.value = localizeLanguageLabel(targetSelection.label);
       }
-      if(type === "detected" && !input.value.trim() && confirmedInputLanguage){
-        input.value = localizeLanguageLabel(confirmedInputLanguage);
+      if(type === "detected"){
+        if(!input.value.trim() && confirmedInputLanguage){
+          input.value = localizeLanguageLabel(confirmedInputLanguage);
+        }else if(!input.value.trim() && detectedSelection){
+          input.value = localizeLanguageLabel(detectedSelection.label);
+        }
       }
     }, 120);
   });
@@ -381,10 +376,8 @@ function setupSearch(inputId, suggestionId, onPick, type){
       }
 
       activeIndex = (activeIndex + 1) % matches.length;
-
       if(type === "target") targetActiveIndex = activeIndex;
       else detectedActiveIndex = activeIndex;
-
       highlightActive(box, type);
     }
 
@@ -394,10 +387,8 @@ function setupSearch(inputId, suggestionId, onPick, type){
       if(!matches.length) return;
 
       activeIndex = activeIndex <= 0 ? matches.length - 1 : activeIndex - 1;
-
       if(type === "target") targetActiveIndex = activeIndex;
       else detectedActiveIndex = activeIndex;
-
       highlightActive(box, type);
     }
 
@@ -496,6 +487,7 @@ function updateDetection(){
   detectedSelection = detectInput(text);
   setDetectedDisplay(detectedSelection.label);
   card?.classList.remove("hidden");
+  updateChangeButtonLayout();
 }
 
 /* -------------------------
@@ -505,8 +497,8 @@ function updateDetection(){
 function keepDetected(){
   if(!detectedSelection) return;
   confirmedInputLanguage = detectedSelection.label;
-  setConfirmedDisplay(confirmedInputLanguage);
-  applyConfirmationButtonState();
+  setSelectedDisplay(confirmedInputLanguage);
+  updateChangeButtonLayout();
   updateTranslateState();
 }
 
@@ -528,8 +520,8 @@ function toggleDetectedChange(){
           detectedSelection = { label: item.label };
           input.value = localizeLanguageLabel(item.label);
           wrap.classList.add("hidden");
-          setConfirmedDisplay(item.label);
-          applyConfirmationButtonState();
+          setSelectedDisplay(item.label);
+          updateChangeButtonLayout();
           updateTranslateState();
         },
         "detected"
@@ -543,44 +535,90 @@ function toggleDetectedChange(){
 -------------------------- */
 
 function spanishPronunciationForEnglishReader(text){
+  const specialWords = {
+    "como": "KOH-moh",
+    "estas": "ehs-TAHS",
+    "clima": "KLEE-mah",
+    "hoy": "oy",
+    "hola": "OH-lah",
+    "parcero": "par-SEH-roh",
+    "gracias": "GRAH-syahs",
+    "donde": "DOHN-deh",
+    "esta": "ehs-TAH",
+    "el": "ehl",
+    "bano": "BAHN-yoh",
+    "necesito": "neh-seh-SEE-toh",
+    "hablar": "ah-BLAR",
+    "contigo": "kohn-TEE-goh"
+  };
+
   return text
     .split(/\s+/)
     .filter(Boolean)
     .map(word => {
-      return word
-        .toLowerCase()
-        .replace(/[¿?¡!.,;:()"']/g, "")
+      const clean = normalize(word).replace(/[^a-z]/g, "");
+      if(!clean) return "";
+
+      if(specialWords[clean]) return specialWords[clean];
+
+      let out = clean
         .replace(/ñ/g, "ny")
         .replace(/ll/g, "y")
-        .replace(/que/g, "kay")
+        .replace(/que/g, "keh")
         .replace(/qui/g, "kee")
-        .replace(/ce/g, "say")
+        .replace(/gue/g, "geh")
+        .replace(/gui/g, "gee")
+        .replace(/ge/g, "heh")
+        .replace(/gi/g, "hee")
+        .replace(/ce/g, "seh")
         .replace(/ci/g, "see")
+        .replace(/ch/g, "ch")
+        .replace(/j/g, "h")
         .replace(/a/g, "ah")
         .replace(/e/g, "eh")
         .replace(/i/g, "ee")
         .replace(/o/g, "oh")
         .replace(/u/g, "oo");
+
+      out = out
+        .replace(/([aeiou]{1,2}[a-z]+)/g, "$1-")
+        .replace(/-+/g, "-")
+        .replace(/-$/, "");
+
+      return out;
     })
+    .filter(Boolean)
     .join("   ");
 }
 
 function englishPronunciationForSpanishReader(text){
+  const specialWords = {
+    "how": "jau",
+    "are": "ar",
+    "you": "yu",
+    "hello": "jelou",
+    "friend": "frend",
+    "weather": "ueder",
+    "today": "tudei",
+    "what": "uat",
+    "is": "is",
+    "the": "de"
+  };
+
   return text
     .split(/\s+/)
     .filter(Boolean)
     .map(word => {
-      return word
-        .toLowerCase()
-        .replace(/[¿?¡!.,;:()"']/g, "")
-        .replace(/^how$/g, "jau")
-        .replace(/^are$/g, "ar")
-        .replace(/^you$/g, "yu")
-        .replace(/^hello$/g, "jelou")
-        .replace(/^friend$/g, "frend")
-        .replace(/^weather$/g, "ueder")
-        .replace(/^today$/g, "tudei")
+      const clean = normalize(word).replace(/[^a-z]/g, "");
+      if(!clean) return "";
+
+      if(specialWords[clean]) return specialWords[clean];
+
+      let out = clean
         .replace(/tion/g, "shon")
+        .replace(/sion/g, "shon")
+        .replace(/ough/g, "ou")
+        .replace(/augh/g, "au")
         .replace(/th/g, "d")
         .replace(/sh/g, "sh")
         .replace(/ch/g, "ch")
@@ -588,16 +626,20 @@ function englishPronunciationForSpanishReader(text){
         .replace(/igh/g, "ai")
         .replace(/ow/g, "au")
         .replace(/ee/g, "i")
-        .replace(/oo/g, "u");
+        .replace(/oo/g, "u")
+        .replace(/ea/g, "i");
+
+      return out;
     })
+    .filter(Boolean)
     .join("   ");
 }
 
 function buildPronunciation(translatedText, sourceLanguage, targetLanguage){
   if(!translatedText) return "";
 
-  const source = (sourceLanguage || "").toLowerCase();
-  const target = (targetLanguage || "").toLowerCase();
+  const source = normalize(sourceLanguage || "");
+  const target = normalize(targetLanguage || "");
 
   if(source.includes("spanish") && target.includes("english")){
     return englishPronunciationForSpanishReader(translatedText);
@@ -637,9 +679,7 @@ async function translateText(){
   try{
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         text: input,
         target: target,
@@ -652,9 +692,7 @@ async function translateText(){
     const translated = data.output || "";
 
     if(el("output")) el("output").value = translated;
-    if(el("pronunciation")){
-      el("pronunciation").value = buildPronunciation(translated, confirmedInputLanguage, target);
-    }
+    if(el("pronunciation")) el("pronunciation").value = buildPronunciation(translated, confirmedInputLanguage, target);
 
   }catch(err){
     if(el("output")) el("output").value = "Network error";
@@ -683,7 +721,6 @@ function speak(rate){
   if(!text) return;
 
   speechSynthesis.cancel();
-
   const msg = new SpeechSynthesisUtterance(text);
   msg.rate = rate;
   speechSynthesis.speak(msg);
@@ -695,7 +732,6 @@ function speak(rate){
 
 function toggleDarkMode(){
   document.body.classList.toggle("dark");
-
   const isDark = document.body.classList.contains("dark");
   localStorage.setItem("darkMode", isDark ? "on" : "off");
 
@@ -762,17 +798,13 @@ function applySiteLanguage(lang){
     el("targetSearch").value = localizeLanguageLabel(targetSelection.label);
   }
 
-  if(confirmedInputLanguage && el("detectedSearch")){
-    el("detectedSearch").value = localizeLanguageLabel(confirmedInputLanguage);
-  }
-
   if(confirmedInputLanguage){
-    setConfirmedDisplay(confirmedInputLanguage);
+    setSelectedDisplay(confirmedInputLanguage);
   }else if(detectedSelection){
     setDetectedDisplay(detectedSelection.label);
   }
 
-  applyConfirmationButtonState();
+  updateChangeButtonLayout();
 
   const footer = document.querySelector("footer");
   if(footer){
@@ -842,8 +874,8 @@ document.addEventListener("DOMContentLoaded", () => {
       el("detectedSearch").value = localizeLanguageLabel(item.label);
       closeSuggestions(el("detectedSuggestions"), "detected");
       el("changeDetectedWrap")?.classList.add("hidden");
-      setConfirmedDisplay(item.label);
-      applyConfirmationButtonState();
+      setSelectedDisplay(item.label);
+      updateChangeButtonLayout();
       updateTranslateState();
     },
     "detected"
@@ -851,5 +883,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if(el("translateButton")) el("translateButton").disabled = true;
   if(el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
-  applyConfirmationButtonState();
+  updateChangeButtonLayout();
 });
