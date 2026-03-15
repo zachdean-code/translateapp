@@ -1,207 +1,323 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Cross-Cultural Translator</title>
-<link rel="stylesheet" href="style.css">
-</head>
 
-<body>
+*{
+  box-sizing:border-box;
+}
 
-<div class="container">
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:#f4f6f8;
+  color:#111827;
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  transition:background .2s ease,color .2s ease;
+}
 
-<div class="topBar">
+body.dark{
+  background:#111827;
+  color:#f3f4f6;
+}
 
-<div class="languageGroup">
-<label for="siteLanguage">Site Language</label>
-<select id="siteLanguage" class="miniSelect">
-<option value="en">English</option>
-<option value="es">Español</option>
-</select>
-</div>
+.container{
+  width:min(1150px,100%);
+  background:white;
+  padding:28px;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  transition:background .2s ease,color .2s ease;
+}
 
-<button id="darkModeButton" class="darkToggle">🌙 Dark</button>
+body.dark .container{
+  background:#1f2937;
+}
 
-</div>
+.topBar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-bottom:16px;
+}
 
-<h1>Cross-Cultural Translator™</h1>
+.languageGroup{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-<p class="subtitle">
-Beyond translation — real cross-cultural communication
-</p>
+.darkToggle,
+.miniSelect{
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #d1d5db;
+  background:white;
+  font-size:14px;
+  color:#111827;
+}
 
-<p class="description">
-Dialect-aware translation, pronunciation guidance, and cultural clarity
-</p>
+body.dark .darkToggle,
+body.dark .miniSelect{
+  background:#111827;
+  color:#f3f4f6;
+  border-color:#4b5563;
+}
 
-<div class="translatorRow">
+h1{
+  text-align:center;
+  margin:10px 0;
+  font-size:3rem;
+  line-height:1.1;
+}
 
-<!-- LEFT COLUMN -->
+.subtitle{
+  text-align:center;
+  color:#4b5563;
+  font-size:1.15rem;
+  margin:0 0 8px;
+}
 
-<div class="inputColumn">
+.description{
+  text-align:center;
+  color:#6b7280;
+  font-size:1.1rem;
+  margin:0 0 28px;
+}
 
-<label id="inputLabel" for="userInput">Input Text</label>
+body.dark .subtitle{
+  color:#d1d5db;
+}
 
-<textarea
-id="userInput"
-rows="6"
-tabindex="1"></textarea>
+body.dark .description{
+  color:#9ca3af;
+}
 
-<div id="detectedCard" class="detectedCard hidden">
+.translatorRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:start;
+}
 
-<div id="detectedLanguageDialect"></div>
+.inputColumn,
+.outputColumn{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
 
-<div class="detectedButtons">
+label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:8px;
+}
 
-<button
-id="keepDetectedButton"
-class="keepButton"
-tabindex="2">
-Keep
-</button>
+textarea,
+input{
+  width:100%;
+  padding:12px 14px;
+  margin-bottom:14px;
+  border-radius:10px;
+  border:1px solid #d1d5db;
+  font-size:15px;
+  font-family:Inter,sans-serif;
+  background:white;
+  color:#111827;
+}
 
-<button
-id="changeDetectedButton"
-class="changeButton"
-tabindex="3">
-Change
-</button>
+textarea{
+  resize:vertical;
+  min-height:160px;
+}
 
-</div>
+#pronunciation{
+  min-height:88px;
+}
 
-</div>
+body.dark textarea,
+body.dark input{
+  background:#111827;
+  color:#f3f4f6;
+  border-color:#4b5563;
+}
 
-<div
-id="changeDetectedWrap"
-class="hidden">
+button{
+  padding:10px 14px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  font-family:Inter,sans-serif;
+  font-size:14px;
+}
 
-<label for="detectedSearch">
-Change input language to:
-</label>
+.primaryButton{
+  background:#2563eb;
+  color:white;
+  margin-bottom:16px;
+}
 
-<div class="searchWrap">
+.copyButton{
+  background:#444;
+  color:white;
+  margin-bottom:16px;
+}
 
-<input
-id="detectedSearch"
-type="text"
-autocomplete="off">
+.normalButton{
+  background:#15803d;
+  color:white;
+}
 
-<div
-id="detectedSuggestions"
-class="suggestions">
-</div>
+.slowButton{
+  background:#b45309;
+  color:white;
+}
 
-</div>
+.keepButton{
+  background:#15803d;
+  color:white;
+}
 
-</div>
+.changeButton{
+  background:#b45309;
+  color:white;
+}
 
-<label for="targetSearch">Translate To</label>
+.buttonRow{
+  display:flex;
+  gap:12px;
+  width:100%;
+}
 
-<div class="searchWrap">
+.buttonRow button{
+  flex:1;
+  text-align:center;
+}
 
-<input
-id="targetSearch"
-type="text"
-autocomplete="off"
-tabindex="4">
+.toggleRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
 
-<div
-id="targetSuggestions"
-class="suggestions">
-</div>
+.toggleRow input[type="checkbox"]{
+  width:auto;
+  margin:0;
+}
 
-</div>
+.hidden{
+  display:none !important;
+}
 
-<button
-id="translateButton"
-class="primaryButton"
-tabindex="5">
-Translate
-</button>
+.detectedCard{
+  margin-bottom:14px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(37,99,235,0.06);
+  border:1px solid rgba(37,99,235,0.18);
+}
 
-</div>
+body.dark .detectedCard{
+  background:rgba(59,130,246,0.08);
+  border-color:rgba(96,165,250,0.25);
+}
 
-<!-- RIGHT COLUMN -->
+.detectedButtons{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
 
-<div class="outputColumn">
+.searchWrap{
+  position:relative;
+}
 
-<label for="output">Translation</label>
+.suggestions{
+  display:none;
+  position:absolute;
+  left:0;
+  right:0;
+  top:calc(100% - 10px);
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  background:white;
+  overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  z-index:10;
+}
 
-<textarea
-id="output"
-readonly></textarea>
+body.dark .suggestions{
+  background:#111827;
+  border-color:#4b5563;
+}
 
-<button
-id="copyButton"
-class="copyButton"
-tabindex="6">
-Copy
-</button>
+.suggestionItem{
+  padding:10px 12px;
+  cursor:pointer;
+  border-bottom:1px solid #e5e7eb;
+}
 
-<div class="toggleRow">
+.suggestionItem:last-child{
+  border-bottom:none;
+}
 
-<input
-id="pronToggle"
-type="checkbox"
-tabindex="7">
+.suggestionItem:hover{
+  background:#f3f4f6;
+}
 
-<label id="pronToggleLabel" for="pronToggle">
-Show Pronunciation
-</label>
+.suggestionItem.activeSuggestion{
+  background:#e5e7eb;
+}
 
-</div>
+body.dark .suggestionItem{
+  border-bottom-color:#374151;
+}
 
-<div id="pronunciationSection" class="hidden">
+body.dark .suggestionItem:hover{
+  background:#374151;
+}
 
-<label for="pronunciation">
-Pronunciation Guide
-</label>
+body.dark .suggestionItem.activeSuggestion{
+  background:#374151;
+}
 
-<textarea
-id="pronunciation"
-tabindex="8"></textarea>
+footer{
+  margin-top:28px;
+  text-align:center;
+  color:#6b7280;
+  font-size:13px;
+  line-height:1.6;
+}
 
-<div class="buttonRow">
+body.dark footer{
+  color:#9ca3af;
+}
 
-<button
-id="speakNormal"
-class="normalButton"
-tabindex="9">
-Speak Normally
-</button>
+footer strong{
+  display:block;
+  margin-bottom:4px;
+}
 
-<button
-id="speakSlow"
-class="slowButton"
-tabindex="10">
-Speak Slowly
-</button>
+@media (max-width: 900px){
+  .translatorRow{
+    grid-template-columns:1fr;
+  }
 
-</div>
+  h1{
+    font-size:2.2rem;
+  }
 
-</div>
+  .container{
+    padding:20px;
+  }
 
-</div>
+  .topBar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+} 
 
-</div>
 
-<footer>
-
-<strong>Cross-Cultural Translator™</strong>
-
-Beyond translation — real cross-cultural communication  
-Dialect-aware translation • Pronunciation guidance • Cultural clarity  
-
-© 2026 CCTLA-TBD, LLC  
-Patent pending.
-
-</footer>
-
-</div>
-
-<script src="translations.js"></script>
-<script src="languageCatalog.js"></script>
-<script src="script.js"></script>
-
-</body>
-</html>
+Here is teh current version 
