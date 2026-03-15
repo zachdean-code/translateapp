@@ -1,0 +1,36 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "translateapp2.vercel",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "translateapp2.vercel",
+  "start_url": "/Cross-Cultural Translatorâ„¢ Beyond translation â€” real cross-cultural communication  Dialect-aware translation, pronunciation guidance, and cultural clarity",
+  "theme_color": "#122071",
+  "id": "zrdtranslateapp1",
+  "description": "Cross-Cultural Translatorâ„¢\nBeyond translation â€” real cross-cultural communication\n\nDialect-aware translation, pronunciation guidance, and cultural clarity",
+  "lang": "en",
+  "related_applications": [
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/us/app/translate/id1514844618",
+      "id": ""
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/us/app/ai-translator-translate-app/id6479346303",
+      "id": ""
+    }
+  ],
+  "categories": [
+    "business",
+    "education",
+    "entertainment",
+    "government",
+    "lifestyle",
+    "productivity",
+    "social",
+    "travel"
+  ]
+}
