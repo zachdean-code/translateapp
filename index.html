@@ -43,7 +43,6 @@
 
       <textarea
         id="userInput"
-        rows="6"
         tabindex="1"></textarea>
 
       <div id="detectedCard" class="detectedCard hidden">
@@ -121,19 +120,19 @@
 
     <div class="outputColumn">
 
-      <label for="output">Translation</label>
+      <div class="translationHeader">
+        <label for="output">Translation</label>
 
-      <div class="toggleRow">
+        <div class="toggleRow">
+          <input
+            id="pronToggle"
+            type="checkbox"
+            tabindex="8">
 
-        <input
-          id="pronToggle"
-          type="checkbox"
-          tabindex="8">
-
-        <label id="pronToggleLabel" for="pronToggle">
-          Show Pronunciation
-        </label>
-
+          <label id="pronToggleLabel" for="pronToggle">
+            Show Pronunciation
+          </label>
+        </div>
       </div>
 
       <textarea
