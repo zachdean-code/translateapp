@@ -846,8 +846,8 @@ document.addEventListener("DOMContentLoaded", () => {
   el("copyButton")?.addEventListener("click", copyTranslation);
   el("darkModeButton")?.addEventListener("click", toggleDarkMode);
   el("pronToggle")?.addEventListener("change", togglePronunciation);
-  el("speakNormal")?.addEventListener("click", () => speak(1.0));
-  el("speakSlow")?.addEventListener("click", () => speak(0.35));
+  el("speakNormal")?.addEventListener("click", () => speak(.70));
+  el("speakSlow")?.addEventListener("click", () => speak(0.2));
 
   setupSearch("targetSearch", "targetSuggestions", (item) => {
     targetSelection = item;
