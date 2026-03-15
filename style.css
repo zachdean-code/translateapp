@@ -1,5 +1,14 @@
-{
+*{
   box-sizing:border-box;
+}
+
+:focus-visible{
+  outline:3px solid #2563eb;
+  outline-offset:2px;
+}
+
+body.dark :focus-visible{
+  outline:3px solid #60a5fa;
 }
 
 body{
@@ -126,17 +135,24 @@ input{
   color:#111827;
 }
 
-/ REDUCED TEXT BOX HEIGHT /
-
 textarea{
   resize:vertical;
   min-height:95px;
 }
 
-/ PRONUNCIATION BOX SLIGHTLY SMALLER /
+#userInput{
+  min-height:95px !important;
+  height:95px !important;
+}
+
+#output{
+  min-height:95px !important;
+  height:95px !important;
+}
 
 #pronunciation{
-  min-height:60px;
+  min-height:60px !important;
+  height:60px !important;
 }
 
 body.dark textarea,
@@ -160,8 +176,6 @@ button{
   color:white;
   margin-bottom:16px;
 }
-
-/ COPY BUTTON RED /
 
 .copyButton{
   background:#dc2626;
@@ -200,21 +214,13 @@ button{
   text-align:center;
 }
 
-/ HEADER FOR TRANSLATION + PRONUNCIATION TO ALIGN SAME ROW */
-
-.translationHeader{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:8px;
-}
-
 .toggleRow{
   display:flex;
   align-items:center;
+  justify-content:flex-end;
   gap:10px;
-  margin-bottom:10px;
+  margin-top:-34px;
+  margin-bottom:12px;
 }
 
 .toggleRow input[type="checkbox"]{
@@ -271,7 +277,9 @@ body.dark .detectedCard{
   background:white;
   overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,.08);
-  z-index:10;
+  z-index:100;
+  max-height:260px;
+  overflow-y:auto;
 }
 
 body.dark .suggestions{
@@ -342,5 +350,21 @@ footer strong{
   .topBar{
     flex-direction:column;
     align-items:flex-start;
+  }
+
+  #userInput,
+  #output{
+    min-height:95px !important;
+    height:95px !important;
+  }
+
+  #pronunciation{
+    min-height:60px !important;
+    height:60px !important;
+  }
+
+  .toggleRow{
+    margin-top:0;
+    justify-content:flex-start;
   }
 }
