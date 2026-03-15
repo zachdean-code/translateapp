@@ -1,3 +1,4 @@
+
 *{
   box-sizing:border-box;
 }
@@ -178,18 +179,18 @@ button{
 }
 
 .copyButton{
-  background:#15803d;
+  background:#dc2626;
   color:white;
   margin-bottom:16px;
 }
 
 .normalButton{
-  background:#b45309;
+  background:#15803d;
   color:white;
 }
 
 .slowButton{
-  background:#dc2626;
+  background:#b45309;
   color:white;
 }
 
