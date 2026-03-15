@@ -1,14 +1,5 @@
-*{
+{
   box-sizing:border-box;
-}
-
-:focus-visible{
-  outline:3px solid #2563eb;
-  outline-offset:2px;
-}
-
-body.dark :focus-visible{
-  outline:3px solid #60a5fa;
 }
 
 body{
@@ -135,10 +126,14 @@ input{
   color:#111827;
 }
 
+/ REDUCED TEXT BOX HEIGHT /
+
 textarea{
-  resize:none;
+  resize:vertical;
   min-height:95px;
 }
+
+/ PRONUNCIATION BOX SLIGHTLY SMALLER /
 
 #pronunciation{
   min-height:60px;
@@ -165,6 +160,8 @@ button{
   color:white;
   margin-bottom:16px;
 }
+
+/ COPY BUTTON RED /
 
 .copyButton{
   background:#dc2626;
@@ -202,10 +199,8 @@ button{
   flex:1;
   text-align:center;
 }
-.buttonRow button{
-  flex:1;
-  text-align:center;
-}
+
+/ HEADER FOR TRANSLATION + PRONUNCIATION TO ALIGN SAME ROW */
 
 .translationHeader{
   display:flex;
@@ -215,12 +210,6 @@ button{
   margin-bottom:8px;
 }
 
-.toggleRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-}
 .toggleRow{
   display:flex;
   align-items:center;
@@ -261,6 +250,7 @@ body.dark .detectedCard{
   gap:10px;
   margin-left:auto;
 }
+
 #detectedLanguageDialect{
   flex:1;
   min-width:0;
@@ -281,9 +271,7 @@ body.dark .detectedCard{
   background:white;
   overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,.08);
-  z-index:100;
-  max-height:260px;
-  overflow-y:auto;
+  z-index:10;
 }
 
 body.dark .suggestions{
