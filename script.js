@@ -872,3 +872,71 @@ document.addEventListener("DOMContentLoaded", () => {
   if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
   styleConfirmationRow();
 });
+
+async function enablePushNotifications() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.log('Push notifications are not supported in this browser.');
+    return;
+  }
+
+  const permission = await Notification.requestPermission();
+
+  if (permission !== 'granted') {
+    console.log('Notification permission not granted.');
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: 'YOUR_PUBLIC_VAPID_KEY_HERE'
+  });
+
+  console.log('Push subscription:', JSON.stringify(subscription));
+}
+
+async function registerBackgroundSync() {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+  if ('sync' in registration) {
+    await registration.sync.register('retry-translation-request');
+    console.log('Background sync registered.');
+  } else {
+    console.log('Background sync not supported.');
+  }
+}
+
+async function registerPeriodicSync() {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+  if ('periodicSync' in registration) {
+    try {
+      const status = await navigator.permissions.query({
+        name: 'periodic-background-sync'
+      });
+
+      if (status.state === 'granted') {
+        await registration.periodicSync.register('refresh-language-data', {
+          minInterval: 24 * 60 * 60 * 1000
+        });
+
+        console.log('Periodic background sync registered.');
+      } else {
+        console.log('Periodic background sync permission not granted.');
+      }
+    } catch (error) {
+      console.log('Periodic background sync failed:', error);
+    }
+  } else {
+    console.log('Periodic background sync not supported.');
+  }
+}
