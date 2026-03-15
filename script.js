@@ -868,9 +868,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTranslateState();
   }, "detected");
 
-  if (el("translateButton")) el("translateButton").disabled = true;
+    if (el("translateButton")) el("translateButton").disabled = true;
   if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
   styleConfirmationRow();
+  registerPeriodicSync();
 });
 
 async function enablePushNotifications() {
