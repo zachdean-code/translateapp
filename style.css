@@ -137,19 +137,11 @@ input{
 
 textarea{
   resize:none;
-  min-height:160px;
-}
-
-textarea[readonly]{
-  cursor:default;
-}
-
-textarea[readonly]:focus{
-  outline:none;
+  min-height:95px;
 }
 
 #pronunciation{
-  min-height:88px;
+  min-height:60px;
 }
 
 body.dark textarea,
