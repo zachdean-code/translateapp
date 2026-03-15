@@ -167,7 +167,7 @@ button{
 }
 
 .copyButton{
-  background:#444;
+  background:#dc2626;
   color:white;
   margin-bottom:16px;
 }
@@ -202,7 +202,25 @@ button{
   flex:1;
   text-align:center;
 }
+.buttonRow button{
+  flex:1;
+  text-align:center;
+}
 
+.translationHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.toggleRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
 .toggleRow{
   display:flex;
   align-items:center;
