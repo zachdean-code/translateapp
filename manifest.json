@@ -17,5 +17,19 @@
     "productivity",
     "social",
     "travel"
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Translate",
+      "short_name": "Translate",
+      "description": "Open quick translate",
+      "url": "/?shortcut=quick-translate"
+    },
+    {
+      "name": "Dialect Quiz",
+      "short_name": "Quiz",
+      "description": "Open the dialect quiz",
+      "url": "/?shortcut=dialect-quiz"
+    }
   ]
 }
