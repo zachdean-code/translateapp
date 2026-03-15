@@ -179,18 +179,18 @@ button{
 }
 
 .copyButton{
-  background:#dc2626;
+  background:#15803d;
   color:white;
   margin-bottom:16px;
 }
 
 .normalButton{
-  background:#15803d;
+  background:#b45309;
   color:white;
 }
 
 .slowButton{
-  background:#b45309;
+  background:#dc2626;
   color:white;
 }
 
