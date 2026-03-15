@@ -200,5 +200,11 @@
 <script src="languageCatalog.js"></script>
 <script src="script.js"></script>
 
+v<script>
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('sw.js')
+  }
+</script>
+
 </body>
 </html>
