@@ -286,12 +286,14 @@ body.dark #contextSection{
 #contextSection label{
   margin-bottom:6px;
   line-height:1.15;
+  text-align:center;
 }
 
 #contextSection select{
   width:100%;
   min-width:0;
   margin-bottom:0;
+  text-align:center;
 }
 
 /* ===== OUTPUT HEADER / TOGGLE ===== */
