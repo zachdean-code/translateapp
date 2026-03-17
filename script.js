@@ -124,11 +124,6 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
   }
 };
 
-const languageCatalog = Object.keys(TARGET_LANGUAGE_TRANSLATIONS.en).map(label => ({
-  label,
-  aliases: []
-}));
-
 function el(id) {
   return document.getElementById(id);
 }
@@ -166,9 +161,25 @@ function tokenize(value) {
     .filter(Boolean);
 }
 
+function sanitizeForSpeech(text) {
+  return (text || "")
+    .replace(/[¿¡]/g, "")
+    .replace(/[.,;:!?()"']/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizePronunciationStyle(text) {
+  return (text || "")
+    .replace(/\|/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\s*-\s*/g, "-")
+    .trim();
+}
+
 function updateAdditionalInfo(text) {
-  const box = el("additionalInfo");
-  const section = el("additionalInfoSection");
+  const box = el("contextOutput") || el("additionalInfo");
+  const section = el("contextOutputSection") || el("additionalInfoSection");
   if (!box || !section) return;
 
   const value = (text || "").trim();
@@ -187,7 +198,7 @@ function setDetectedDisplay(label) {
   if (!display) return;
   display.innerText =
     (isSpanishUI() ? "Idioma detectado: " : "Detected language: ") +
-    localizeLanguageLabel(label);
+        localizeLanguageLabel(label);
 }
 
 function setConfirmedDisplay(label) {
@@ -325,7 +336,6 @@ function findMatches(value) {
     .map(row => row.item)
     .slice(0, 12);
 }
-
 function closeSuggestions(container, type) {
   if (!container) return;
   container.style.display = "none";
@@ -388,7 +398,7 @@ function renderSuggestions(container, matches, onPick, type) {
 
 function setupSearch(inputId, suggestionId, onPick, type) {
   const input = el(inputId);
-  const box = el(suggestionId);
+    const box = el(suggestionId);
   if (!input || !box) return;
 
   input.addEventListener("focus", () => {
@@ -570,16 +580,122 @@ function toggleDetectedChange() {
   }
 }
 
-function buildPronunciation(text) {
-  return text || "";
+function englishPronunciationForSpanishReader(text) {
+  const specialWords = {
+    "how": "jau",
+    "are": "ar",
+    "you": "yu",
+    "hello": "jelou",
+    "friend": "frend",
+    "weather": "ueder",
+    "today": "tudei",
+    "what": "uat",
+    "is": "is",
+    "the": "de"
+  };
+
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(word => {
+            const clean = normalize(word).replace(/[^a-z]/g, "");
+      if (!clean) return "";
+      if (specialWords[clean]) return specialWords[clean];
+
+      return clean
+        .replace(/tion/g, "shon")
+        .replace(/sion/g, "shon")
+        .replace(/ough/g, "ou")
+        .replace(/augh/g, "au")
+        .replace(/th/g, "d")
+        .replace(/sh/g, "sh")
+        .replace(/ch/g, "ch")
+        .replace(/ph/g, "f")
+        .replace(/igh/g, "ai")
+        .replace(/ow/g, "au")
+        .replace(/ee/g, "i")
+        .replace(/oo/g, "u")
+        .replace(/ea/g, "i");
+    })
+    .filter(Boolean)
+    .join(" ");
 }
 
-function normalizePronunciationStyle(text) {
-  return text || "";
-}
+function spanishPronunciationForEnglishReader(text) {
+  const specialWords = {
+    "hola": "oh-LAH",
+    "parcero": "par-SEH-roh",
+    "gracias": "GRAH-syahs",
+    "donde": "DOHN-deh",
+    "esta": "ehs-TAH",
+    "el": "ehl",
+    "bano": "BAHN-yoh",
+    "necesito": "neh-seh-SEE-toh",
+    "hablar": "ah-BLAR",
+    "contigo": "kohn-TEE-goh",
+    "como": "KOH-moh",
+    "estas": "ehs-TAHS",
+    "clima": "KLEE-mah",
+    "hoy": "oy",
+    "puedo": "pweh-DOH",
+    "tener": "teh-NEHR",
+    "una": "oo-nah",
+    "mejora": "meh-HOH-rah"
+  };
 
-function sanitizeForSpeech(text) {
-  return (text || "").replace(/[^\w\s.,!?¿¡-]/g, "");
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(word => {
+      const raw = word.replace(/[^\p{L}]/gu, "");
+      const clean = normalize(raw).replace(/[^a-z]/g, "");
+      if (!clean) return "";
+      if (specialWords[clean]) return specialWords[clean];
+
+      let out = clean
+        .replace(/que/g, "keh")
+        .replace(/qui/g, "kee")
+        .replace(/gue/g, "geh")
+        .replace(/gui/g, "gee")
+        .replace(/ge/g, "heh")
+        .replace(/gi/g, "hee")
+        .replace(/ce/g, "seh")
+        .replace(/ci/g, "see")
+        .replace(/ll/g, "y")
+        .replace(/ñ/g, "ny")
+        .replace(/ch/g, "ch")
+        .replace(/j/g, "h")
+        .replace(/a/g, "ah")
+        .replace(/e/g, "eh")
+        .replace(/i/g, "ee")
+        .replace(/o/g, "oh")
+        .replace(/u/g, "oo");
+
+      out = out
+        .replace(/([a-z]{2,})(ah|eh|ee|oh|oo)/gi, "$1-$2")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      return out;
+    })
+    .filter(Boolean)
+    .join(" ");
+}
+function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
+  if (!translatedText) return "";
+
+  const source = normalize(sourceLanguage || "");
+  const target = normalize(targetLanguage || "");
+
+  if (source.includes("spanish") && target.includes("english")) {
+    return englishPronunciationForSpanishReader(translatedText);
+  }
+
+  if (source.includes("english") && target.includes("spanish")) {
+    return spanishPronunciationForEnglishReader(translatedText);
+  }
+
+  return "";
 }
 
 async function translateText() {
@@ -625,7 +741,8 @@ async function translateText() {
     if (el("output")) el("output").value = translated;
 
     if (el("pronunciation")) {
-const rawPronunciation = buildPronunciation(translated);      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
+      const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
+      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
     }
 
     updateAdditionalInfo(additionalInfo);
@@ -681,7 +798,7 @@ function applySiteLanguage(lang) {
     safeTextBySelector('label[for="siteLanguage"]', "Idioma del sitio");
     safeTextBySelector("h1", "Traductor Intercultural™");
     safeTextBySelector(".subtitle", "Más que traducción — comunicación intercultural real");
-    safeTextBySelector(".description", "Traducción con sensibilidad dialectal, guía de pronunciación y claridad cultural");
+        safeTextBySelector(".description", "Traducción con sensibilidad dialectal, guía de pronunciación y claridad cultural");
     safeTextById("inputLabel", "Texto de entrada");
     safeTextById("keepDetectedButton", "Mantener");
     safeTextById("changeDetectedButton", "Cambiar");
@@ -816,15 +933,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function enablePushNotifications() {
-  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-    console.log("Push notifications are not supported in this browser.");
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.log('Push notifications are not supported in this browser.');
     return;
   }
 
   const permission = await Notification.requestPermission();
 
-  if (permission !== "granted") {
-    console.log("Notification permission not granted.");
+  if (permission !== 'granted') {
+    console.log('Notification permission not granted.');
     return;
   }
 
@@ -832,55 +949,54 @@ async function enablePushNotifications() {
 
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
-    applicationServerKey: "YOUR_PUBLIC_VAPID_KEY_HERE"
+    applicationServerKey: 'YOUR_PUBLIC_VAPID_KEY_HERE'
   });
 
-  console.log("Push subscription:", JSON.stringify(subscription));
+  console.log('Push subscription:', JSON.stringify(subscription));
 }
 
 async function registerBackgroundSync() {
-  if (!("serviceWorker" in navigator)) {
+  if (!('serviceWorker' in navigator)) {
     return;
   }
 
   const registration = await navigator.serviceWorker.ready;
 
-  if ("sync" in registration) {
-    await registration.sync.register("retry-translation-request");
-    console.log("Background sync registered.");
+  if ('sync' in registration) {
+    await registration.sync.register('retry-translation-request');
+    console.log('Background sync registered.');
   } else {
-    console.log("Background sync not supported.");
+    console.log('Background sync not supported.');
   }
 }
 
-// ===== FINAL FIX =====
-
 async function registerPeriodicSync() {
-  if (!("serviceWorker" in navigator)) {
+  if (!('serviceWorker' in navigator)) {
     return;
   }
 
   const registration = await navigator.serviceWorker.ready;
 
-  if ("periodicSync" in registration) {
+  if ('periodicSync' in registration) {
     try {
       const status = await navigator.permissions.query({
-        name: "periodic-background-sync"
+        name: 'periodic-background-sync'
       });
 
-      if (status.state === "granted") {
-        await registration.periodicSync.register("refresh-language-data", {
+      if (status.state === 'granted') {
+        await registration.periodicSync.register('refresh-language-data', {
           minInterval: 24 * 60 * 60 * 1000
         });
 
-        console.log("Periodic background sync registered.");
+        console.log('Periodic background sync registered.');
       } else {
-        console.log("Periodic background sync permission not granted.");
+        console.log('Periodic background sync permission not granted.');
       }
     } catch (error) {
-      console.log("Periodic background sync failed:", error);
+      console.log('Periodic background sync failed:', error);
     }
   } else {
-    console.log("Periodic background sync not supported.");
+    console.log('Periodic background sync not supported.');
   }
 }
+    
