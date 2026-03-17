@@ -124,6 +124,11 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
   }
 };
 
+const languageCatalog = Object.keys(TARGET_LANGUAGE_TRANSLATIONS.en).map(label => ({
+  label,
+  aliases: []
+}));
+
 function el(id) {
   return document.getElementById(id);
 }
@@ -565,6 +570,18 @@ function toggleDetectedChange() {
   }
 }
 
+function buildPronunciation(text) {
+  return text || "";
+}
+
+function normalizePronunciationStyle(text) {
+  return text || "";
+}
+
+function sanitizeForSpeech(text) {
+  return (text || "").replace(/[^\w\s.,!?¿¡-]/g, "");
+}
+
 async function translateText() {
   if (!confirmedInputLanguage) {
     alert(isSpanishUI() ? "Confirma primero el idioma detectado." : "Please confirm the detected language first.");
@@ -837,6 +854,8 @@ async function registerBackgroundSync() {
   }
 }
 
+// ===== FINAL FIX =====
+
 async function registerPeriodicSync() {
   if (!("serviceWorker" in navigator)) {
     return;
@@ -865,3 +884,4 @@ async function registerPeriodicSync() {
   } else {
     console.log("Periodic background sync not supported.");
   }
+}
