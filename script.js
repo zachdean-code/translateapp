@@ -263,6 +263,7 @@ function resetConfirmedLanguage() {
   el("pronunciationSection")?.classList.add("hidden");
 
   updateAdditionalInfo("");
+  refreshPronunciationAvailability();
   styleConfirmationRow();
   updateTranslateState();
 }
@@ -270,6 +271,23 @@ function resetConfirmedLanguage() {
 function togglePronunciation() {
   const checked = !!el("pronToggle")?.checked;
   el("pronunciationSection")?.classList.toggle("hidden", !checked);
+}
+function refreshPronunciationAvailability() {
+  const toggle = el("pronToggle");
+  const section = el("pronunciationSection");
+  const box = el("pronunciation");
+  const target = targetSelection?.label || "";
+  const supported = hasPronunciationSupport(confirmedInputLanguage, target);
+
+  if (!toggle || !section || !box) return;
+
+  toggle.disabled = !supported;
+
+  if (!supported) {
+    toggle.checked = false;
+    box.value = "";
+    section.classList.add("hidden");
+  }
 }
 
 function scoreLanguageMatch(item, query) {
@@ -792,11 +810,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTranslateState();
   }, "detected");
 
-  if (el("translateButton")) el("translateButton").disabled = true;
-  if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
-  if (el("additionalInfoSection")) el("additionalInfoSection").classList.add("hidden");
-  styleConfirmationRow();
-  registerPeriodicSync();
+if (el("translateButton")) el("translateButton").disabled = true;
+if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
+if (el("additionalInfoSection")) el("additionalInfoSection").classList.add("hidden");
+
+refreshPronunciationAvailability();
+
+styleConfirmationRow();
+registerPeriodicSync();
 });
 
 async function enablePushNotifications() {
@@ -1115,8 +1136,20 @@ function resetConfirmedLanguage() {
 }
 
 function togglePronunciation() {
-  const checked = !!el("pronToggle")?.checked;
-  el("pronunciationSection")?.classList.toggle("hidden", !checked);
+  const toggle = el("pronToggle");
+  const section = el("pronunciationSection");
+  const target = targetSelection?.label || "";
+  const supported = hasPronunciationSupport(confirmedInputLanguage, target);
+
+  if (!toggle || !section) return;
+
+  if (!supported) {
+    toggle.checked = false;
+    section.classList.add("hidden");
+    return;
+  }
+
+  section.classList.toggle("hidden", !toggle.checked);
 }
 
 function scoreLanguageMatch(item, query) {
@@ -1384,6 +1417,9 @@ function keepDetected() {
   setConfirmedDisplay(confirmedInputLanguage);
   el("changeDetectedWrap")?.classList.add("hidden");
   styleConfirmationRow();
+
+  refreshPronunciationAvailability();
+
   updateTranslateState();
 }
 
@@ -1737,24 +1773,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  setupSearch("targetSearch", "targetSuggestions", (item) => {
-    targetSelection = item;
-    el("targetSearch").value = localizeLanguageLabel(item.label);
-    closeSuggestions(el("targetSuggestions"), "target");
-    updateTranslateState();
-  }, "target");
+ setupSearch("targetSearch", "targetSuggestions", (item) => {
+  targetSelection = item;
+  el("targetSearch").value = localizeLanguageLabel(item.label);
+  closeSuggestions(el("targetSuggestions"), "target");
 
-  setupSearch("detectedSearch", "detectedSuggestions", (item) => {
-    confirmedInputLanguage = item.label;
-    confirmationMode = "chosen";
-    detectedSelection = { label: item.label };
-    el("detectedSearch").value = localizeLanguageLabel(item.label);
-    closeSuggestions(el("detectedSuggestions"), "detected");
-    el("changeDetectedWrap")?.classList.add("hidden");
-    setConfirmedDisplay(item.label);
-    styleConfirmationRow();
-    updateTranslateState();
-  }, "detected");
+  refreshPronunciationAvailability();
+
+  updateTranslateState();
+}, "target");
+
+   setupSearch("detectedSearch", "detectedSuggestions", (item) => {
+  confirmedInputLanguage = item.label;
+  confirmationMode = "chosen";
+  detectedSelection = { label: item.label };
+  el("detectedSearch").value = localizeLanguageLabel(item.label);
+  closeSuggestions(el("detectedSuggestions"), "detected");
+  el("changeDetectedWrap")?.classList.add("hidden");
+  setConfirmedDisplay(item.label);
+  styleConfirmationRow();
+
+  refreshPronunciationAvailability();
+
+  updateTranslateState();
+}, "detected");
 
   if (el("translateButton")) el("translateButton").disabled = true;
   if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
