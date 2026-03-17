@@ -1,4 +1,4 @@
-/* 0316_1205a_STYLE_FULL_LOCKED */
+/* 0317_1220a_style_FULL_LOCKED */
 
 /* ===== BASE ===== */
 *{box-sizing:border-box;}
@@ -171,23 +171,23 @@ button{
 
 .hidden{display:none !important;}
 
-/* ===== DETECTED LANGUAGE ===== */
+/* ===== DETECTED LANGUAGE CARD ===== */
 .detectedCard{
   margin-bottom:14px;
-  padding:14px;
-  border-radius:12px;
-  background:rgba(37,99,235,0.06);
-  border:1px solid rgba(37,99,235,0.18);
+  padding:16px 18px;
+  border-radius:14px;
+  background:rgba(37,99,235,0.08);
+  border:1px solid rgba(37,99,235,0.22);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
+  gap:16px;
   flex-wrap:nowrap;
 }
 
 body.dark .detectedCard{
-  background:rgba(59,130,246,0.08);
-  border-color:rgba(96,165,250,0.25);
+  background:rgba(59,130,246,0.10);
+  border-color:rgba(96,165,250,0.28);
 }
 
 #detectedLanguageDialect{
@@ -266,8 +266,17 @@ body.dark .suggestionItem.activeSuggestion{background:#374151;}
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:10px 36px;
-  margin-bottom:14px;
+  margin:0 0 14px;
+  padding:16px 18px;
+  border-radius:14px;
+  background:rgba(59,130,246,0.06);
+  border:1px solid rgba(96,165,250,0.20);
   align-items:start;
+}
+
+body.dark #contextSection{
+  background:rgba(59,130,246,0.06);
+  border-color:rgba(96,165,250,0.20);
 }
 
 #contextSection > div{
