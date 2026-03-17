@@ -5,24 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cross-Cultural Translator</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#122071">
 </head>
 
 <body>
 
 <div class="container">
 
+  <!-- Top Bar -->
   <div class="topBar">
     <div class="languageGroup">
-      <label>Site Language</label>
-      <select id="siteLanguage">
+      <label for="siteLanguage">Site Language</label>
+      <select id="siteLanguage" class="miniSelect">
         <option value="en">English</option>
         <option value="es">Español</option>
       </select>
     </div>
 
-    <button id="darkModeButton">🌙 Dark</button>
+    <button id="darkModeButton" class="darkToggle">🌙 Dark</button>
   </div>
 
+  <!-- Header -->
   <h1>Cross-Cultural Translator™</h1>
 
   <p class="subtitle">
@@ -33,86 +37,61 @@
     Dialect-aware translation, pronunciation guidance, and cultural clarity
   </p>
 
+  <!-- MAIN GRID -->
   <div class="translatorRow">
 
-    <!-- LEFT SIDE -->
+    <!-- LEFT -->
     <div class="inputColumn">
 
-      <label>Input Text</label>
+      <label for="userInput">Input Text</label>
       <textarea id="userInput"></textarea>
 
       <div class="contextToggleRow">
         <input id="contextToggle" type="checkbox">
-        <label>Enhanced Context Mode</label>
+        <label for="contextToggle">Enhanced Context Mode</label>
       </div>
 
-      <div id="contextSection" class="hidden">
+      <label for="targetSearch">Translate To</label>
+      <input id="targetSearch" type="text">
 
-        <div>
-          <label>To Whom?</label>
-          <select id="contextAudience">
-            <option value=""></option>
-            <option value="friend">Friend</option>
-            <option value="romantic">Romantic</option>
-            <option value="professional">Professional</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Intent / Tone</label>
-          <select id="contextTone">
-            <option value=""></option>
-            <option value="casual">Casual</option>
-            <option value="formal">Formal</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Situation</label>
-          <select id="contextSituation">
-            <option value=""></option>
-            <option value="travel">Travel</option>
-            <option value="business">Business</option>
-          </select>
-        </div>
-
-      </div>
-
-      <label>Translate To</label>
-      <input id="targetSearch">
-
-      <button id="translateButton">Translate</button>
+      <button id="translateButton" class="primaryButton">
+        Translate
+      </button>
 
     </div>
 
-    <!-- RIGHT SIDE -->
+    <!-- RIGHT -->
     <div class="outputColumn">
 
       <div class="translationHeader">
-        <label>Translation</label>
+        <label for="output">Translation</label>
 
         <div class="toggleRow">
           <input id="pronToggle" type="checkbox">
-          <label>Show Pronunciation</label>
+          <label for="pronToggle">Show Pronunciation</label>
         </div>
       </div>
 
       <textarea id="output" readonly></textarea>
 
-      <button id="copyButton">Copy</button>
+      <button id="copyButton" class="copyButton">
+        Copy
+      </button>
 
+      <!-- Pronunciation -->
       <div id="pronunciationSection" class="hidden">
-        <label>Pronunciation Guide</label>
+        <label for="pronunciation">Pronunciation Guide</label>
         <textarea id="pronunciation" readonly></textarea>
 
         <div class="buttonRow">
-          <button id="speakNormal">Speak Normally</button>
-          <button id="speakSlow">Speak Slowly</button>
+          <button id="speakNormal" class="normalButton">Speak Normally</button>
+          <button id="speakSlow" class="slowButton">Speak Slowly</button>
         </div>
       </div>
 
+      <!-- Additional Info -->
       <div id="additionalInfoSection" class="hidden">
-        <label>Additional Information</label>
+        <label for="additionalInfo">Additional Information</label>
         <textarea id="additionalInfo" readonly></textarea>
       </div>
 
@@ -122,6 +101,8 @@
 
 </div>
 
+<script src="translations.js"></script>
+<script src="languageCatalog.js"></script>
 <script src="pronunciation.js"></script>
 <script src="script.js"></script>
 
