@@ -1,8 +1,11 @@
-/* 0317_restore_full_style */
+/* =========================================================
+   Cross-Cultural Translator
+   Recommended merged style pass
+   Base: 0316_1100p_style-css_FULL.txt
+   Targeted merges: contact-mode alignment + centered context fields
+   ========================================================= */
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 :focus-visible{
   outline:3px solid #2563eb;
@@ -95,13 +98,8 @@ h1{
   margin:0 0 28px;
 }
 
-body.dark .subtitle{
-  color:#d1d5db;
-}
-
-body.dark .description{
-  color:#9ca3af;
-}
+body.dark .subtitle{color:#d1d5db;}
+body.dark .description{color:#9ca3af;}
 
 .translatorRow{
   display:grid;
@@ -124,9 +122,8 @@ label{
   margin-bottom:8px;
 }
 
-/* critical: do not style checkboxes like text inputs */
 textarea,
-input:not([type="checkbox"]),
+input,
 select{
   width:100%;
   padding:12px 14px;
@@ -145,33 +142,24 @@ textarea{
 }
 
 #userInput,
-#output{
-  height:95px;
-  min-height:95px;
+#output,
+#translationOutput{
+  min-height:95px !important;
+  height:95px !important;
 }
 
-#pronunciation{
-  height:60px;
+#pronunciation,
+#contextOutput,
+#usageNotes{
   min-height:60px;
 }
 
-#additionalInfo{
-  height:72px;
-  min-height:72px;
-}
-
 body.dark textarea,
-body.dark input:not([type="checkbox"]),
+body.dark input,
 body.dark select{
   background:#111827;
   color:#f3f4f6;
   border-color:#4b5563;
-}
-
-input[type="checkbox"]{
-  width:auto;
-  margin:0;
-  padding:0;
 }
 
 button{
@@ -183,88 +171,72 @@ button{
   font-size:14px;
 }
 
-.primaryButton{
+.primaryButton,
+#translateButton{
   background:#2563eb;
   color:white;
-  margin-bottom:16px;
 }
 
-.copyButton{
+.copyButton,
+#copyButton,
+.keepButton,
+#keepDetectedButton{
   background:#15803d;
   color:white;
-  margin-bottom:16px;
 }
 
-.normalButton{
+.normalButton,
+#speakNormal,
+#speakInput{
   background:#f59e0b;
   color:white;
 }
 
-.slowButton{
+.slowButton,
+#speakSlow,
+#speakOutput{
   background:#dc2626;
   color:white;
 }
 
-.keepButton{
-  background:#15803d;
-  color:white;
-}
-
-.changeButton{
+.changeButton,
+#changeDetectedButton{
   background:#b45309;
   color:white;
 }
 
-.buttonRow{
+.buttonRow,
+.outputActions,
+#outputActions,
+.speakButtonRow{
   display:flex;
   gap:12px;
   width:100%;
-  margin-top:6px;
+  align-items:center;
+  flex-wrap:wrap;
 }
 
-.buttonRow button{
+.buttonRow button,
+.outputActions button,
+#outputActions button,
+.speakButtonRow button{
   flex:1;
   text-align:center;
+  margin-bottom:0;
 }
 
 .hidden{
   display:none !important;
 }
 
-.detectedCard{
-  margin-bottom:14px;
-  padding:16px 24px 16px 18px;
-  border-radius:14px;
-  background:rgba(37,99,235,0.08);
-  border:1px solid rgba(37,99,235,0.22);
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  align-items:center;
-  column-gap:20px;
-}
-
-body.dark .detectedCard{
-  background:rgba(59,130,246,0.10);
-  border-color:rgba(96,165,250,0.28);
-}
-
-#detectedLanguageDialect{
-  min-width:0;
-  line-height:1.15;
-}
-
-.detectedButtons{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  justify-self:end;
-}
-
+/* ===== SEARCH / SUGGESTIONS ===== */
 .searchWrap{
   position:relative;
 }
 
-.suggestions{
+.suggestions,
+#detectedSuggestions,
+#targetSuggestions{
   display:none;
   position:absolute;
   left:0;
@@ -280,7 +252,9 @@ body.dark .detectedCard{
   overflow-y:auto;
 }
 
-body.dark .suggestions{
+body.dark .suggestions,
+body.dark #detectedSuggestions,
+body.dark #targetSuggestions{
   background:#111827;
   border-color:#4b5563;
 }
@@ -291,50 +265,119 @@ body.dark .suggestions{
   border-bottom:1px solid #e5e7eb;
 }
 
-.suggestionItem:last-child{
-  border-bottom:none;
-}
-
-.suggestionItem:hover{
-  background:#f3f4f6;
-}
-
+.suggestionItem:last-child{border-bottom:none;}
+.suggestionItem:hover,
 .suggestionItem.activeSuggestion{
-  background:#e5e7eb;
+  background:#eff6ff;
 }
 
 body.dark .suggestionItem{
   border-bottom-color:#374151;
 }
 
-body.dark .suggestionItem:hover{
-  background:#374151;
-}
-
+body.dark .suggestionItem:hover,
 body.dark .suggestionItem.activeSuggestion{
-  background:#374151;
+  background:#1f2937;
 }
 
-.contextToggleRow{
+/* ===== DETECTED LANGUAGE CARD ===== */
+.detectedCard,
+#detectedLanguageCard,
+#detectedLanguageRow,
+.detected-language-row{
+  margin-bottom:14px;
+  padding:16px 18px;
+  border-radius:14px;
+  background:rgba(37,99,235,0.08);
+  border:1px solid rgba(37,99,235,0.22);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:nowrap;
+  min-width:0;
+}
+
+body.dark .detectedCard,
+body.dark #detectedLanguageCard{
+  background:rgba(59,130,246,0.10);
+  border-color:rgba(96,165,250,0.28);
+}
+
+#detectedLanguageDialect,
+#detectedLanguageLabel,
+.detected-language-label,
+#detectedLanguageText,
+.detected-language-text,
+#detectedSearch{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+#detectedLanguageText,
+.detected-language-text,
+#detectedLanguageDialect{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  line-height:1.15;
+}
+
+.detectedButtons,
+#changeDetectedWrap,
+.change-detected-wrap{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+  white-space:nowrap;
+}
+
+.detectedButtons button,
+#changeDetectedWrap button,
+.change-detected-wrap button{
+  margin-bottom:0;
+}
+
+/* ===== CONTEXT / ENHANCED CONTEXT TOGGLE ===== */
+.contextToggleRow,
+.inline-check-row,
+#enhancedContactWrap,
+.enhanced-contact-wrap{
   display:flex;
   align-items:center;
   gap:8px;
   margin:6px 0 14px;
 }
 
-.contextToggleRow input[type="checkbox"]{
+.contextToggleRow input[type="checkbox"],
+.inline-check-row input[type="checkbox"],
+#enhancedContactWrap input[type="checkbox"],
+.enhanced-contact-wrap input[type="checkbox"],
+.toggleRow input[type="checkbox"]{
   width:auto;
   margin:0;
-  padding:0;
+  flex:0 0 auto;
 }
 
-.contextToggleRow label{
+.contextToggleRow label,
+.inline-check-row label,
+#enhancedContactWrap label,
+.enhanced-contact-wrap label{
   margin:0;
+  line-height:1.2;
 }
 
-#contextSection{
+/* ===== CONTEXT FIELDS ===== */
+#contextSection,
+#contextFieldsRow,
+.contextFieldsRow,
+#contactFieldsRow,
+.contactFieldsRow,
+.contact-grid,
+#contactModeGrid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(140px,1fr));
   gap:14px 24px;
   margin:0 0 14px;
   padding:16px 18px;
@@ -344,67 +387,129 @@ body.dark .suggestionItem.activeSuggestion{
   align-items:start;
 }
 
-body.dark #contextSection{
+body.dark #contextSection,
+body.dark #contextFieldsRow,
+body.dark #contactFieldsRow,
+body.dark .contact-grid,
+body.dark #contactModeGrid{
   background:rgba(59,130,246,0.06);
   border-color:rgba(96,165,250,0.20);
 }
 
-#contextSection > div{
+#contextSection > div,
+#contextFieldsRow > div,
+.contextFieldsRow > div,
+#contactFieldsRow > div,
+.contactFieldsRow > div,
+.contact-grid .field-block,
+#contactModeGrid .field-block{
+  min-width:0;
   display:flex;
   flex-direction:column;
   align-items:center;
-  min-width:0;
 }
 
-#contextSection label{
+#contextSection label,
+#contextFieldsRow label,
+.contextFieldsRow label,
+#contactFieldsRow label,
+.contactFieldsRow label,
+.contact-grid .field-block label,
+#contactModeGrid .field-block label{
   margin-bottom:6px;
   line-height:1.15;
   text-align:center;
+  white-space:nowrap;
 }
 
-#contextSection select{
+#contextSection select,
+#contextSection input,
+#contextFieldsRow select,
+#contextFieldsRow input,
+.contextFieldsRow select,
+.contextFieldsRow input,
+#contactFieldsRow select,
+#contactFieldsRow input,
+.contactFieldsRow select,
+.contactFieldsRow input,
+.contact-grid .field-block select,
+.contact-grid .field-block input,
+#contactModeGrid .field-block select,
+#contactModeGrid .field-block input{
   width:100%;
   min-width:0;
-  margin:0;
-  display:block;
+  margin-bottom:0;
 }
 
-.translationHeader{
+.optional-text,
+.field-optional{
+  font-size:.9rem;
+  opacity:.7;
+  line-height:1.1;
+  min-height:1em;
+}
+
+.optional-text.is-empty,
+.field-optional.is-empty,
+.optional-text:empty,
+.field-optional:empty{
+  visibility:hidden;
+}
+
+/* ===== TRANSLATION HEADER / SHOW PRONUNCIATION ===== */
+.translationHeader,
+.translationHeaderRow,
+#translationHeaderRow,
+.translation-header-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
   margin-bottom:8px;
+  flex-wrap:nowrap;
 }
 
-.translationHeader label{
+.translationHeader label,
+.translationHeaderRow label,
+#translationHeaderRow label{
   margin:0;
 }
 
-.toggleRow{
+.toggleRow,
+.pronunciation-toggle{
   display:flex;
   align-items:center;
   justify-content:flex-end;
-  gap:10px;
+  gap:6px;
+  margin-top:0;
+  margin-bottom:10px;
+  white-space:nowrap;
+}
+
+.translationHeader .toggleRow,
+.translationHeaderRow .toggleRow,
+#translationHeaderRow .toggleRow,
+.translationHeader .pronunciation-toggle,
+.translationHeaderRow .pronunciation-toggle,
+#translationHeaderRow .pronunciation-toggle{
+  margin:0;
+}
+
+.translationHeader .toggleRow label,
+.translationHeaderRow .toggleRow label,
+#translationHeaderRow .toggleRow label,
+.translationHeader .pronunciation-toggle label,
+.translationHeaderRow .pronunciation-toggle label,
+#translationHeaderRow .pronunciation-toggle label{
+  margin:0;
+}
+
+.outputColumn > .toggleRow{
   margin-top:0;
   margin-bottom:10px;
 }
 
-.translationHeader .toggleRow{
-  margin:0;
-  gap:6px;
-}
-
-.toggleRow input[type="checkbox"]{
-  width:auto;
-  margin:0;
-  padding:0;
-}
-
-.translationHeader .toggleRow label{
-  margin:0;
-}
-
+/* ===== FOOTER ===== */
 footer{
   margin-top:28px;
   text-align:center;
@@ -413,51 +518,56 @@ footer{
   line-height:1.6;
 }
 
-body.dark footer{
-  color:#9ca3af;
-}
+body.dark footer{color:#9ca3af;}
+footer strong{color:inherit;}
 
-footer strong{
-  display:block;
-  margin-bottom:4px;
-  font-size:13px;
-  font-weight:700;
-}
-
-@media (max-width:900px){
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px){
   .translatorRow{
     grid-template-columns:1fr;
   }
 
-  h1{
-    font-size:2.2rem;
-  }
-
-  .container{
-    padding:20px;
-  }
-
-  .topBar{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  #contextSection{
+  #contextSection,
+  #contextFieldsRow,
+  .contextFieldsRow,
+  #contactFieldsRow,
+  .contactFieldsRow,
+  .contact-grid,
+  #contactModeGrid{
     grid-template-columns:1fr 1fr;
   }
 }
 
-@media (max-width:600px){
-  #contextSection{
+@media (max-width: 640px){
+  #contextSection,
+  #contextFieldsRow,
+  .contextFieldsRow,
+  #contactFieldsRow,
+  .contactFieldsRow,
+  .contact-grid,
+  #contactModeGrid{
     grid-template-columns:1fr;
   }
 
-  .translationHeader{
+  .detectedCard,
+  #detectedLanguageCard,
+  #detectedLanguageRow,
+  .detected-language-row,
+  .translationHeader,
+  .translationHeaderRow,
+  #translationHeaderRow,
+  .translation-header-row{
     flex-wrap:wrap;
-    align-items:flex-start;
   }
 
-  .toggleRow{
+  .detectedButtons,
+  #changeDetectedWrap,
+  .change-detected-wrap{
+    margin-left:auto;
+  }
+
+  .toggleRow,
+  .pronunciation-toggle{
     justify-content:flex-start;
   }
 }
