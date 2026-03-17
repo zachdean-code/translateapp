@@ -228,6 +228,7 @@ function styleConfirmationRow() {
   row.style.alignItems = "center";
 
   if (confirmedInputLanguage) {
+    card.classList.add("confirmed");
     keepBtn.classList.add("hidden");
     row.style.justifyContent = "flex-end";
     row.style.gap = "10px";
@@ -241,6 +242,7 @@ function styleConfirmationRow() {
     card.style.paddingTop = "10px";
     card.style.paddingBottom = "10px";
   } else {
+    card.classList.remove("confirmed");
     keepBtn.classList.remove("hidden");
     row.style.justifyContent = "flex-start";
     row.style.gap = "10px";
