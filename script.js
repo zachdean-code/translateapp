@@ -169,6 +169,30 @@ function sanitizeForSpeech(text) {
     .trim();
 }
 
+function normalizePronunciationStyle(text) {
+  return (text || "")
+    .replace(/\|/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\s*-\s*/g, "-")
+    .trim();
+}
+
+function updateAdditionalInfo(text) {
+  const box = el("additionalInfo");
+  const section = el("additionalInfoSection");
+  if (!box || !section) return;
+
+  const value = (text || "").trim();
+
+  if (value) {
+    box.value = value;
+    section.classList.remove("hidden");
+  } else {
+    box.value = "";
+    section.classList.add("hidden");
+  }
+}
+
 function setDetectedDisplay(label) {
   const display = el("detectedLanguageDialect");
   if (!display) return;
@@ -254,6 +278,7 @@ function resetConfirmedLanguage() {
   if (el("pronToggle")) el("pronToggle").checked = false;
   el("pronunciationSection")?.classList.add("hidden");
 
+  updateAdditionalInfo("");
   styleConfirmationRow();
   updateTranslateState();
 }
@@ -311,7 +336,6 @@ function findMatches(value) {
     .map(row => row.item)
     .slice(0, 12);
 }
-
 function closeSuggestions(container, type) {
   if (!container) return;
   container.style.display = "none";
@@ -502,6 +526,7 @@ function detectInput(text) {
 
   return { label: "American English" };
 }
+
 function updateDetection() {
   const text = el("userInput")?.value.trim() || "";
   const card = el("detectedCard");
@@ -593,12 +618,12 @@ function englishPronunciationForSpanishReader(text) {
         .replace(/ea/g, "i");
     })
     .filter(Boolean)
-    .join("   ");
+    .join(" ");
 }
 
 function spanishPronunciationForEnglishReader(text) {
   const specialWords = {
-    "hola": "OH-lah",
+    "hola": "oh-LAH",
     "parcero": "par-SEH-roh",
     "gracias": "GRAH-syahs",
     "donde": "DOHN-deh",
@@ -611,20 +636,23 @@ function spanishPronunciationForEnglishReader(text) {
     "como": "KOH-moh",
     "estas": "ehs-TAHS",
     "clima": "KLEE-mah",
-    "hoy": "oy"
+    "hoy": "oy",
+    "puedo": "pweh-DOH",
+    "tener": "teh-NEHR",
+    "una": "oo-nah",
+    "mejora": "meh-HOH-rah"
   };
 
   return text
     .split(/\s+/)
     .filter(Boolean)
     .map(word => {
-      const clean = normalize(word).replace(/[^a-z]/g, "");
+      const raw = word.replace(/[^\p{L}]/gu, "");
+      const clean = normalize(raw).replace(/[^a-z]/g, "");
       if (!clean) return "";
       if (specialWords[clean]) return specialWords[clean];
 
       let out = clean
-        .replace(/ñ/g, "ny")
-        .replace(/ll/g, "y")
         .replace(/que/g, "keh")
         .replace(/qui/g, "kee")
         .replace(/gue/g, "geh")
@@ -633,6 +661,8 @@ function spanishPronunciationForEnglishReader(text) {
         .replace(/gi/g, "hee")
         .replace(/ce/g, "seh")
         .replace(/ci/g, "see")
+        .replace(/ll/g, "y")
+        .replace(/ñ/g, "ny")
         .replace(/ch/g, "ch")
         .replace(/j/g, "h")
         .replace(/a/g, "ah")
@@ -642,16 +672,15 @@ function spanishPronunciationForEnglishReader(text) {
         .replace(/u/g, "oo");
 
       out = out
-        .replace(/([aeiou]{1,2}[a-z]+)/g, "$1-")
+        .replace(/([a-z]{2,})(ah|eh|ee|oh|oo)/gi, "$1-$2")
         .replace(/-+/g, "-")
-        .replace(/-$/, "");
+        .replace(/^-|-$/g, "");
 
       return out;
     })
     .filter(Boolean)
-    .join("   ");
+    .join(" ");
 }
-
 function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
   if (!translatedText) return "";
 
@@ -691,20 +720,36 @@ async function translateText() {
         text: input,
         target: target,
         targetLanguage: target,
-        sourceLanguage: confirmedInputLanguage
+        sourceLanguage: confirmedInputLanguage,
+        contextAudience: el("contextAudience")?.value || "",
+        contextTone: el("contextTone")?.value || "",
+        contextSituation: el("contextSituation")?.value || "",
+        enhancedContextMode: !!el("contextToggle")?.checked
       })
     });
 
     const data = await response.json();
     const translated = data.output || "";
+    const additionalInfo =
+      data.additional_information ||
+      data.additionalInfo ||
+      data.context_note ||
+      data.usage_note ||
+      data.additionalNotes ||
+      "";
 
     if (el("output")) el("output").value = translated;
+
     if (el("pronunciation")) {
-      el("pronunciation").value = buildPronunciation(translated, confirmedInputLanguage, target);
+      const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
+      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
     }
+
+    updateAdditionalInfo(additionalInfo);
   } catch (err) {
     if (el("output")) el("output").value = "Network error";
     if (el("pronunciation")) el("pronunciation").value = "";
+    updateAdditionalInfo("");
   }
 }
 
@@ -764,6 +809,7 @@ function applySiteLanguage(lang) {
     safeTextById("copyButton", "Copiar");
     safeTextById("pronToggleLabel", "Mostrar pronunciación");
     safeTextBySelector('label[for="pronunciation"]', "Guía de pronunciación");
+    safeTextBySelector('label[for="additionalInfo"]', "Información adicional");
     safeTextById("speakNormal", "Hablar normal");
     safeTextById("speakSlow", "Hablar lento");
   } else {
@@ -781,6 +827,7 @@ function applySiteLanguage(lang) {
     safeTextById("copyButton", "Copy");
     safeTextById("pronToggleLabel", "Show Pronunciation");
     safeTextBySelector('label[for="pronunciation"]', "Pronunciation Guide");
+    safeTextBySelector('label[for="additionalInfo"]', "Additional Information");
     safeTextById("speakNormal", "Speak Normally");
     safeTextById("speakSlow", "Speak Slowly");
   }
@@ -880,6 +927,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (el("translateButton")) el("translateButton").disabled = true;
   if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
+  if (el("additionalInfoSection")) el("additionalInfoSection").classList.add("hidden");
   styleConfirmationRow();
   registerPeriodicSync();
 });
