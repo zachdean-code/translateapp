@@ -287,6 +287,7 @@ button:disabled {
 .detectedCard.confirmed .keepButton {
   display: none;
 }
+
 /* context toggle row */
 .contextToggleRow {
   display: flex;
@@ -354,7 +355,7 @@ button:disabled {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: nowrap;
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 
 .translationHeader > label {
@@ -498,4 +499,21 @@ footer {
   .buttonRow {
     flex-direction: column;
   }
+}
+
+#inputLabel,
+.translationHeader,
+label[for="targetSearch"] {
+  margin-bottom: 0 !important;
+}
+
+#userInput,
+#output,
+.searchWrap {
+  margin-top: 0 !important;
+}
+
+.inputColumn > label,
+.outputColumn > label {
+  margin-bottom: 0 !important;
 }
