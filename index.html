@@ -140,28 +140,43 @@
         </button>
       </div>
 
-      <div class="outputColumn">
-        <div class="translationHeader">
-          <label for="output">Translation</label>
+ <div class="outputColumn">
 
-          <div class="toggleRow">
-            <input id="pronToggle" type="checkbox" tabindex="8">
-            <label id="pronToggleLabel" for="pronToggle">
-              Show Pronunciation
-            </label>
-          </div>
-        </div>
+  <div class="translationHeader">
+    <label for="output">Translation</label>
 
-        <textarea id="output" readonly tabindex="-1"></textarea>
+    <div class="toggleRow">
+      <input id="pronToggle" type="checkbox">
+      <label id="pronToggleLabel" for="pronToggle">
+        Show Pronunciation
+      </label>
+    </div>
+  </div>
 
-        <button id="copyButton" class="copyButton" tabindex="7">
-          Copy
-        </button>
+  <textarea id="output" readonly></textarea>
 
-        <div id="pronunciationSection" class="hidden">
-          <label for="pronunciation">Pronunciation Guide</label>
-          <textarea id="pronunciation" readonly tabindex="-1"></textarea>
-        </div>
+  <button id="copyButton" class="copyButton">
+    Copy
+  </button>
+
+  <!-- ✅ THIS GOES HERE -->
+  <div id="pronunciationSection" class="hidden">
+    <label for="pronunciation">Pronunciation Guide</label>
+    <textarea id="pronunciation" readonly tabindex="-1"></textarea>
+
+    <div class="buttonRow">
+      <button id="speakNormal" class="normalButton">Speak Normally</button>
+      <button id="speakSlow" class="slowButton">Speak Slowly</button>
+    </div>
+  </div>
+
+  <!-- THEN THIS -->
+  <div id="additionalInfoSection" class="hidden">
+    <label for="additionalInfo">Additional Information</label>
+    <textarea id="additionalInfo" readonly tabindex="-1"></textarea>
+  </div>
+
+</div>
 
         <div id="additionalInfoSection" class="hidden">
           <label for="additionalInfo">Additional Information</label>
