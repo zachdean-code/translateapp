@@ -848,7 +848,9 @@ document.addEventListener("DOMContentLoaded", () => {
   el("pronToggle")?.addEventListener("change", togglePronunciation);
   el("speakNormal")?.addEventListener("click", () => speak(.70));
   el("speakSlow")?.addEventListener("click", () => speak(0.2));
-
+  el("contextToggle")?.addEventListener("change", (e) => {
+  el("contextSection")?.classList.toggle("hidden", !e.target.checked);
+});
   setupSearch("targetSearch", "targetSuggestions", (item) => {
     targetSelection = item;
     el("targetSearch").value = localizeLanguageLabel(item.label);
