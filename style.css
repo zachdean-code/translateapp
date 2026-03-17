@@ -242,10 +242,7 @@ button:disabled {
 
 #detectedLanguageDialect {
   display: block;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  margin: 0 0 10px 0;
+  margin: 0;
   color: #f9fafb;
   font-size: 16px;
   line-height: 1.32;
@@ -259,8 +256,8 @@ button:disabled {
 .detectedButtons {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: nowrap;
   min-width: 0;
 }
@@ -270,14 +267,32 @@ button:disabled {
   flex: 0 0 auto;
 }
 
-#changeDetectedWrap {
-  margin-top: -2px;
+.detectedButtons::before {
+  content: "";
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-#changeDetectedWrap label {
-  margin-bottom: 8px;
+.detectedCard.confirmed {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
 }
 
+.detectedCard.confirmed #detectedLanguageDialect {
+  margin: 0;
+  max-width: 100%;
+}
+
+.detectedCard.confirmed .detectedButtons {
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.detectedCard.confirmed .keepButton {
+  display: none;
+}
 /* context toggle row */
 .contextToggleRow {
   display: flex;
