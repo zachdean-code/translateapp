@@ -1,66 +1,87 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   margin: 0;
-  background: #1e293b;
-  color: white;
+  background: #f5f7fa;
+  color: #111;
 }
 
 .container {
   max-width: 1100px;
   margin: auto;
-  padding: 20px;
+  padding: 24px;
 }
 
+/* Top Bar */
 .topBar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: center;
 }
 
+.miniSelect,
+.darkToggle {
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* Header */
+h1 {
+  font-size: 40px;
+  margin: 20px 0 10px;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.description {
+  margin-bottom: 24px;
+}
+
+/* GRID */
 .translatorRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.inputColumn,
+.outputColumn {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
 }
 
-.inputColumn, .outputColumn {
-  flex: 1;
-}
-
+/* Textareas */
 textarea {
   width: 100%;
   height: 100px;
-  margin-bottom: 10px;
   padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+/* Buttons */
+.primaryButton {
+  margin-top: 12px;
+  padding: 10px;
+  background: #2d6cdf;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+
+.copyButton {
+  margin: 12px auto;
+  background: #22a55a;
+  color: white;
+  padding: 8px 16px;
   border-radius: 8px;
   border: none;
 }
 
-button {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-#translateButton {
-  background: #2563eb;
-  color: white;
-}
-
-#copyButton {
-  background: #16a34a;
-  color: white;
-}
-
-#speakNormal {
-  background: orange;
-}
-
-#speakSlow {
-  background: red;
-  color: white;
-}
-
+/* Header Row */
 .translationHeader {
   display: flex;
   justify-content: space-between;
@@ -73,10 +94,47 @@ button {
   gap: 6px;
 }
 
-.contextToggleRow {
-  margin-top: 10px;
+/* Pronunciation */
+.buttonRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
 }
 
+.normalButton {
+  background: orange;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+}
+
+.slowButton {
+  background: red;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* Hidden */
 .hidden {
   display: none;
+}
+
+/* DARK MODE */
+body.dark {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+body.dark textarea,
+body.dark input {
+  background: #111827;
+  color: #e5e7eb;
+  border: 1px solid #374151;
+}
+
+body.dark .container {
+  background: transparent;
 }
