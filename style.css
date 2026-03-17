@@ -517,19 +517,4 @@ label[for="targetSearch"] {
 .outputColumn > label {
   margin-bottom: 0 !important;
 }
-#inputLabel,
-.translationHeader,
-label[for="targetSearch"] {
-  margin-bottom: 0 !important;
-}
 
-#userInput,
-#output,
-.searchWrap {
-  margin-top: 0 !important;
-}
-
-.inputColumn > label,
-.outputColumn > label {
-  margin-bottom: 0 !important;
-}
