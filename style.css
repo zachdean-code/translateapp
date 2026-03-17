@@ -256,8 +256,8 @@ button:disabled {
 .detectedButtons {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 10px;
   flex-wrap: nowrap;
   min-width: 0;
 }
@@ -265,12 +265,6 @@ button:disabled {
 .detectedButtons .keepButton,
 .detectedButtons .changeButton {
   flex: 0 0 auto;
-}
-
-.detectedButtons::before {
-  content: "";
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 .detectedCard.confirmed {
@@ -281,13 +275,13 @@ button:disabled {
 }
 
 .detectedCard.confirmed #detectedLanguageDialect {
-  margin: 0;
   max-width: 100%;
 }
 
 .detectedCard.confirmed .detectedButtons {
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 0;
 }
 
 .detectedCard.confirmed .keepButton {
