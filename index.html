@@ -5,404 +5,125 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cross-Cultural Translator</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="122071">
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="topBar">
-      <div class="languageGroup">
-        <label for="siteLanguage">Site Language</label>
-        <select id="siteLanguage" class="miniSelect" tabindex="11">
-          <option value="en">English</option>
-          <option value="es">Español</option>
-        </select>
-      </div>
-
-      <button id="darkModeButton" class="darkToggle" tabindex="12">🌙 Dark</button>
+  <div class="topBar">
+    <div class="languageGroup">
+      <label>Site Language</label>
+      <select id="siteLanguage">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
     </div>
 
-    <h1>Cross-Cultural Translator™</h1>
-
-    <p class="subtitle">
-      Beyond translation — real cross-cultural communication
-    </p>
-
-    <p class="description">
-      Dialect-aware translation, pronunciation guidance, and cultural clarity
-    </p>
-
-    <div class="translatorRow">
-
-      <div class="inputColumn">
-        <label id="inputLabel" for="userInput">Input Text</label>
-
-        <textarea id="userInput" tabindex="1"></textarea>
-
-        <div id="detectedCard" class="detectedCard hidden">
-          <div id="detectedLanguageDialect"></div>
-
-          <div class="detectedButtons">
-            <button id="keepDetectedButton" class="keepButton" tabindex="2">
-              Keep
-            </button>
-
-            <button id="changeDetectedButton" class="changeButton" tabindex="3">
-              Change
-            </button>
-          </div>
-        </div>
-
-        <div id="changeDetectedWrap" class="hidden">
-          <label for="detectedSearch">
-            Change input language to:
-          </label>
-
-          <div class="searchWrap">
-            <input
-              id="detectedSearch"
-              type="text"
-              autocomplete="off"
-              tabindex="4"
-            >
-
-            <div id="detectedSuggestions" class="suggestions"></div>
-          </div>
-        </div>
-
-        <div class="contextToggleRow">
-          <input id="contextToggle" type="checkbox">
-          <label for="contextToggle">
-            Enhanced Context Mode
-          </label>
-        </div>
-
-        <div id="contextSection" class="hidden">
-
-          <div>
-            <label for="contextAudience">To Whom?</label>
-            <select id="contextAudience">
-              <option value=""></option>
-              <option value="friend">Friend</option>
-              <option value="romantic">Romantic interest</option>
-              <option value="professional">Boss / Professional</option>
-              <option value="stranger">Stranger</option>
-              <option value="service">Service Employee</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="contextTone">Intent / Tone</label>
-            <select id="contextTone">
-              <option value=""></option>
-              <option value="casual">Casual</option>
-              <option value="formal">Formal</option>
-              <option value="respectful">Respectful</option>
-              <option value="playful">Playful</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="contextSituation">Situation</label>
-            <select id="contextSituation">
-              <option value=""></option>
-              <option value="travel">Travel</option>
-              <option value="business">Business</option>
-              <option value="social">Social</option>
-              <option value="conflict">Conflict</option>
-              <option value="flirting">Flirting</option>
-            </select>
-          </div>
-
-        </div>
-
-        <label for="targetSearch">Translate To</label>
-
-        <div class="searchWrap">
-          <input
-            id="targetSearch"
-            type="text"
-            autocomplete="off"
-            tabindex="5"
-          >
-
-          <div id="targetSuggestions" class="suggestions"></div>
-        </div>
-
-        <button id="translateButton" class="primaryButton" tabindex="6">
-          Translate
-        </button>
-      </div>
-
-      <div class="outputColumn">
-
-        <div class="translationHeader">
-          <label for="output">Translation</label>
-
-          <div class="toggleRow">
-            <input id="pronToggle" type="checkbox" tabindex="8">
-            <label id="pronToggleLabel" for="pronToggle">
-              Show Pronunciation
-            </label>
-          </div>
-        </div>
-
-        <textarea id="output" readonly tabindex="-1"></textarea>
-
-        <button id="copyButton" class="copyButton" tabindex="7">
-          Copy
-        </button>
-
-        <div id="pronunciationSection" class="hidden">
-          <label for="pronunciation">Pronunciation Guide</label>
-          <textarea id="pronunciation" readonly tabindex="-1"></textarea>
-
-          <div class="buttonRow">
-            <button id="speakNormal" class="normalButton" tabindex="9">
-              Speak Normally
-            </button>
-
-            <button id="speakSlow" class="slowButton" tabindex="10">
-              Speak Slowly
-            </button>
-          </div>
-        </div>
-
-        <div id="additionalInfoSection" class="hidden">
-          <label for="additionalInfo">Additional Information</label>
-          <textarea id="additionalInfo" readonly tabindex="-1"></textarea>
-        </div>
-
-      </div>
-
-    </div>
-
-    <footer>
-      <strong>Cross-Cultural Translator™</strong>
-      <br>
-      Beyond translation — real cross-cultural communication<br>
-      Dialect-aware translation • Pronunciation guidance • Cultural clarity<br>
-      © 2026 CCTLA-TBD, LLC<br>
-      Patent pending.
-    </footer>
-
+    <button id="darkModeButton">🌙 Dark</button>
   </div>
 
-  <script src="translations.js"></script>
-  <script src="languageCatalog.js"></script>
-  <script src="pronunciation.js"></script>
-  <script src="script.js"></script>
+  <h1>Cross-Cultural Translator™</h1>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(registration => {
-            console.log('Service Worker registered:', registration);
-          })
-          .catch(error => {
-            console.error('Service Worker registration failed:', error);
-          });
-      });
-    }
-  </script>
+  <p class="subtitle">
+    Beyond translation — real cross-cultural communication
+  </p>
 
-</body>
-</html>
-    <div class="translatorRow">
+  <p class="description">
+    Dialect-aware translation, pronunciation guidance, and cultural clarity
+  </p>
 
-      <div class="inputColumn">
-        <label id="inputLabel" for="userInput">Input Text</label>
+  <div class="translatorRow">
 
-        <textarea id="userInput" tabindex="1"></textarea>
+    <!-- LEFT SIDE -->
+    <div class="inputColumn">
 
-        <div id="detectedCard" class="detectedCard hidden">
-          <div id="detectedLanguageDialect"></div>
+      <label>Input Text</label>
+      <textarea id="userInput"></textarea>
 
-          <div class="detectedButtons">
-            <button id="keepDetectedButton" class="keepButton" tabindex="2">
-              Keep
-            </button>
-
-            <button id="changeDetectedButton" class="changeButton" tabindex="3">
-              Change
-            </button>
-          </div>
-        </div>
-
-        <div id="changeDetectedWrap" class="hidden">
-          <label for="detectedSearch">
-            Change input language to:
-          </label>
-
-          <div class="searchWrap">
-            <input
-              id="detectedSearch"
-              type="text"
-              autocomplete="off"
-              tabindex="4"
-            >
-
-            <div id="detectedSuggestions" class="suggestions"></div>
-          </div>
-        </div>
-
-        <div class="contextToggleRow">
-          <input
-            id="contextToggle"
-            type="checkbox">
-          <label for="contextToggle">
-            Enhanced Context Mode
-          </label>
-        </div>
-
-        <div id="contextSection" class="hidden">
-
-          <div>
-            <label for="contextAudience">To Whom?</label>
-            <select id="contextAudience">
-              <option value=""></option>
-              <option value="friend">Friend</option>
-              <option value="romantic">Romantic interest</option>
-              <option value="professional">Boss / Professional</option>
-              <option value="stranger">Stranger</option>
-              <option value="service">Service Employee</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="contextTone">Intent / Tone</label>
-            <select id="contextTone">
-              <option value=""></option>
-              <option value="casual">Casual</option>
-              <option value="formal">Formal</option>
-              <option value="respectful">Respectful</option>
-              <option value="playful">Playful</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="contextSituation">Situation</label>
-            <select id="contextSituation">
-              <option value=""></option>
-              <option value="travel">Travel</option>
-              <option value="business">Business</option>
-              <option value="social">Social</option>
-              <option value="conflict">Conflict</option>
-              <option value="flirting">Flirting</option>
-            </select>
-          </div>
-
-        </div>
-
-        <label for="targetSearch">Translate To</label>
-
-        <div class="searchWrap">
-          <input
-            id="targetSearch"
-            type="text"
-            autocomplete="off"
-            tabindex="5"
-          >
-
-          <div id="targetSuggestions" class="suggestions"></div>
-        </div>
-
-        <button id="translateButton" class="primaryButton" tabindex="6">
-          Translate
-        </button>
+      <div class="contextToggleRow">
+        <input id="contextToggle" type="checkbox">
+        <label>Enhanced Context Mode</label>
       </div>
 
- <div class="outputColumn">
+      <div id="contextSection" class="hidden">
 
-  <div class="translationHeader">
-    <label for="output">Translation</label>
+        <div>
+          <label>To Whom?</label>
+          <select id="contextAudience">
+            <option value=""></option>
+            <option value="friend">Friend</option>
+            <option value="romantic">Romantic</option>
+            <option value="professional">Professional</option>
+          </select>
+        </div>
 
-    <div class="toggleRow">
-      <input id="pronToggle" type="checkbox">
-      <label id="pronToggleLabel" for="pronToggle">
-        Show Pronunciation
-      </label>
+        <div>
+          <label>Intent / Tone</label>
+          <select id="contextTone">
+            <option value=""></option>
+            <option value="casual">Casual</option>
+            <option value="formal">Formal</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Situation</label>
+          <select id="contextSituation">
+            <option value=""></option>
+            <option value="travel">Travel</option>
+            <option value="business">Business</option>
+          </select>
+        </div>
+
+      </div>
+
+      <label>Translate To</label>
+      <input id="targetSearch">
+
+      <button id="translateButton">Translate</button>
+
     </div>
-  </div>
 
-  <textarea id="output" readonly></textarea>
+    <!-- RIGHT SIDE -->
+    <div class="outputColumn">
 
-  <button id="copyButton" class="copyButton">
-    Copy
-  </button>
+      <div class="translationHeader">
+        <label>Translation</label>
 
-  <!-- ✅ THIS GOES HERE -->
-  <div id="pronunciationSection" class="hidden">
-    <label for="pronunciation">Pronunciation Guide</label>
-    <textarea id="pronunciation" readonly tabindex="-1"></textarea>
+        <div class="toggleRow">
+          <input id="pronToggle" type="checkbox">
+          <label>Show Pronunciation</label>
+        </div>
+      </div>
 
-    <div class="buttonRow">
-      <button id="speakNormal" class="normalButton">Speak Normally</button>
-      <button id="speakSlow" class="slowButton">Speak Slowly</button>
+      <textarea id="output" readonly></textarea>
+
+      <button id="copyButton">Copy</button>
+
+      <div id="pronunciationSection" class="hidden">
+        <label>Pronunciation Guide</label>
+        <textarea id="pronunciation" readonly></textarea>
+
+        <div class="buttonRow">
+          <button id="speakNormal">Speak Normally</button>
+          <button id="speakSlow">Speak Slowly</button>
+        </div>
+      </div>
+
+      <div id="additionalInfoSection" class="hidden">
+        <label>Additional Information</label>
+        <textarea id="additionalInfo" readonly></textarea>
+      </div>
+
     </div>
-  </div>
 
-  <!-- THEN THIS -->
-  <div id="additionalInfoSection" class="hidden">
-    <label for="additionalInfo">Additional Information</label>
-    <textarea id="additionalInfo" readonly tabindex="-1"></textarea>
   </div>
 
 </div>
 
-        <div id="additionalInfoSection" class="hidden">
-          <label for="additionalInfo">Additional Information</label>
-          <textarea id="additionalInfo" readonly tabindex="-1"></textarea>
-        </div>
-
-        <div class="buttonRow">
-          <button id="speakNormal" class="normalButton" tabindex="9">
-            Speak Normally
-          </button>
-
-          <button id="speakSlow" class="slowButton" tabindex="10">
-            Speak Slowly
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <footer>
-      <strong>Cross-Cultural Translator™</strong>
-      <br>
-      Beyond translation — real cross-cultural communication<br>
-      Dialect-aware translation • Pronunciation guidance • Cultural clarity<br>
-      © 2026 CCTLA-TBD, LLC<br>
-      Patent pending.
-    </footer>
-
-  </div>
-
-<script src="translations.js"></script>
-<script src="languageCatalog.js"></script>
 <script src="pronunciation.js"></script>
 <script src="script.js"></script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(registration => {
-            console.log('Service Worker registered:', registration);
-          })
-          .catch(error => {
-            console.error('Service Worker registration failed:', error);
-          });
-      });
-    }
-  </script>
 
 </body>
 </html>
