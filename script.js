@@ -178,8 +178,8 @@ function normalizePronunciationStyle(text) {
 }
 
 function updateAdditionalInfo(text) {
-  const box = el("contextOutput") || el("additionalInfo");
-  const section = el("contextOutputSection") || el("additionalInfoSection");
+  const box = el("additionalInfo");
+  const section = el("additionalInfoSection");
   if (!box || !section) return;
 
   const value = (text || "").trim();
