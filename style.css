@@ -121,7 +121,7 @@ body.dark .detectedCard{
 #contextSection{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px 36px;
+  gap:14px 24px;
   margin:0 0 14px;
   padding:16px 18px;
   border-radius:14px;
@@ -137,11 +137,16 @@ body.dark .detectedCard{
 }
 
 #contextSection select{
-  width:220px;
-  max-width:100%;
-  min-width:220px;
-  margin:0 auto;
+  width:100%;
+  min-width:0;
+  margin:0;
   display:block;
+}
+
+#contextSection > div{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
 /* ===== OUTPUT HEADER ===== */
