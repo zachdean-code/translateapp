@@ -625,8 +625,7 @@ async function translateText() {
     if (el("output")) el("output").value = translated;
 
     if (el("pronunciation")) {
-      const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
-      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
+const rawPronunciation = buildPronunciation(translated);      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
     }
 
     updateAdditionalInfo(additionalInfo);
