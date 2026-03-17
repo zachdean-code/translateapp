@@ -1,5 +1,3 @@
-
-
 *{
   box-sizing:border-box;
 }
@@ -368,5 +366,169 @@ footer strong{
   .toggleRow{
     margin-top:0;
     justify-content:flex-start;
+  }
+}
+
+/* =========================================
+   0316 1100p — LOCKED FULL FILE VERSION
+   Scoped additions only
+   ========================================= */
+
+/* Enhanced Context Mode checkbox + label */
+#enhancedContextWrap,
+.enhancedContextWrap,
+#enhancedContextRow,
+.enhancedContextRow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:6px 0 14px;
+}
+
+#enhancedContextWrap input[type="checkbox"],
+.enhancedContextWrap input[type="checkbox"],
+#enhancedContextRow input[type="checkbox"],
+.enhancedContextRow input[type="checkbox"]{
+  width:auto;
+  margin:0;
+}
+
+#enhancedContextWrap label,
+.enhancedContextWrap label,
+#enhancedContextRow label,
+.enhancedContextRow label{
+  margin:0;
+  display:inline-flex;
+  align-items:center;
+}
+
+/* Who / Intent / Tone / Situation row */
+#contextFieldsRow,
+.contextFieldsRow,
+#contactFieldsRow,
+.contactFieldsRow{
+  display:grid;
+  grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(140px,1fr));
+  gap:12px;
+  align-items:end;
+  margin-bottom:14px;
+}
+
+#contextFieldsRow label,
+.contextFieldsRow label,
+#contactFieldsRow label,
+.contactFieldsRow label{
+  margin-bottom:6px;
+}
+
+#contextFieldsRow select,
+.contextFieldsRow select,
+#contactFieldsRow select,
+.contactFieldsRow select,
+#contextFieldsRow input,
+.contextFieldsRow input,
+#contactFieldsRow input,
+.contactFieldsRow input{
+  margin-bottom:0;
+}
+
+/* Detected language card cleanup */
+.detectedCard{
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:nowrap;
+}
+
+#detectedLanguageDialect{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.detectedButtons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+}
+
+.detectedButtons button{
+  margin-bottom:0;
+}
+
+/* Translation + Show Pronunciation */
+.translationHeaderRow,
+#translationHeaderRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.translationHeaderRow label,
+#translationHeaderRow label{
+  margin:0;
+}
+
+.translationHeaderRow .toggleRow,
+#translationHeaderRow .toggleRow{
+  margin:0;
+  justify-content:flex-end;
+}
+
+.translationHeaderRow .toggleRow input[type="checkbox"],
+#translationHeaderRow .toggleRow input[type="checkbox"]{
+  width:auto;
+  margin:0;
+}
+
+/* Remove upward pull on output toggle row */
+.outputColumn > .toggleRow{
+  margin-top:0;
+  margin-bottom:10px;
+}
+
+/* Speak buttons row */
+.outputActions,
+#outputActions,
+.speakButtonRow{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.outputActions button,
+#outputActions button,
+.speakButtonRow button{
+  margin-bottom:0;
+}
+
+@media (max-width: 900px){
+  #contextFieldsRow,
+  .contextFieldsRow,
+  #contactFieldsRow,
+  .contactFieldsRow{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (max-width: 640px){
+  #contextFieldsRow,
+  .contextFieldsRow,
+  #contactFieldsRow,
+  .contactFieldsRow{
+    grid-template-columns:1fr;
+  }
+
+  .detectedCard{
+    flex-wrap:wrap;
+  }
+
+  .translationHeaderRow,
+  #translationHeaderRow{
+    flex-wrap:wrap;
+    align-items:flex-start;
   }
 }
