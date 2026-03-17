@@ -73,44 +73,45 @@
           <label for="contextToggle">Enhanced Context Mode</label>
         </div>
 
-        <div id="contextSection" class="hidden">
-          <div>
-            <label for="contextAudience">Who are you speaking to?</label>
-            <select id="contextAudience">
-              <option value="">Optional</option>
-              <option value="friend">Friend</option>
-              <option value="romantic">Romantic interest</option>
-              <option value="professional">Boss / Professional</option>
-              <option value="stranger">Stranger</option>
-              <option value="service">Service worker</option>
-            </select>
-          </div>
+     <div id="contextSection" class="hidden">
+  <div>
+    <label for="contextAudience">To Whom?</label>
+    <select id="contextAudience">
+      <option value=""></option>
+      <option value="friend">Friend</option>
+      <option value="romantic">Romantic interest</option>
+      <option value="professional">Boss / Professional</option>
+      <option value="stranger">Stranger</option>
+      <option value="service">Service Employee</option>
+    </select>
+  </div>
 
-          <div>
-            <label for="contextTone">Intent / Tone</label>
-            <select id="contextTone">
-              <option value="">Optional</option>
-              <option value="casual">Casual</option>
-              <option value="formal">Formal</option>
-              <option value="respectful">Respectful</option>
-              <option value="playful">Playful</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
+  <div>
+    <label for="contextTone">Intent / Tone</label>
+    <select id="contextTone">
+      <option value=""></option>
+      <option value="casual">Casual</option>
+      <option value="formal">Formal</option>
+      <option value="respectful">Respectful</option>
+      <option value="playful">Playful</option>
+      <option value="urgent">Urgent</option>
+    </select>
+  </div>
 
-          <div>
-            <label for="contextSituation">Situation</label>
-            <select id="contextSituation">
-              <option value="">Optional</option>
-              <option value="travel">Travel</option>
-              <option value="business">Business</option>
-              <option value="social">Social</option>
-              <option value="conflict">Conflict</option>
-              <option value="flirting">Flirting</option>
-            </select>
-          </div>
-        </div>
+  <div>
+    <label for="contextSituation">Situation</label>
+    <select id="contextSituation">
+      <option value=""></option>
+      <option value="travel">Travel</option>
+      <option value="business">Business</option>
+      <option value="social">Social</option>
+      <option value="conflict">Conflict</option>
+      <option value="flirting">Flirting</option>
+    </select>
+  </div>
+</div>
 
+    
         <label for="targetSearch">Translate To</label>
 
         <div class="searchWrap">
@@ -150,173 +151,6 @@
           <label for="contextOutput">Context Adaptation</label>
           <textarea id="contextOutput" readonly tabindex="-1"></textarea>
         </div>
-
-        <div id="pronunciationSection" class="hidden">
-          <label for="pronunciation">Pronunciation Guide</label>
-          <textarea id="pronunciation" readonly tabindex="-1"></textarea>
-
-          <div class="buttonRow">
-            <button id="speakNormal" class="normalButton" tabindex="9">
-              Speak Normally
-            </button>
-
-            <button id="speakSlow" class="slowButton" tabindex="10">
-              Speak Slowly
-            </button>
-          </div>
-        </div>
-
-        <div id="additionalInfoSection" class="hidden">
-          <label for="additionalInfo">Additional Information</label>
-          <textarea id="additionalInfo" readonly tabindex="-1"></textarea>
-        </div>
-      </div>
-
-    </div>
-
-    <footer>
-      <strong>Cross-Cultural Translator™</strong>
-      <br>
-      Beyond translation — real cross-cultural communication<br>
-      Dialect-aware translation • Pronunciation guidance • Cultural clarity<br>
-      © 2026 CCTLA-TBD, LLC<br>
-      Patent pending.
-    </footer>
-
-  </div>
-
-  <script src="translations.js"></script>
-  <script src="languageCatalog.js"></script>
-  <script src="pronunciation.js"></script>
-  <script src="script.js"></script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js")
-          .then((registration) => {
-            console.log("Service Worker registered:", registration);
-          })
-          .catch((error) => {
-            console.error("Service Worker registration failed:", error);
-          });
-      });
-    }
-  </script>
-</body>
-</html>
-    <div class="translatorRow">
-
-      <div class="inputColumn">
-        <label id="inputLabel" for="userInput">Input Text</label>
-
-        <textarea id="userInput" tabindex="1"></textarea>
-
-        <div id="detectedCard" class="detectedCard hidden">
-          <div id="detectedLanguageDialect"></div>
-
-          <div class="detectedButtons">
-            <button id="keepDetectedButton" class="keepButton" tabindex="2">
-              Keep
-            </button>
-
-            <button id="changeDetectedButton" class="changeButton" tabindex="3">
-              Change
-            </button>
-          </div>
-        </div>
-
-        <div id="changeDetectedWrap" class="hidden">
-          <label for="detectedSearch">Change input language to:</label>
-
-          <div class="searchWrap">
-            <input
-              id="detectedSearch"
-              type="text"
-              autocomplete="off"
-              tabindex="4"
-            >
-            <div id="detectedSuggestions" class="suggestions"></div>
-          </div>
-        </div>
-
-        <div class="contextToggleRow">
-          <input id="contextToggle" type="checkbox">
-          <label for="contextToggle">Enhanced Context Mode</label>
-        </div>
-
-        <div id="contextSection" class="hidden">
-          <div>
-            <label for="contextAudience">To Whom?</label>
-            <select id="contextAudience">
-              <option value=""></option>
-              <option value="friend">Friend</option>
-              <option value="romantic">Romantic interest</option>
-              <option value="professional">Boss / Professional</option>
-              <option value="stranger">Stranger</option>
-              <option value="service">Service Employee</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="contextTone">Intent / Tone</label>
-            <select id="contextTone">
-              <option value=""></option>
-              <option value="casual">Casual</option>
-              <option value="formal">Formal</option>
-              <option value="respectful">Respectful</option>
-              <option value="playful">Playful</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="contextSituation">Situation</label>
-            <select id="contextSituation">
-              <option value=""></option>
-              <option value="travel">Travel</option>
-              <option value="business">Business</option>
-              <option value="social">Social</option>
-              <option value="conflict">Conflict</option>
-              <option value="flirting">Flirting</option>
-            </select>
-          </div>
-        </div>
-
-        <label for="targetSearch">Translate To</label>
-
-        <div class="searchWrap">
-          <input
-            id="targetSearch"
-            type="text"
-            autocomplete="off"
-            tabindex="5"
-          >
-          <div id="targetSuggestions" class="suggestions"></div>
-        </div>
-
-        <button id="translateButton" class="primaryButton" tabindex="6">
-          Translate
-        </button>
-      </div>
-
-      <div class="outputColumn">
-        <div class="translationHeader">
-          <label for="output">Translation</label>
-
-          <div class="toggleRow">
-            <input id="pronToggle" type="checkbox" tabindex="8">
-            <label id="pronToggleLabel" for="pronToggle">
-              Show Pronunciation
-            </label>
-          </div>
-        </div>
-
-        <textarea id="output" readonly tabindex="-1"></textarea>
-
-        <button id="copyButton" class="copyButton" tabindex="7">
-          Copy
-        </button>
 
         <div id="pronunciationSection" class="hidden">
           <label for="pronunciation">Pronunciation Guide</label>
