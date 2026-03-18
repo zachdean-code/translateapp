@@ -186,7 +186,7 @@ button:disabled {
 }
 
 .changeButton {
-  background: #6b7280;
+  background: #b45309;
   color: white;
   white-space: nowrap;
 }
@@ -245,11 +245,11 @@ button:disabled {
   margin: 0;
   color: #f9fafb;
   font-size: 16px;
-  line-height: 1.32;
+  line-height: 1.28;
   text-align: left;
   white-space: normal !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
   writing-mode: horizontal-tb !important;
 }
 
@@ -259,7 +259,8 @@ button:disabled {
   justify-content: flex-start;
   gap: 10px;
   flex-wrap: nowrap;
-  min-width: 0;
+  flex-shrink: 0;
+  min-width: max-content;
 }
 
 .detectedButtons .keepButton,
@@ -271,7 +272,8 @@ button:disabled {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  column-gap: 12px;
+  row-gap: 8px;
 }
 
 .detectedCard.confirmed #detectedLanguageDialect {
@@ -312,14 +314,14 @@ button:disabled {
 /* enhanced context box */
 #contextSection {
   display: grid;
-  grid-template-columns: 190px 170px 170px;
-  justify-content: start;
-  gap: 12px 14px;
+  grid-template-columns: minmax(210px, 240px) minmax(180px, 210px) minmax(180px, 210px);
+  justify-content: center;
+  gap: 14px 16px;
   align-items: start;
   border: 1px solid #3564a2;
   border-radius: 18px;
   background: #2d4a78;
-  padding: 14px 14px;
+  padding: 14px 16px;
 }
 
 #contextSection > div {
@@ -327,6 +329,7 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-width: 0;
 }
 
 #contextSection label {
@@ -335,17 +338,25 @@ button:disabled {
   text-align: center;
 }
 
+#contextSection select {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  text-align-last: center;
+  padding-right: 36px;
+}
+
 #contextAudience {
-  width: 190px;
-  min-width: 190px;
-  max-width: 190px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
 }
 
 #contextTone,
 #contextSituation {
-  width: 170px;
-  min-width: 170px;
-  max-width: 170px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
 }
 
 /* output header */
