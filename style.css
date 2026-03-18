@@ -154,7 +154,9 @@ textarea {
 }
 
 select {
-  min-height: 56px;
+  min-height: 50px;
+  font-size: 15px;
+  padding: 12px 16px;
 }
 
 button {
@@ -186,7 +188,7 @@ button:disabled {
 }
 
 .changeButton {
-  background: #b45309;
+  background: #6b7280;
   color: white;
   white-space: nowrap;
 }
@@ -203,6 +205,13 @@ button:disabled {
 
 .searchWrap {
   position: relative;
+}
+
+#targetSearch,
+#detectedSearch {
+  min-height: 50px;
+  font-size: 15px;
+  padding: 12px 16px;
 }
 
 .suggestions {
@@ -231,7 +240,6 @@ button:disabled {
   background: #1d4ed8;
 }
 
-/* detected language card */
 .detectedCard {
   border: 1px solid #3564a2;
   border-radius: 18px;
@@ -247,151 +255,70 @@ button:disabled {
   font-size: 16px;
   line-height: 1.28;
   text-align: left;
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-  writing-mode: horizontal-tb !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .detectedButtons {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
   gap: 10px;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
-  min-width: max-content;
-}
-
-.detectedButtons .keepButton,
-.detectedButtons .changeButton {
-  flex: 0 0 auto;
 }
 
 .detectedCard.confirmed {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
   column-gap: 12px;
-  row-gap: 8px;
-}
-
-.detectedCard.confirmed #detectedLanguageDialect {
-  max-width: 100%;
-}
-
-.detectedCard.confirmed .detectedButtons {
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 0;
 }
 
 .detectedCard.confirmed .keepButton {
   display: none;
 }
 
-/* context toggle row */
 .contextToggleRow {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 2px 0 0 0;
+  margin: 2px 0 12px 0;
 }
 
-.contextToggleRow input[type="checkbox"] {
+.contextToggleRow input {
   width: 20px;
   height: 20px;
-  margin: 0;
-  flex: 0 0 auto;
 }
 
-.contextToggleRow label {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-/* enhanced context box */
 #contextSection {
   display: grid;
   grid-template-columns: minmax(210px, 240px) minmax(180px, 210px) minmax(180px, 210px);
-  justify-content: center;
   gap: 14px 16px;
-  align-items: start;
   border: 1px solid #3564a2;
   border-radius: 18px;
   background: #2d4a78;
   padding: 14px 16px;
-}
-
-#contextSection > div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  min-width: 0;
-}
-
-#contextSection label {
-  width: 100%;
-  margin: 0 0 6px 0;
-  text-align: center;
+  margin-bottom: 16px;
 }
 
 #contextSection select {
-  width: 100%;
-  min-width: 0;
+  min-height: 50px;
+  padding: 12px 16px;
+  font-size: 15px;
   text-align: center;
-  text-align-last: center;
-  padding-right: 36px;
 }
 
-#contextAudience {
-  width: 100%;
-  min-width: 0;
-  max-width: none;
+label[for="targetSearch"] {
+  margin-top: 2px;
 }
 
-#contextTone,
-#contextSituation {
-  width: 100%;
-  min-width: 0;
-  max-width: none;
-}
-
-/* output header */
 .translationHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  flex-wrap: nowrap;
-  margin-bottom: 0 !important;
-}
-
-.translationHeader > label {
-  margin: 0;
-  flex: 0 1 auto;
+  align-items: center;
 }
 
 .toggleRow {
   display: flex;
-  align-items: center;
   gap: 8px;
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
-
-.toggleRow input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  margin: 0;
-  flex: 0 0 auto;
-}
-
-.toggleRow label {
-  margin: 0;
-  white-space: nowrap;
 }
 
 #output {
@@ -402,32 +329,8 @@ button:disabled {
   margin-top: 2px;
 }
 
-/* context output / additional info */
-#contextOutputSection,
-#additionalInfoSection {
-  display: flex;
-  flex-direction: column;
-}
-
-#contextOutputSection label,
-#additionalInfoSection label {
-  margin-bottom: 6px;
-}
-
-#contextOutput,
-#additionalInfo {
-  min-height: 100px;
-}
-
-/* pronunciation */
 #pronunciationSection {
   margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-}
-
-#pronunciationSection label {
-  margin-bottom: 6px;
 }
 
 #pronunciation {
@@ -438,94 +341,17 @@ button:disabled {
   display: flex;
   gap: 18px;
   margin-top: 14px;
-  flex-wrap: wrap;
 }
 
-.buttonRow button {
-  flex: 1 1 220px;
-}
-
-/* footer */
 footer {
   margin-top: 18px;
   text-align: center;
   color: #d1d5db;
   font-size: 13px;
-  line-height: 1.5;
 }
 
 @media (max-width: 1200px) {
   .translatorRow {
     grid-template-columns: 1fr;
-    gap: 24px;
   }
 }
-
-@media (max-width: 760px) {
-  body {
-    padding: 10px;
-  }
-
-  .container {
-    padding: 14px;
-    border-radius: 14px;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-
-  .topBar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .translationHeader {
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  #contextSection {
-    grid-template-columns: 1fr;
-    justify-content: stretch;
-  }
-
-  #contextSection > div {
-    align-items: stretch;
-    text-align: left;
-  }
-
-  #contextSection label {
-    text-align: left;
-  }
-
-  #contextAudience,
-  #contextTone,
-  #contextSituation {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-  }
-
-  .buttonRow {
-    flex-direction: column;
-  }
-}
-
-#inputLabel,
-.translationHeader,
-label[for="targetSearch"] {
-  margin-bottom: 0 !important;
-}
-
-#userInput,
-#output,
-.searchWrap {
-  margin-top: 0 !important;
-}
-
-.inputColumn > label,
-.outputColumn > label {
-  margin-bottom: 0 !important;
-}
-
