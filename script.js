@@ -19,39 +19,43 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
     "French": "French",
     "German": "German",
     "Italian": "Italian",
-    "Mexican Spanish": "Mexican Spanish",
-    "LATAM Spanish": "LATAM Spanish",
-    "General Colombian Spanish": "General Colombian Spanish",
-    "Paisa Spanish (Medellín)": "Paisa Spanish (Medellín)",
-    "Rolo Spanish (Bogotá)": "Rolo Spanish (Bogotá)",
-    "Cali Spanish": "Cali Spanish",
-    "Santander Spanish": "Santander Spanish",
-    "Venezuelan Spanish": "Venezuelan Spanish",
-    "Chinese": "Chinese",
+
+    "Spanish — LATAM (Neutral)": "Spanish — LATAM (Neutral)",
+    "Spanish — Mexican": "Spanish — Mexican",
+    "Spanish — Central American": "Spanish — Central American",
+    "Spanish — Caribbean": "Spanish — Caribbean",
+    "Spanish — Peruvian": "Spanish — Peruvian",
+    "Spanish — Argentine": "Spanish — Argentine",
+    "Spanish — Chilean": "Spanish — Chilean",
+    "Spanish — General Colombian": "Spanish — General Colombian",
+    "Spanish — Venezuelan": "Spanish — Venezuelan",
+
+    "Colombian Spanish — Paisa (Medellín)": "Colombian Spanish — Paisa (Medellín)",
+    "Colombian Spanish — Rolo (Bogotá)": "Colombian Spanish — Rolo (Bogotá)",
+    "Colombian Spanish — Cali": "Colombian Spanish — Cali",
+    "Colombian Spanish — Santander": "Colombian Spanish — Santander",
+
+    "Mexican Spanish": "Spanish — Mexican",
+    "LATAM Spanish": "Spanish — LATAM (Neutral)",
+    "General Colombian Spanish": "Spanish — General Colombian",
+    "Paisa Spanish (Medellín)": "Colombian Spanish — Paisa (Medellín)",
+    "Rolo Spanish (Bogotá)": "Colombian Spanish — Rolo (Bogotá)",
+    "Cali Spanish": "Colombian Spanish — Cali",
+    "Santander Spanish": "Colombian Spanish — Santander",
+    "Venezuelan Spanish": "Spanish — Venezuelan",
+    "Latin American Spanish (Neutral)": "Spanish — LATAM (Neutral)",
+    "Colombian Spanish": "Spanish — General Colombian",
+
+    "Chinese": "Mandarin Chinese",
     "Korean": "Korean",
     "Japanese": "Japanese",
     "Russian": "Russian",
+    "Mandarin Chinese": "Mandarin Chinese",
+
     "English — American": "American English",
     "English — British": "British English",
     "English — Australian": "Australian English",
-    "Spanish — LATAM (Neutral)": "LATAM Spanish",
-    "Spanish — Mexican": "Mexican Spanish",
-    "Spanish — Central American": "Central American Spanish",
-    "Spanish — Caribbean": "Caribbean Spanish",
-    "Spanish — Peruvian": "Peruvian Spanish",
-    "Spanish — Argentine": "Argentine Spanish",
-    "Spanish — Chilean": "Chilean Spanish",
-    "Spanish — Paisa (Medellín)": "Paisa Spanish (Medellín)",
-    "Spanish — Rolo (Bogotá)": "Rolo Spanish (Bogotá)",
-    "Spanish — Cali": "Cali Spanish",
-    "Spanish — Santander": "Santander Spanish",
-    "Spanish — Venezuelan": "Venezuelan Spanish",
-    "Spanish — General Colombian": "General Colombian Spanish",
-    "Colombian Spanish — Paisa (Medellín)": "Paisa Spanish (Medellín)",
-    "Colombian Spanish — Rolo (Bogotá)": "Rolo Spanish (Bogotá)",
-    "Colombian Spanish — Cali": "Cali Spanish",
-    "Colombian Spanish — Santander": "Santander Spanish",
-    "Latin American Spanish (Neutral)": "LATAM Spanish",
+
     "Brazilian Portuguese": "Brazilian Portuguese",
     "European Portuguese": "European Portuguese",
     "Modern Standard Arabic": "Modern Standard Arabic",
@@ -64,8 +68,7 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
     "Filipino (Tagalog)": "Filipino (Tagalog)",
     "Swahili": "Swahili",
     "Amharic": "Amharic",
-    "Turkish": "Turkish",
-    "Mandarin Chinese": "Mandarin Chinese"
+    "Turkish": "Turkish"
   },
   es: {
     "American English": "Inglés estadounidense",
@@ -74,39 +77,43 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
     "French": "Francés",
     "German": "Alemán",
     "Italian": "Italiano",
-    "Mexican Spanish": "Español mexicano",
-    "LATAM Spanish": "Español latinoamericano",
-    "General Colombian Spanish": "Español colombiano",
-    "Paisa Spanish (Medellín)": "Español paisa (Medellín)",
-    "Rolo Spanish (Bogotá)": "Español rolo (Bogotá)",
-    "Cali Spanish": "Español caleño",
-    "Santander Spanish": "Español santandereano",
-    "Venezuelan Spanish": "Español venezolano",
-    "Chinese": "Chino",
-    "Korean": "Coreano",
-    "Japanese": "Japonés",
-    "Russian": "Ruso",
-    "English — American": "Inglés estadounidense",
-    "English — British": "Inglés británico",
-    "English — Australian": "Inglés australiano",
-    "Spanish — LATAM (Neutral)": "Español latinoamericano",
+
+    "Spanish — LATAM (Neutral)": "Español latinoamericano (neutral)",
     "Spanish — Mexican": "Español mexicano",
     "Spanish — Central American": "Español centroamericano",
     "Spanish — Caribbean": "Español caribeño",
     "Spanish — Peruvian": "Español peruano",
     "Spanish — Argentine": "Español argentino",
     "Spanish — Chilean": "Español chileno",
-    "Spanish — Paisa (Medellín)": "Español paisa (Medellín)",
-    "Spanish — Rolo (Bogotá)": "Español rolo (Bogotá)",
-    "Spanish — Cali": "Español caleño",
-    "Spanish — Santander": "Español santandereano",
+    "Spanish — General Colombian": "Español colombiano general",
     "Spanish — Venezuelan": "Español venezolano",
-    "Spanish — General Colombian": "Español colombiano",
+
     "Colombian Spanish — Paisa (Medellín)": "Español colombiano — Paisa (Medellín)",
     "Colombian Spanish — Rolo (Bogotá)": "Español colombiano — Rolo (Bogotá)",
     "Colombian Spanish — Cali": "Español colombiano — Cali",
     "Colombian Spanish — Santander": "Español colombiano — Santander",
+
+    "Mexican Spanish": "Español mexicano",
+    "LATAM Spanish": "Español latinoamericano",
+    "General Colombian Spanish": "Español colombiano general",
+    "Paisa Spanish (Medellín)": "Español colombiano — Paisa (Medellín)",
+    "Rolo Spanish (Bogotá)": "Español colombiano — Rolo (Bogotá)",
+    "Cali Spanish": "Español colombiano — Cali",
+    "Santander Spanish": "Español colombiano — Santander",
+    "Venezuelan Spanish": "Español venezolano",
     "Latin American Spanish (Neutral)": "Español latinoamericano (neutral)",
+    "Colombian Spanish": "Español colombiano general",
+
+    "Chinese": "Chino",
+    "Korean": "Coreano",
+    "Japanese": "Japonés",
+    "Russian": "Ruso",
+    "Mandarin Chinese": "Chino mandarín",
+
+    "English — American": "Inglés estadounidense",
+    "English — British": "Inglés británico",
+    "English — Australian": "Inglés australiano",
+
     "Brazilian Portuguese": "Portugués brasileño",
     "European Portuguese": "Portugués europeo",
     "Modern Standard Arabic": "Árabe estándar moderno",
@@ -119,10 +126,56 @@ const TARGET_LANGUAGE_TRANSLATIONS = {
     "Filipino (Tagalog)": "Filipino (Tagalo)",
     "Swahili": "Suajili",
     "Amharic": "Amhárico",
-    "Turkish": "Turco",
-    "Mandarin Chinese": "Chino mandarín"
+    "Turkish": "Turco"
   }
 };
+
+const languageCatalog = [
+  { label: "American English", aliases: ["English", "English — American"] },
+  { label: "British English", aliases: ["English — British"] },
+  { label: "Australian English", aliases: ["English — Australian"] },
+
+  { label: "Spanish — LATAM (Neutral)", aliases: ["Spanish", "LATAM Spanish", "Latin American Spanish", "Latin American Spanish (Neutral)"] },
+  { label: "Spanish — Mexican", aliases: ["Mexican Spanish"] },
+  { label: "Spanish — Central American", aliases: ["Central American Spanish"] },
+  { label: "Spanish — Caribbean", aliases: ["Caribbean Spanish"] },
+  { label: "Spanish — Peruvian", aliases: ["Peruvian Spanish"] },
+  { label: "Spanish — Argentine", aliases: ["Argentine Spanish"] },
+  { label: "Spanish — Chilean", aliases: ["Chilean Spanish"] },
+
+  { label: "Spanish — General Colombian", aliases: ["General Colombian Spanish", "Colombian Spanish"] },
+  { label: "Colombian Spanish — Paisa (Medellín)", aliases: ["Paisa Spanish (Medellín)", "Spanish — Paisa (Medellín)", "Paisa Colombian Spanish", "Medellín Spanish"] },
+  { label: "Colombian Spanish — Rolo (Bogotá)", aliases: ["Rolo Spanish (Bogotá)", "Spanish — Rolo (Bogotá)", "Bogotá Spanish"] },
+  { label: "Colombian Spanish — Cali", aliases: ["Cali Spanish", "Spanish — Cali"] },
+  { label: "Colombian Spanish — Santander", aliases: ["Santander Spanish", "Spanish — Santander"] },
+  { label: "Spanish — Venezuelan", aliases: ["Venezuelan Spanish"] },
+
+  { label: "French", aliases: [] },
+  { label: "German", aliases: [] },
+  { label: "Italian", aliases: [] },
+
+  { label: "Brazilian Portuguese", aliases: [] },
+  { label: "European Portuguese", aliases: [] },
+
+  { label: "Modern Standard Arabic", aliases: ["Arabic"] },
+  { label: "Egyptian Arabic", aliases: [] },
+
+  { label: "Iranian Persian — Farsi", aliases: ["Farsi", "Persian"] },
+  { label: "Afghan Persian — Dari", aliases: ["Dari"] },
+  { label: "Tajik Persian — Tajik", aliases: ["Tajik"] },
+
+  { label: "Hindi", aliases: [] },
+  { label: "Indonesian", aliases: [] },
+  { label: "Filipino (Tagalog)", aliases: ["Tagalog"] },
+  { label: "Swahili", aliases: [] },
+  { label: "Amharic", aliases: [] },
+  { label: "Turkish", aliases: [] },
+
+  { label: "Mandarin Chinese", aliases: ["Chinese"] },
+  { label: "Korean", aliases: [] },
+  { label: "Japanese", aliases: [] },
+  { label: "Russian", aliases: [] }
+];
 
 function el(id) {
   return document.getElementById(id);
@@ -236,7 +289,7 @@ function styleConfirmationRow() {
     changeBtn.style.padding = "6px 12px";
     changeBtn.style.fontSize = "12px";
     changeBtn.style.lineHeight = "1.2";
-    changeBtn.style.background = "#6b7280";
+    changeBtn.style.background = "#b45309";
     changeBtn.style.color = "white";
     changeBtn.style.borderRadius = "8px";
     card.style.paddingTop = "10px";
@@ -287,7 +340,41 @@ function resetConfirmedLanguage() {
 
 function togglePronunciation() {
   const checked = !!el("pronToggle")?.checked;
-  el("pronunciationSection")?.classList.toggle("hidden", !checked);
+  const source = normalize(confirmedInputLanguage || "");
+  const target = normalize(targetSelection?.label || "");
+  const section = el("pronunciationSection");
+  const toggleWrap = el("pronToggle")?.closest(".toggleRow");
+
+  if (!section) return;
+
+  const sameBaseLanguage =
+    (source.includes("english") && target.includes("english")) ||
+    (source.includes("spanish") && target.includes("spanish")) ||
+    (source.includes("arabic") && target.includes("arabic")) ||
+    (source.includes("persian") && target.includes("persian")) ||
+    (source.includes("portuguese") && target.includes("portuguese")) ||
+    (source.includes("chinese") && target.includes("chinese")) ||
+    (source.includes("japanese") && target.includes("japanese")) ||
+    (source.includes("korean") && target.includes("korean")) ||
+    (source.includes("russian") && target.includes("russian")) ||
+    (source.includes("hindi") && target.includes("hindi")) ||
+    (source.includes("indonesian") && target.includes("indonesian")) ||
+    (source.includes("swahili") && target.includes("swahili")) ||
+    (source.includes("amharic") && target.includes("amharic")) ||
+    (source.includes("turkish") && target.includes("turkish"));
+
+  if (toggleWrap) {
+    toggleWrap.classList.toggle("hidden", sameBaseLanguage);
+  }
+
+  if (sameBaseLanguage) {
+    if (el("pronToggle")) el("pronToggle").checked = false;
+    if (el("pronunciation")) el("pronunciation").value = "";
+    section.classList.add("hidden");
+    return;
+  }
+
+  section.classList.toggle("hidden", !checked);
 }
 
 function scoreLanguageMatch(item, query) {
@@ -507,7 +594,7 @@ function detectInput(text) {
   }
 
   if (lower.includes("orale") || lower.includes("wey") || lower.includes("no manches")) {
-    return { label: "Mexican Spanish" };
+    return { label: "Spanish — Mexican" };
   }
 
   const spanishSignals = [
@@ -523,7 +610,7 @@ function detectInput(text) {
   }
 
   if (/[áéíóúñ¿¡]/i.test(text) || count >= 2) {
-    return { label: "Latin American Spanish (Neutral)" };
+    return { label: "Spanish — LATAM (Neutral)" };
   }
 
   return { label: "American English" };
@@ -554,8 +641,9 @@ function keepDetected() {
   confirmationMode = "detected";
   setConfirmedDisplay(confirmedInputLanguage);
   el("changeDetectedWrap")?.classList.add("hidden");
-  styleConfirmationRow();
+   styleConfirmationRow();
   updateTranslateState();
+  togglePronunciation();
 }
 
 function toggleDetectedChange() {
@@ -577,11 +665,12 @@ function toggleDetectedChange() {
         setConfirmedDisplay(item.label);
         styleConfirmationRow();
         updateTranslateState();
+        togglePronunciation();
       }, "detected");
     }
   }
 }
-
+    
 function englishPronunciationForSpanishReader(text) {
   const specialWords = {
     "how": "jau",
@@ -907,25 +996,27 @@ document.addEventListener("DOMContentLoaded", () => {
       el("contextSection")?.classList.toggle("hidden", !e.target.checked);
     });
   }
+  
+setupSearch("targetSearch", "targetSuggestions", (item) => {
+  targetSelection = item;
+  el("targetSearch").value = localizeLanguageLabel(item.label);
+  closeSuggestions(el("targetSuggestions"), "target");
+  updateTranslateState();
+  togglePronunciation();
+}, "target");
 
-  setupSearch("targetSearch", "targetSuggestions", (item) => {
-    targetSelection = item;
-    el("targetSearch").value = localizeLanguageLabel(item.label);
-    closeSuggestions(el("targetSuggestions"), "target");
-    updateTranslateState();
-  }, "target");
-
-  setupSearch("detectedSearch", "detectedSuggestions", (item) => {
-    confirmedInputLanguage = item.label;
-    confirmationMode = "chosen";
-    detectedSelection = { label: item.label };
-    el("detectedSearch").value = localizeLanguageLabel(item.label);
-    closeSuggestions(el("detectedSuggestions"), "detected");
-    el("changeDetectedWrap")?.classList.add("hidden");
-    setConfirmedDisplay(item.label);
-    styleConfirmationRow();
-    updateTranslateState();
-  }, "detected");
+setupSearch("detectedSearch", "detectedSuggestions", (item) => {
+  confirmedInputLanguage = item.label;
+  confirmationMode = "chosen";
+  detectedSelection = { label: item.label };
+  el("detectedSearch").value = localizeLanguageLabel(item.label);
+  closeSuggestions(el("detectedSuggestions"), "detected");
+  el("changeDetectedWrap")?.classList.add("hidden");
+  setConfirmedDisplay(item.label);
+  styleConfirmationRow();
+  updateTranslateState();
+  togglePronunciation();
+}, "detected");
 
   if (el("translateButton")) el("translateButton").disabled = true;
   if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
@@ -1000,5 +1091,4 @@ async function registerPeriodicSync() {
   } else {
     console.log('Periodic background sync not supported.');
   }
-}
-    
+}    
