@@ -336,10 +336,11 @@ button:disabled {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  min-width: 0;
+  width: 100%;
+  overflow: hidden;
 }
-
 #contextSection label {
   width: 100%;
   margin: 0 0 6px 0;
@@ -349,7 +350,9 @@ button:disabled {
 #contextSection select {
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   min-height: 50px;
+  margin: 0 auto;
   text-align: center;
   text-align-last: center;
   padding: 12px 16px;
