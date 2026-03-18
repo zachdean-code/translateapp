@@ -9,39 +9,12 @@ const uiTranslations = {
   },
   pageDescription: {
     en: "Dialect-aware translation, pronunciation guidance, and cultural clarity",
-    es: "Traducción con conciencia dialectal, guía de pronunciación y claridad cultural"
+    es: "Traducción con sensibilidad dialectal, guía de pronunciación y claridad cultural"
   },
 
   uiLanguageLabel: {
     en: "Site Language",
     es: "Idioma del sitio"
-  },
-  darkModeButton: {
-    en: "🌙 Dark",
-    es: "🌙 Oscuro"
-  },
-
-  inputLabel: {
-    en: "Input Text",
-    es: "Texto de entrada"
-  },
-  inputPlaceholder: {
-    en: "",
-    es: ""
-  },
-
-  changeDetectedLabel: {
-    en: "Change Detected Language",
-    es: "Cambiar idioma detectado"
-  },
-
-  translateToLabel: {
-    en: "Translate To",
-    es: "Traducir a"
-  },
-  targetSearchPlaceholder: {
-    en: "",
-    es: ""
   },
 
   translateButton: {
@@ -52,10 +25,6 @@ const uiTranslations = {
   translationLabel: {
     en: "Translation",
     es: "Traducción"
-  },
-  outputPlaceholder: {
-    en: "",
-    es: ""
   },
 
   copyButton: {
@@ -76,14 +45,6 @@ const uiTranslations = {
     en: "Show Pronunciation",
     es: "Mostrar pronunciación"
   },
-  pronunciationLabel: {
-    en: "Pronunciation Guide",
-    es: "Guía de pronunciación"
-  },
-  pronunciationPlaceholder: {
-    en: "",
-    es: ""
-  },
 
   speakNormalButton: {
     en: "Speak Normally",
@@ -91,20 +52,7 @@ const uiTranslations = {
   },
   speakSlowButton: {
     en: "Speak Slowly",
-    es: "Hablar despacio"
-  },
-
-  footerProduct: {
-    en: "Cross-Cultural Translator™",
-    es: "Traductor Intercultural™"
-  },
-  footerCopyright: {
-    en: "© 2026 CCTLA-TBD, LLC",
-    es: "© 2026 CCTLA-TBD, LLC"
-  },
-  footerPatent: {
-    en: "Patent pending.",
-    es: "Patente en trámite."
+    es: "Hablar lento"
   }
 };
 
