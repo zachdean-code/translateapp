@@ -1,7 +1,14 @@
+function normalize(text) {
+  return (text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 function sanitizeForSpeech(text) {
   return (text || "")
     .replace(/[¿¡]/g, "")
-    .replace(/[.,;:!?()"']/g, "")
+    .replace(/[.,;:!?()\"']/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
