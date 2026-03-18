@@ -289,7 +289,7 @@ function styleConfirmationRow() {
     changeBtn.style.padding = "6px 12px";
     changeBtn.style.fontSize = "12px";
     changeBtn.style.lineHeight = "1.2";
-    changeBtn.style.background = "#b45309";
+    changeBtn.style.background = "#6b7280";
     changeBtn.style.color = "white";
     changeBtn.style.borderRadius = "8px";
     card.style.paddingTop = "10px";
