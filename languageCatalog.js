@@ -12,11 +12,11 @@ const languageCatalog = [
   { label: "Spanish — Chilean", aliases: ["Chilean Spanish"] },
 
   { label: "Spanish — General Colombian", aliases: ["General Colombian Spanish", "Colombian Spanish"] },
-  { label: "Colombian Spanish — Paisa (Medellín)", aliases: ["Paisa Spanish (Medellín)", "Medellín Spanish", "parce"] },
-  { label: "Colombian Spanish — Rolo (Bogotá)", aliases: ["Rolo Spanish (Bogotá)", "Bogotá Spanish"] },
-  { label: "Colombian Spanish — Cali", aliases: ["Cali Spanish"] },
-  { label: "Colombian Spanish — Santander", aliases: ["Santander Spanish"] },
-  { label: "Spanish — Venezuelan", aliases: ["Venezuelan Spanish"] },
+  { label: "Colombian Spanish — Paisa (Medellín)", aliases: ["paisa", "medellin", "medellín", "parce"] },
+  { label: "Colombian Spanish — Rolo (Bogotá)", aliases: ["rolo", "bogota", "bogotá"] },
+  { label: "Colombian Spanish — Cali", aliases: ["cali"] },
+  { label: "Colombian Spanish — Santander", aliases: ["santander"] },
+  { label: "Spanish — Venezuelan", aliases: ["venezuelan"] },
 
   { label: "French", aliases: [] },
   { label: "German", aliases: [] },
@@ -25,21 +25,21 @@ const languageCatalog = [
   { label: "Brazilian Portuguese", aliases: [] },
   { label: "European Portuguese", aliases: [] },
 
-  { label: "Modern Standard Arabic", aliases: ["Arabic"] },
+  { label: "Modern Standard Arabic", aliases: ["arabic"] },
   { label: "Egyptian Arabic", aliases: [] },
 
-  { label: "Iranian Persian — Farsi", aliases: ["Farsi", "Persian"] },
-  { label: "Afghan Persian — Dari", aliases: ["Dari"] },
-  { label: "Tajik Persian — Tajik", aliases: ["Tajik"] },
+  { label: "Iranian Persian — Farsi", aliases: ["farsi", "persian"] },
+  { label: "Afghan Persian — Dari", aliases: ["dari"] },
+  { label: "Tajik Persian — Tajik", aliases: ["tajik"] },
 
   { label: "Hindi", aliases: [] },
   { label: "Indonesian", aliases: [] },
-  { label: "Filipino (Tagalog)", aliases: ["Tagalog"] },
+  { label: "Filipino (Tagalog)", aliases: ["tagalog"] },
   { label: "Swahili", aliases: [] },
   { label: "Amharic", aliases: [] },
   { label: "Turkish", aliases: [] },
 
-  { label: "Mandarin Chinese", aliases: ["Chinese"] },
+  { label: "Mandarin Chinese", aliases: ["chinese"] },
   { label: "Korean", aliases: [] },
   { label: "Japanese", aliases: [] },
   { label: "Russian", aliases: [] }
