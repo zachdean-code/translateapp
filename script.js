@@ -821,16 +821,28 @@ function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
   const source = normalize(sourceLanguage || "").toLowerCase();
   const target = normalize(targetLanguage || "").toLowerCase();
 
-  // Spanish → English (user reads English phonetics)
+  // Spanish → English (user reads English-style phonetics)
   if (source.includes("spanish") && target.includes("english")) {
     return englishPronunciationForSpanishReader(translatedText);
   }
 
-  // English → Spanish (user reads Spanish phonetics)
+  // English → Spanish (user reads Spanish-style phonetics)
   if (source.includes("english") && target.includes("spanish")) {
     return spanishPronunciationForEnglishReader(translatedText);
   }
 
+  // Fallbacks (prevents blank output if detection isn't perfect)
+  if (target.includes("spanish")) {
+    return spanishPronunciationForEnglishReader(translatedText);
+  }
+
+  if (target.includes("english")) {
+    return englishPronunciationForSpanishReader(translatedText);
+  }
+
+  // Explicitly show it's not supported yet
+  return "Pronunciation not available for this language pair yet.";
+}
   // 🔥 FALLBACK (THIS FIXES YOUR BLANK ISSUE)
   if (target.includes("spanish")) {
     return spanishPronunciationForEnglishReader(translatedText);
