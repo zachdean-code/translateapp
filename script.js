@@ -344,7 +344,7 @@ function updatePronunciationAvailability() {
   const target = (targetSelection?.label || "").toLowerCase();
 
   const section = el("pronunciationSection");
-  const toggleWrap = el("pronToggleWrap");
+  const toggleWrap = el("pronToggle")?.closest(".toggleRow");
   const box = el("pronunciation");
 
   if (!section || !toggleWrap || !box) return;
@@ -389,20 +389,31 @@ function updatePronunciationAvailability() {
 
 function togglePronunciation() {
   const checked = !!el("pronToggle")?.checked;
-  const source = normalize(confirmedInputLanguage || "");
-  const target = normalize(targetSelection?.label || "");
+  const source = (confirmedInputLanguage || "").toLowerCase();
+  const target = (targetSelection?.label || "").toLowerCase();
   const section = el("pronunciationSection");
 
   if (!section) return;
 
-  const isSupported =
-    (source.includes("spanish") && target.includes("english")) ||
-    (source.includes("english") && target.includes("spanish"));
+  const isEnglishSpanish =
+    (source.includes("english") && target.includes("spanish")) ||
+    (source.includes("spanish") && target.includes("english"));
 
+  const isSameLanguage =
+    (source.includes("english") && target.includes("english")) ||
+    (source.includes("spanish") && target.includes("spanish"));
+
+  // Always sync state first
   updatePronunciationAvailability();
 
-  if (!isSupported) {
+  // Same language → never show anything
+  if (isSameLanguage) {
     section.classList.add("hidden");
+    return;
+  }
+
+  // Only allow EN ↔ ES to toggle visibility
+  if (!isEnglishSpanish) {
     return;
   }
 
