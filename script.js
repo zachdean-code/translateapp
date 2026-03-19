@@ -578,6 +578,7 @@ function setupSearch(inputId, suggestionId, onPick, type) {
 
 function detectInput(text) {
   const lower = normalize(text);
+  const tokens = tokenize(text);
 
   if (/[\u0600-\u06FF]/.test(text)) return { label: "Modern Standard Arabic" };
   if (/[\u0400-\u04FF]/.test(text)) return { label: "Russian" };
@@ -585,32 +586,74 @@ function detectInput(text) {
   if (/[\u4e00-\u9fff]/.test(text)) return { label: "Mandarin Chinese" };
   if (/[\uAC00-\uD7AF]/.test(text)) return { label: "Korean" };
 
-  if (lower.includes("parce") || lower.includes("parcero") || lower.includes("que mas pues") || lower.includes("quiubo")) {
+  if (
+    lower.includes("fag") ||
+    lower.includes("bloody") ||
+    lower.includes("cheers") ||
+    lower.includes("knackered") ||
+    lower.includes("loo") ||
+    lower.includes("uni") ||
+    lower.includes("flat") ||
+    lower.includes("lift") ||
+    lower.includes("holiday") ||
+    lower.includes("mum") ||
+    lower.includes("petrol")
+  ) {
+    return { label: "British English" };
+  }
+
+  if (
+    lower.includes("arvo") ||
+    lower.includes("brekkie") ||
+    lower.includes("servo") ||
+    lower.includes("no worries")
+  ) {
+    return { label: "Australian English" };
+  }
+
+  if (
+    lower.includes("parce") ||
+    lower.includes("parcero") ||
+    lower.includes("que mas pues") ||
+    lower.includes("quiubo")
+  ) {
     return { label: "Colombian Spanish — Paisa (Medellín)" };
   }
 
-  if (lower.includes("sumercé") || lower.includes("sumerce") || lower.includes("bacano")) {
+  if (
+    lower.includes("sumercé") ||
+    lower.includes("sumerce") ||
+    lower.includes("bacano")
+  ) {
     return { label: "Colombian Spanish — Rolo (Bogotá)" };
   }
 
-  if (lower.includes("orale") || lower.includes("wey") || lower.includes("no manches")) {
+  if (
+    lower.includes("orale") ||
+    lower.includes("wey") ||
+    lower.includes("no manches")
+  ) {
     return { label: "Spanish — Mexican" };
   }
 
   const spanishSignals = [
-    "hola","como","estas","que","para","porque","por","favor",
-    "gracias","buenos","buenas","dias","noches","tardes",
-    "amigo","amiga","con","sin","pero","muy","si","tambien",
-    "quiero","puedo","necesito","vamos","bien","mal"
+    "hola", "como", "estas", "que", "para", "porque", "por", "favor",
+    "gracias", "buenos", "buenas", "dias", "noches", "tardes",
+    "amigo", "amiga", "con", "sin", "pero", "muy", "si", "tambien",
+    "quiero", "puedo", "necesito", "vamos", "bien", "mal"
   ];
 
   let count = 0;
-  for (const token of tokenize(text)) {
+  for (const token of tokens) {
     if (spanishSignals.includes(token)) count += 1;
   }
 
-  if (/[áéíóúñ¿¡]/i.test(text) || count >= 2) {
+  if (/[áéíóúñ¿¡]/i.test(text) || count >= 1) {
     return { label: "Spanish — LATAM (Neutral)" };
+  }
+
+  if (tokens.length < 2 && lower.length < 6) {
+    return null;
   }
 
   return { label: "American English" };
