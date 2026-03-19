@@ -14,13 +14,13 @@
     <div class="topBar">
       <div class="languageGroup">
         <label for="siteLanguage">Site Language</label>
-        <select id="siteLanguage" class="miniSelect" tabindex="11">
+        <select id="siteLanguage" class="miniSelect" tabindex="14">
           <option value="en">English</option>
           <option value="es">Español</option>
         </select>
       </div>
 
-      <button id="darkModeButton" class="darkToggle" tabindex="12">🌙 Dark</button>
+      <button id="darkModeButton" class="darkToggle" tabindex="15">🌙 Dark</button>
     </div>
 
     <h1>Cross-Cultural Translator™</h1>
@@ -69,49 +69,48 @@
         </div>
 
         <div class="contextToggleRow">
-          <input id="contextToggle" type="checkbox">
+          <input id="contextToggle" type="checkbox" tabindex="5">
           <label for="contextToggle">Enhanced Context Mode</label>
         </div>
 
-     <div id="contextSection" class="hidden">
-  <div>
-    <label for="contextAudience">Who</label>
-    <select id="contextAudience">
-      <option value=""></option>
-      <option value="friend">Friend</option>
-      <option value="romantic">Romantic interest</option>
-      <option value="professional">Boss / Professional</option>
-      <option value="stranger">Stranger</option>
-      <option value="service">Service Employee</option>
-    </select>
-  </div>
+        <div id="contextSection" class="hidden">
+          <div>
+            <label for="contextAudience">Who</label>
+            <select id="contextAudience" tabindex="6">
+              <option value=""></option>
+              <option value="friend">Friend</option>
+              <option value="romantic">Romantic interest</option>
+              <option value="professional">Boss / Professional</option>
+              <option value="stranger">Stranger</option>
+              <option value="service">Service Employee</option>
+            </select>
+          </div>
 
-  <div>
-    <label for="contextTone">Intent / Tone</label>
-    <select id="contextTone">
-      <option value=""></option>
-      <option value="casual">Casual</option>
-      <option value="formal">Formal</option>
-      <option value="respectful">Respectful</option>
-      <option value="playful">Playful</option>
-      <option value="urgent">Urgent</option>
-    </select>
-  </div>
+          <div>
+            <label for="contextTone">Intent / Tone</label>
+            <select id="contextTone" tabindex="7">
+              <option value=""></option>
+              <option value="casual">Casual</option>
+              <option value="formal">Formal</option>
+              <option value="respectful">Respectful</option>
+              <option value="playful">Playful</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
 
-  <div>
-    <label for="contextSituation">Situation</label>
-    <select id="contextSituation">
-      <option value=""></option>
-      <option value="travel">Travel</option>
-      <option value="business">Business</option>
-      <option value="social">Social</option>
-      <option value="conflict">Conflict</option>
-      <option value="flirting">Flirting</option>
-    </select>
-  </div>
-</div>
+          <div>
+            <label for="contextSituation">Situation</label>
+            <select id="contextSituation" tabindex="8">
+              <option value=""></option>
+              <option value="travel">Travel</option>
+              <option value="business">Business</option>
+              <option value="social">Social</option>
+              <option value="conflict">Conflict</option>
+              <option value="flirting">Flirting</option>
+            </select>
+          </div>
+        </div>
 
-    
         <label for="targetSearch">Translate To</label>
 
         <div class="searchWrap">
@@ -119,12 +118,12 @@
             id="targetSearch"
             type="text"
             autocomplete="off"
-            tabindex="5"
+            tabindex="9"
           >
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-        <button id="translateButton" class="primaryButton" tabindex="6">
+        <button id="translateButton" class="primaryButton" tabindex="10">
           Translate
         </button>
       </div>
@@ -134,7 +133,7 @@
           <label for="output">Translation</label>
 
           <div class="toggleRow">
-            <input id="pronToggle" type="checkbox" tabindex="8">
+            <input id="pronToggle" type="checkbox" tabindex="11">
             <label id="pronToggleLabel" for="pronToggle">
               Show Pronunciation
             </label>
@@ -143,7 +142,7 @@
 
         <textarea id="output" readonly tabindex="-1"></textarea>
 
-        <button id="copyButton" class="copyButton" tabindex="7">
+        <button id="copyButton" class="copyButton" tabindex="12">
           Copy
         </button>
 
@@ -157,11 +156,11 @@
           <textarea id="pronunciation" readonly tabindex="-1"></textarea>
 
           <div class="buttonRow">
-            <button id="speakNormal" class="normalButton" tabindex="9">
+            <button id="speakNormal" class="normalButton" tabindex="13">
               Speak Normally
             </button>
 
-            <button id="speakSlow" class="slowButton" tabindex="10">
+            <button id="speakSlow" class="slowButton" tabindex="14">
               Speak Slowly
             </button>
           </div>
@@ -169,7 +168,7 @@
 
         <div id="additionalInfoSection" class="hidden">
           <label for="additionalInfo">Additional Information</label>
-          <textarea id="additionalInfo" readonly></textarea>      
+          <textarea id="additionalInfo" readonly tabindex="-1"></textarea>      
         </div>
       </div>
 
