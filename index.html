@@ -123,44 +123,45 @@
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-        <button id="translateButton" class="primaryButton" tabindex="10">
-          Translate
-        </button>
-      </div>
+<button id="translateButton" class="primaryButton" tabindex="10">
+  Translate
+</button>
+</div>
 
-      <div class="outputColumn">
-        <div class="translationHeader">
-          <label for="output">Translation</label>
-        </div>
+<div class="outputColumn">
 
-        <textarea id="output" readonly tabindex="-1"></textarea>
+  <div class="translationHeader">
+    <label for="output">Translation</label>
 
-        <button id="copyButton" class="copyButton" tabindex="11">
-          Copy
-        </button>
+    <div class="toggleRow">
+      <input id="pronToggle" type="checkbox" tabindex="12">
+      <label id="pronToggleLabel" for="pronToggle">
+        Show Pronunciation
+      </label>
+    </div>
+  </div>
 
-        <div class="toggleRow">
-          <input id="pronToggle" type="checkbox" tabindex="12">
-          <label id="pronToggleLabel" for="pronToggle">
-            Show Pronunciation
-          </label>
-        </div>
+  <textarea id="output" readonly tabindex="-1"></textarea>
 
-        <div id="contextOutputSection" class="hidden">
-          <label for="contextOutput">Context Adaptation</label>
-          <textarea id="contextOutput" readonly tabindex="-1"></textarea>
-        </div>
+  <button id="copyButton" class="copyButton" tabindex="11">
+    Copy
+  </button>
 
-        <div id="pronunciationSection" class="hidden">
-          <label for="pronunciation">Pronunciation Guide</label>
-          <textarea id="pronunciation" readonly tabindex="-1"></textarea>
+  <div id="contextOutputSection" class="hidden">
+    <label for="contextOutput">Context Adaptation</label>
+    <textarea id="contextOutput" readonly tabindex="-1"></textarea>
+  </div>
 
-          <div class="buttonRow">
-            <button id="speakNormal" class="normalButton" tabindex="13">
-              Speak Normally
-            </button>
+  <div id="pronunciationSection" class="hidden">
+    <label for="pronunciation">Pronunciation Guide</label>
+    <textarea id="pronunciation" readonly tabindex="-1"></textarea>
 
-            <button id="speakSlow" class="slowButton" tabindex="14">
+    <div class="buttonRow">
+      <button id="speakNormal" class="normalButton" tabindex="13">
+        Speak Normally
+      </button>
+      
+      <button id="speakSlow" class="slowButton" tabindex="14">
               Speak Slowly
             </button>
           </div>
