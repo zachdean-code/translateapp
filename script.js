@@ -696,7 +696,27 @@ function updateDetection() {
     return;
   }
 
-  detectedSelection = detectInput(text);
+function updateDetection() {
+  const text = el("userInput")?.value.trim() || "";
+  const card = el("detectedCard");
+
+  resetConfirmedLanguage();
+
+  if (!text) {
+    detectedSelection = null;
+    card?.classList.add("hidden");
+    return;
+  }
+
+  const detected = detectInput(text);
+
+  if (!detected) {
+    detectedSelection = null;
+    card?.classList.add("hidden");
+    return;
+  }
+
+  detectedSelection = detected;
   setDetectedDisplay(detectedSelection.label);
   card?.classList.remove("hidden");
   styleConfirmationRow();
@@ -909,14 +929,11 @@ if (el("pronunciation")) {
 updatePronunciationAvailability();
 updateAdditionalInfo(additionalInfo);
 }
-
-updateAdditionalInfo(additionalInfo);
   } catch (err) {
     if (el("output")) el("output").value = "Network error";
     if (el("pronunciation")) el("pronunciation").value = "";
     updateAdditionalInfo("");
-  }
-}
+  } 
 
 function updateAdditionalInfo(additionalInfo) {
   const section = document.getElementById("additionalInfoSection");
@@ -1011,6 +1028,21 @@ function applySiteLanguage(lang) {
     safeTextById("speakNormal", "Speak Normally");
     safeTextById("speakSlow", "Speak Slowly");
   }
+
+  // ✅ ADD THIS PART (this is the fix you were missing)
+  if (targetSelection && el("targetSearch")) {
+    el("targetSearch").value = localizeLanguageLabel(targetSelection.label);
+  }
+
+  if (confirmedInputLanguage) {
+    setConfirmedDisplay(confirmedInputLanguage);
+  } else if (detectedSelection) {
+    setDetectedDisplay(detectedSelection.label);
+  }
+
+  styleConfirmationRow();
+  updatePronunciationAvailability(); // ← THIS is the key fix
+}
 
   const btn = el("darkModeButton");
   if (btn) {
