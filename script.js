@@ -670,7 +670,7 @@ function detectInput(text) {
 
   let count = 0;
   for (const token of tokens) {
-    if (spanishSignals.includes(token)) count += 1;
+       if (spanishSignals.includes(token)) count += 1;
   }
 
   if (/[áéíóúñ¿¡]/i.test(text) || count >= 1) {
@@ -683,18 +683,6 @@ function detectInput(text) {
 
   return { label: "American English" };
 }
-
-function updateDetection() {
-  const text = el("userInput")?.value.trim() || "";
-  const card = el("detectedCard");
-
-  resetConfirmedLanguage();
-
-  if (!text) {
-    detectedSelection = null;
-    card?.classList.add("hidden");
-    return;
-  }
 
 function updateDetection() {
   const text = el("userInput")?.value.trim() || "";
@@ -721,6 +709,7 @@ function updateDetection() {
   card?.classList.remove("hidden");
   styleConfirmationRow();
 }
+
 function keepDetected() {
   if (!detectedSelection) return;
 
@@ -728,11 +717,11 @@ function keepDetected() {
   confirmationMode = "detected";
   setConfirmedDisplay(confirmedInputLanguage);
   el("changeDetectedWrap")?.classList.add("hidden");
-   styleConfirmationRow();
+  styleConfirmationRow();
   updateTranslateState();
   togglePronunciation();
 }
-
+  
 function toggleDetectedChange() {
   const wrap = el("changeDetectedWrap");
   if (!wrap) return;
@@ -877,6 +866,63 @@ function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
 }
 
 async function translateText() {
+  if (!confirmedInputLanguage) {
+    alert(isSpanishUI() ? "Confirma primero el idioma detectado." : "Please confirm the detected language first.");
+    return;
+  }
+
+  const input = el("userInput")?.value.trim() || "";
+  const target = targetSelection?.label || "";
+
+  if (!input || !target) {
+    alert(isSpanishUI() ? "Escribe texto y elige un idioma." : "Enter text and choose a language.");
+    return;
+  }
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: input,
+        target: target,
+        targetLanguage: target,
+        sourceLanguage: confirmedInputLanguage,
+        contextAudience: el("contextAudience")?.value || "",
+        contextTone: el("contextTone")?.value || "",
+        contextSituation: el("contextSituation")?.value || "",
+        enhancedContextMode: !!el("contextToggle")?.checked
+      })
+    });
+
+    const data = await response.json();
+    console.log("API response:", data);
+
+    const translated = data.output || "";
+    const additionalInfo =
+      data.additional_information ||
+      data.additionalInfo ||
+      data.context_note ||
+      data.usage_note ||
+      data.additionalNotes ||
+      "";
+
+    if (el("output")) el("output").value = translated;
+
+    if (el("pronunciation")) {
+      const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
+      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
+    }
+
+    updatePronunciationAvailability();
+    updateAdditionalInfo(additionalInfo);
+  } catch (err) {
+    if (el("output")) el("output").value = "Network error";
+    if (el("pronunciation")) el("pronunciation").value = "";
+    updatePronunciationAvailability();
+    updateAdditionalInfo("");
+  }
+}
 
 function updateAdditionalInfo(additionalInfo) {
   const section = document.getElementById("additionalInfoSection");
@@ -896,7 +942,6 @@ function updateAdditionalInfo(additionalInfo) {
 function copyTranslation() {
   const box = el("output");
   if (!box) return;
-  
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(box.value).catch(() => {});
   } else {
