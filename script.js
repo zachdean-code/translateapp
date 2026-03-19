@@ -333,9 +333,10 @@ function resetConfirmedLanguage() {
   if (el("pronToggle")) el("pronToggle").checked = false;
   el("pronunciationSection")?.classList.add("hidden");
 
-  updateAdditionalInfo("");
+ updateAdditionalInfo("");
   styleConfirmationRow();
   updateTranslateState();
+  updatePronunciationAvailability();
 }
 
 function updatePronunciationAvailability() {
@@ -1113,11 +1114,12 @@ document.addEventListener("DOMContentLoaded", () => {
     togglePronunciation();
   }, "detected");
 
-  if (el("translateButton")) el("translateButton").disabled = true;
-  if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
-  if (el("additionalInfoSection")) el("additionalInfoSection").classList.add("hidden");
-  styleConfirmationRow();
-  registerPeriodicSync();
+if (el("translateButton")) el("translateButton").disabled = true;
+if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
+if (el("additionalInfoSection")) el("additionalInfoSection").classList.add("hidden");
+styleConfirmationRow();
+updatePronunciationAvailability();
+registerPeriodicSync();
 });
 
 async function enablePushNotifications() {
