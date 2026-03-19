@@ -385,33 +385,16 @@ function togglePronunciation() {
   const source = normalize(confirmedInputLanguage || "");
   const target = normalize(targetSelection?.label || "");
   const section = el("pronunciationSection");
-  const toggleWrap = el("pronToggle")?.closest(".toggleRow");
 
   if (!section) return;
 
-  const sameBaseLanguage =
-    (source.includes("english") && target.includes("english")) ||
-    (source.includes("spanish") && target.includes("spanish")) ||
-    (source.includes("arabic") && target.includes("arabic")) ||
-    (source.includes("persian") && target.includes("persian")) ||
-    (source.includes("portuguese") && target.includes("portuguese")) ||
-    (source.includes("chinese") && target.includes("chinese")) ||
-    (source.includes("japanese") && target.includes("japanese")) ||
-    (source.includes("korean") && target.includes("korean")) ||
-    (source.includes("russian") && target.includes("russian")) ||
-    (source.includes("hindi") && target.includes("hindi")) ||
-    (source.includes("indonesian") && target.includes("indonesian")) ||
-    (source.includes("swahili") && target.includes("swahili")) ||
-    (source.includes("amharic") && target.includes("amharic")) ||
-    (source.includes("turkish") && target.includes("turkish"));
+  const isSupported =
+    (source.includes("spanish") && target.includes("english")) ||
+    (source.includes("english") && target.includes("spanish"));
 
-  if (toggleWrap) {
-    toggleWrap.classList.toggle("hidden", sameBaseLanguage);
-  }
+  updatePronunciationAvailability();
 
-  if (sameBaseLanguage) {
-    if (el("pronToggle")) el("pronToggle").checked = false;
-    if (el("pronunciation")) el("pronunciation").value = "";
+  if (!isSupported) {
     section.classList.add("hidden");
     return;
   }
@@ -860,42 +843,20 @@ function spanishPronunciationForEnglishReader(text) {
 function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
   if (!translatedText) return "";
 
-  const source = normalize(sourceLanguage || "").toLowerCase();
-  const target = normalize(targetLanguage || "").toLowerCase();
+  const source = normalize(sourceLanguage || "");
+  const target = normalize(targetLanguage || "");
 
-  // Spanish → English (user reads English-style phonetics)
   if (source.includes("spanish") && target.includes("english")) {
     return englishPronunciationForSpanishReader(translatedText);
   }
 
-  // English → Spanish (user reads Spanish-style phonetics)
   if (source.includes("english") && target.includes("spanish")) {
     return spanishPronunciationForEnglishReader(translatedText);
   }
 
-  // Fallbacks (prevents blank output if detection isn't perfect)
-  if (target.includes("spanish")) {
-    return spanishPronunciationForEnglishReader(translatedText);
-  }
-
-  if (target.includes("english")) {
-    return englishPronunciationForSpanishReader(translatedText);
-  }
-
-  // Explicitly show it's not supported yet
-  return "Pronunciation not available for this language pair yet.";
+  return ""; 
 }
-  // 🔥 FALLBACK (THIS FIXES YOUR BLANK ISSUE)
-  if (target.includes("spanish")) {
-    return spanishPronunciationForEnglishReader(translatedText);
-  }
 
-  if (target.includes("english")) {
-    return englishPronunciationForSpanishReader(translatedText);
-  }
-
-  return translatedText; // last fallback instead of blank
-}
 async function translateText() {
   if (!confirmedInputLanguage) {
     alert(isSpanishUI() ? "Confirma primero el idioma detectado." : "Please confirm the detected language first.");
@@ -943,6 +904,10 @@ if (el("output")) el("output").value = translated;
 if (el("pronunciation")) {
   const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
   el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
+}
+
+updatePronunciationAvailability();
+updateAdditionalInfo(additionalInfo);
 }
 
 updateAdditionalInfo(additionalInfo);
