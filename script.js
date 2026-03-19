@@ -818,20 +818,30 @@ function spanishPronunciationForEnglishReader(text) {
 function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
   if (!translatedText) return "";
 
-  const source = normalize(sourceLanguage || "");
-  const target = normalize(targetLanguage || "");
+  const source = normalize(sourceLanguage || "").toLowerCase();
+  const target = normalize(targetLanguage || "").toLowerCase();
 
+  // Spanish → English (user reads English phonetics)
   if (source.includes("spanish") && target.includes("english")) {
     return englishPronunciationForSpanishReader(translatedText);
   }
 
+  // English → Spanish (user reads Spanish phonetics)
   if (source.includes("english") && target.includes("spanish")) {
     return spanishPronunciationForEnglishReader(translatedText);
   }
 
-  return "";
-}
+  // 🔥 FALLBACK (THIS FIXES YOUR BLANK ISSUE)
+  if (target.includes("spanish")) {
+    return spanishPronunciationForEnglishReader(translatedText);
+  }
 
+  if (target.includes("english")) {
+    return englishPronunciationForSpanishReader(translatedText);
+  }
+
+  return translatedText; // last fallback instead of blank
+}
 async function translateText() {
   if (!confirmedInputLanguage) {
     alert(isSpanishUI() ? "Confirma primero el idioma detectado." : "Please confirm the detected language first.");
