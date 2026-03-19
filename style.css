@@ -341,6 +341,7 @@ button:disabled {
   width: 100%;
   overflow: hidden;
 }
+
 #contextSection label {
   width: 100%;
   margin: 0 0 6px 0;
@@ -415,34 +416,28 @@ button:disabled {
 
 /* context output / additional info */
 #contextOutputSection,
-#additionalInfoSection {
+#additionalInfoSection,
+#pronunciationSection {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 #contextOutputSection label,
-#additionalInfoSection label {
-  margin-bottom: 6px;
+#additionalInfoSection label,
+#pronunciationSection label {
+  margin-bottom: 0;
 }
 
 #contextOutput,
-#additionalInfo {
-  min-height: 100px;
+#additionalInfo,
+#pronunciation {
+  min-height: 140px;
 }
 
 /* pronunciation */
 #pronunciationSection {
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-}
-
-#pronunciationSection label {
-  margin-bottom: 6px;
-}
-
-#pronunciation {
-  min-height: 100px;
+  margin-top: 14px;
 }
 
 .buttonRow {
