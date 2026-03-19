@@ -337,6 +337,47 @@ function resetConfirmedLanguage() {
   styleConfirmationRow();
   updateTranslateState();
 }
+function updatePronunciationAvailability() {
+  const source = normalize(confirmedInputLanguage || "");
+  const target = normalize(targetSelection?.label || "");
+  const toggleWrap = el("pronToggle")?.closest(".toggleRow");
+  const section = el("pronunciationSection");
+  const headerLabel = document.querySelector(".translationHeader label[for='output']");
+  const unavailableId = "pronunciationUnavailableMessage";
+
+  if (!toggleWrap || !section || !headerLabel) return;
+
+  const isSupported =
+    (source.includes("spanish") && target.includes("english")) ||
+    (source.includes("english") && target.includes("spanish"));
+
+  let msg = document.getElementById(unavailableId);
+
+  if (!isSupported && source && target) {
+    toggleWrap.classList.add("hidden");
+    section.classList.add("hidden");
+
+    if (el("pronToggle")) el("pronToggle").checked = false;
+    if (el("pronunciation")) el("pronunciation").value = "";
+
+    if (!msg) {
+      msg = document.createElement("span");
+      msg.id = unavailableId;
+      msg.style.fontSize = "14px";
+      msg.style.fontWeight = "600";
+      msg.style.color = "#d1d5db";
+      msg.style.marginLeft = "12px";
+      headerLabel.insertAdjacentElement("afterend", msg);
+    }
+
+    msg.innerText = isSpanishUI()
+      ? "La pronunciación aún no está disponible para este par de idiomas."
+      : "Pronunciation not available for this language pair yet.";
+  } else {
+    if (msg) msg.remove();
+    toggleWrap.classList.remove("hidden");
+  }
+}
 
 function togglePronunciation() {
   const checked = !!el("pronToggle")?.checked;
