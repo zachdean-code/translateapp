@@ -346,8 +346,10 @@ function updatePronunciationAvailability() {
   const section = el("pronunciationSection");
   const toggleWrap = el("pronToggle")?.closest(".toggleRow");
   const box = el("pronunciation");
+  const header = document.querySelector(".translationHeader");
+  const unavailableId = "pronunciationUnavailableMessage";
 
-  if (!section || !toggleWrap || !box) return;
+  if (!section || !toggleWrap || !box || !header) return;
 
   const isEnglishSpanish =
     (source.includes("english") && target.includes("spanish")) ||
@@ -357,32 +359,48 @@ function updatePronunciationAvailability() {
     (source.includes("english") && target.includes("english")) ||
     (source.includes("spanish") && target.includes("spanish"));
 
-  // ✅ SAME LANGUAGE → hide everything completely
+  let msg = document.getElementById(unavailableId);
+
+  // SAME LANGUAGE: show nothing at all
   if (isSameLanguage) {
     section.classList.add("hidden");
     toggleWrap.classList.add("hidden");
     box.value = "";
+    if (el("pronToggle")) el("pronToggle").checked = false;
+    if (msg) msg.remove();
     return;
   }
 
-  // ✅ ENGLISH ↔ SPANISH → allow pronunciation
+  // ENGLISH ↔ SPANISH: normal pronunciation flow
   if (isEnglishSpanish) {
     toggleWrap.classList.remove("hidden");
+    if (msg) msg.remove();
 
     if (el("pronToggle")?.checked) {
       section.classList.remove("hidden");
     } else {
       section.classList.add("hidden");
     }
-
     return;
   }
 
-  // ❌ OTHER LANGUAGE PAIRS → show message
+  // ALL OTHER PAIRS: hide pronunciation UI, show only small message by Translation
+  section.classList.add("hidden");
   toggleWrap.classList.add("hidden");
-  section.classList.remove("hidden");
+  box.value = "";
+  if (el("pronToggle")) el("pronToggle").checked = false;
 
-  box.value = isSpanishUI()
+  if (!msg) {
+    msg = document.createElement("span");
+    msg.id = unavailableId;
+    msg.style.fontSize = "14px";
+    msg.style.fontWeight = "600";
+    msg.style.color = "#d1d5db";
+    msg.style.marginLeft = "12px";
+    header.appendChild(msg);
+  }
+
+  msg.innerText = isSpanishUI()
     ? "La pronunciación aún no está disponible para este par de idiomas."
     : "Pronunciation not available for this language pair yet.";
 }
@@ -403,17 +421,15 @@ function togglePronunciation() {
     (source.includes("english") && target.includes("english")) ||
     (source.includes("spanish") && target.includes("spanish"));
 
-  // Always sync state first
   updatePronunciationAvailability();
 
-  // Same language → never show anything
   if (isSameLanguage) {
     section.classList.add("hidden");
     return;
   }
 
-  // Only allow EN ↔ ES to toggle visibility
   if (!isEnglishSpanish) {
+    section.classList.add("hidden");
     return;
   }
 
