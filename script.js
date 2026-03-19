@@ -829,22 +829,22 @@ const additionalInfo =
   data.context_note ||
   data.usage_note ||
   data.additionalNotes ||
-  "TEST: In British English, 'fag' commonly means cigarette. In American English, this term is offensive and should be avoided.";
-    if (el("output")) el("output").value = translated;
+  "";
 
-    if (el("pronunciation")) {
-      const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
-      el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
-    }
+if (el("output")) el("output").value = translated;
 
-    updateAdditionalInfo(additionalInfo);
+if (el("pronunciation")) {
+  const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
+  el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
+}
+
+updateAdditionalInfo(additionalInfo);
   } catch (err) {
     if (el("output")) el("output").value = "Network error";
     if (el("pronunciation")) el("pronunciation").value = "";
     updateAdditionalInfo("");
   }
 }
-
 
 function updateAdditionalInfo(additionalInfo) {
   const section = document.getElementById("additionalInfoSection");
@@ -906,7 +906,7 @@ function applySiteLanguage(lang) {
     safeTextBySelector('label[for="siteLanguage"]', "Idioma del sitio");
     safeTextBySelector("h1", "Traductor Intercultural™");
     safeTextBySelector(".subtitle", "Más que traducción — comunicación intercultural real");
-        safeTextBySelector(".description", "Traducción con sensibilidad dialectal, guía de pronunciación y claridad cultural");
+    safeTextBySelector(".description", "Traducción con sensibilidad dialectal, guía de pronunciación y claridad cultural");
     safeTextById("inputLabel", "Texto de entrada");
     safeTextById("keepDetectedButton", "Mantener");
     safeTextById("changeDetectedButton", "Cambiar");
@@ -1014,26 +1014,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   
-setupSearch("targetSearch", "targetSuggestions", (item) => {
-  targetSelection = item;
-  el("targetSearch").value = localizeLanguageLabel(item.label);
-  closeSuggestions(el("targetSuggestions"), "target");
-  updateTranslateState();
-  togglePronunciation();
-}, "target");
+  setupSearch("targetSearch", "targetSuggestions", (item) => {
+    targetSelection = item;
+    el("targetSearch").value = localizeLanguageLabel(item.label);
+    closeSuggestions(el("targetSuggestions"), "target");
+    updateTranslateState();
+    togglePronunciation();
+  }, "target");
 
-setupSearch("detectedSearch", "detectedSuggestions", (item) => {
-  confirmedInputLanguage = item.label;
-  confirmationMode = "chosen";
-  detectedSelection = { label: item.label };
-  el("detectedSearch").value = localizeLanguageLabel(item.label);
-  closeSuggestions(el("detectedSuggestions"), "detected");
-  el("changeDetectedWrap")?.classList.add("hidden");
-  setConfirmedDisplay(item.label);
-  styleConfirmationRow();
-  updateTranslateState();
-  togglePronunciation();
-}, "detected");
+  setupSearch("detectedSearch", "detectedSuggestions", (item) => {
+    confirmedInputLanguage = item.label;
+    confirmationMode = "chosen";
+    detectedSelection = { label: item.label };
+    el("detectedSearch").value = localizeLanguageLabel(item.label);
+    closeSuggestions(el("detectedSuggestions"), "detected");
+    el("changeDetectedWrap")?.classList.add("hidden");
+    setConfirmedDisplay(item.label);
+    styleConfirmationRow();
+    updateTranslateState();
+    togglePronunciation();
+  }, "detected");
 
   if (el("translateButton")) el("translateButton").disabled = true;
   if (el("pronunciationSection")) el("pronunciationSection").classList.add("hidden");
@@ -1108,4 +1108,4 @@ async function registerPeriodicSync() {
   } else {
     console.log('Periodic background sync not supported.');
   }
-}    
+}
