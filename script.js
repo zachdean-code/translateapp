@@ -829,7 +829,7 @@ const additionalInfo =
   data.context_note ||
   data.usage_note ||
   data.additionalNotes ||
-  "";
+  "TEST: In British English, 'fag' commonly means cigarette. In American English, this term is offensive and should be avoided.";
     if (el("output")) el("output").value = translated;
 
     if (el("pronunciation")) {
