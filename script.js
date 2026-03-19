@@ -351,6 +351,17 @@ function updatePronunciationAvailability() {
 
   if (!section || !toggleWrap || !box || !header) return;
 
+  if (!source || !target) {
+    section.classList.add("hidden");
+    toggleWrap.classList.add("hidden");
+    box.value = "";
+    if (el("pronToggle")) el("pronToggle").checked = false;
+
+    const existingMsg = document.getElementById("pronunciationUnavailableMessage");
+    if (existingMsg) existingMsg.remove();
+    return;
+  }
+
   const isEnglishSpanish =
     (source.includes("english") && target.includes("spanish")) ||
     (source.includes("spanish") && target.includes("english"));
