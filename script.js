@@ -721,7 +721,6 @@ function updateDetection() {
   card?.classList.remove("hidden");
   styleConfirmationRow();
 }
-
 function keepDetected() {
   if (!detectedSelection) return;
 
@@ -878,62 +877,6 @@ function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
 }
 
 async function translateText() {
-  if (!confirmedInputLanguage) {
-    alert(isSpanishUI() ? "Confirma primero el idioma detectado." : "Please confirm the detected language first.");
-    return;
-  }
-
-  const input = el("userInput")?.value.trim() || "";
-  const target = targetSelection?.label || "";
-
-  if (!input || !target) {
-    alert(isSpanishUI() ? "Escribe texto y elige un idioma." : "Enter text and choose a language.");
-    return;
-  }
-
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: input,
-        target: target,
-        targetLanguage: target,
-        sourceLanguage: confirmedInputLanguage,
-        contextAudience: el("contextAudience")?.value || "",
-        contextTone: el("contextTone")?.value || "",
-        contextSituation: el("contextSituation")?.value || "",
-        enhancedContextMode: !!el("contextToggle")?.checked
-      })
-    });
-const data = await response.json();
-console.log("API response:", data);
-
-const translated = data.output || "";
-
-const additionalInfo =
-  data.additional_information ||
-  data.additionalInfo ||
-  data.context_note ||
-  data.usage_note ||
-  data.additionalNotes ||
-  "";
-
-if (el("output")) el("output").value = translated;
-
-if (el("pronunciation")) {
-  const rawPronunciation = buildPronunciation(translated, confirmedInputLanguage, target);
-  el("pronunciation").value = normalizePronunciationStyle(rawPronunciation);
-}
-
-updatePronunciationAvailability();
-updateAdditionalInfo(additionalInfo);
-}
-  } catch (err) {
-    if (el("output")) el("output").value = "Network error";
-    if (el("pronunciation")) el("pronunciation").value = "";
-    updateAdditionalInfo("");
-  } 
 
 function updateAdditionalInfo(additionalInfo) {
   const section = document.getElementById("additionalInfoSection");
@@ -1029,21 +972,6 @@ function applySiteLanguage(lang) {
     safeTextById("speakSlow", "Speak Slowly");
   }
 
-  // ✅ ADD THIS PART (this is the fix you were missing)
-  if (targetSelection && el("targetSearch")) {
-    el("targetSearch").value = localizeLanguageLabel(targetSelection.label);
-  }
-
-  if (confirmedInputLanguage) {
-    setConfirmedDisplay(confirmedInputLanguage);
-  } else if (detectedSelection) {
-    setDetectedDisplay(detectedSelection.label);
-  }
-
-  styleConfirmationRow();
-  updatePronunciationAvailability(); // ← THIS is the key fix
-}
-
   const btn = el("darkModeButton");
   if (btn) {
     const isDark = document.body.classList.contains("dark");
@@ -1063,6 +991,7 @@ function applySiteLanguage(lang) {
   }
 
   styleConfirmationRow();
+  updatePronunciationAvailability();
 
   const footer = document.querySelector("footer");
   if (footer) {
