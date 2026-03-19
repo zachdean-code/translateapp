@@ -280,7 +280,7 @@ function styleConfirmationRow() {
   row.style.width = "100%";
   row.style.alignItems = "center";
 
-  if (confirmedInputLanguage) {
+   if (confirmedInputLanguage) {
     card.classList.add("confirmed");
     keepBtn.classList.add("hidden");
     row.style.justifyContent = "flex-end";
@@ -337,15 +337,16 @@ function resetConfirmedLanguage() {
   styleConfirmationRow();
   updateTranslateState();
 }
+
 function updatePronunciationAvailability() {
   const source = normalize(confirmedInputLanguage || "");
   const target = normalize(targetSelection?.label || "");
   const toggleWrap = el("pronToggle")?.closest(".toggleRow");
   const section = el("pronunciationSection");
-  const headerLabel = document.querySelector(".translationHeader label[for='output']");
+  const header = document.querySelector(".translationHeader");
   const unavailableId = "pronunciationUnavailableMessage";
 
-  if (!toggleWrap || !section || !headerLabel) return;
+  if (!toggleWrap || !section || !header) return;
 
   const isSupported =
     (source.includes("spanish") && target.includes("english")) ||
@@ -367,7 +368,7 @@ function updatePronunciationAvailability() {
       msg.style.fontWeight = "600";
       msg.style.color = "#d1d5db";
       msg.style.marginLeft = "12px";
-      headerLabel.insertAdjacentElement("afterend", msg);
+      header.appendChild(msg);
     }
 
     msg.innerText = isSpanishUI()
