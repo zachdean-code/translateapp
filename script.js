@@ -340,45 +340,51 @@ function resetConfirmedLanguage() {
 }
 
 function updatePronunciationAvailability() {
-  const source = normalize(confirmedInputLanguage || "");
-  const target = normalize(targetSelection?.label || "");
-  const toggleWrap = el("pronToggle")?.closest(".toggleRow");
+  const source = (confirmedInputLanguage || "").toLowerCase();
+  const target = (targetSelection?.label || "").toLowerCase();
+
   const section = el("pronunciationSection");
-  const header = document.querySelector(".translationHeader");
-  const unavailableId = "pronunciationUnavailableMessage";
+  const toggleWrap = el("pronToggleWrap");
+  const box = el("pronunciation");
 
-  if (!toggleWrap || !section || !header) return;
+  if (!section || !toggleWrap || !box) return;
 
-  const isSupported =
-    (source.includes("spanish") && target.includes("english")) ||
-    (source.includes("english") && target.includes("spanish"));
+  const isEnglishSpanish =
+    (source.includes("english") && target.includes("spanish")) ||
+    (source.includes("spanish") && target.includes("english"));
 
-  let msg = document.getElementById(unavailableId);
+  const isSameLanguage =
+    (source.includes("english") && target.includes("english")) ||
+    (source.includes("spanish") && target.includes("spanish"));
 
-  if (!isSupported && source && target) {
-    toggleWrap.classList.add("hidden");
+  // ✅ SAME LANGUAGE → hide everything completely
+  if (isSameLanguage) {
     section.classList.add("hidden");
+    toggleWrap.classList.add("hidden");
+    box.value = "";
+    return;
+  }
 
-    if (el("pronToggle")) el("pronToggle").checked = false;
-    if (el("pronunciation")) el("pronunciation").value = "";
+  // ✅ ENGLISH ↔ SPANISH → allow pronunciation
+  if (isEnglishSpanish) {
+    toggleWrap.classList.remove("hidden");
 
-    if (!msg) {
-      msg = document.createElement("span");
-      msg.id = unavailableId;
-      msg.style.fontSize = "14px";
-      msg.style.fontWeight = "600";
-      msg.style.color = "#d1d5db";
-      msg.style.marginLeft = "12px";
-      header.appendChild(msg);
+    if (el("pronToggle")?.checked) {
+      section.classList.remove("hidden");
+    } else {
+      section.classList.add("hidden");
     }
 
-    msg.innerText = isSpanishUI()
-      ? "La pronunciación aún no está disponible para este par de idiomas."
-      : "Pronunciation not available for this language pair yet.";
-  } else {
-    if (msg) msg.remove();
-    toggleWrap.classList.remove("hidden");
+    return;
   }
+
+  // ❌ OTHER LANGUAGE PAIRS → show message
+  toggleWrap.classList.add("hidden");
+  section.classList.remove("hidden");
+
+  box.value = isSpanishUI()
+    ? "La pronunciación aún no está disponible para este par de idiomas."
+    : "Pronunciation not available for this language pair yet.";
 }
 
 function togglePronunciation() {
