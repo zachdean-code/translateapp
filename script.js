@@ -818,17 +818,18 @@ async function translateText() {
         enhancedContextMode: !!el("contextToggle")?.checked
       })
     });
+const data = await response.json();
+console.log("API response:", data);
 
-    const data = await response.json();
-    const translated = data.output || "";
-    const additionalInfo =
-      data.additional_information ||
-      data.additionalInfo ||
-      data.context_note ||
-      data.usage_note ||
-      data.additionalNotes ||
-      "";
+const translated = data.output || "";
 
+const additionalInfo =
+  data.additional_information ||
+  data.additionalInfo ||
+  data.context_note ||
+  data.usage_note ||
+  data.additionalNotes ||
+  "";
     if (el("output")) el("output").value = translated;
 
     if (el("pronunciation")) {
