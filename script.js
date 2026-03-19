@@ -844,10 +844,26 @@ async function translateText() {
   }
 }
 
+
+function updateAdditionalInfo(additionalInfo) {
+  const section = document.getElementById("additionalInfoSection");
+  const box = document.getElementById("additionalInfo");
+
+  if (!section || !box) return;
+
+  if (additionalInfo && additionalInfo.trim() !== "") {
+    box.value = additionalInfo;
+    section.classList.remove("hidden");
+  } else {
+    section.classList.add("hidden");
+    box.value = "";
+  }
+}
+
 function copyTranslation() {
   const box = el("output");
   if (!box) return;
-
+  
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(box.value).catch(() => {});
   } else {
