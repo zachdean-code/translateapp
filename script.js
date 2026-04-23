@@ -1,59 +1,120 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const savedLang = localStorage.getItem("siteLanguage") || "en";
-  const isDark = localStorage.getItem("darkMode") === "on";
+const API_URL = "https://translateapp-1.onrender.com/translate";
 
-  if (isDark) {
+let detectedSelection = null;
+let confirmedInputLanguage = null;
+let confirmationMode = null;
+let targetSelection = null;
+
+function el(id) {
+  return document.getElementById(id);
+}
+
+/* ---------- UI ---------- */
+
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+  const isDark = document.body.classList.contains("dark");
+  localStorage.setItem("darkMode", isDark ? "on" : "off");
+}
+
+/* ---------- DETECTION ---------- */
+
+function detectInput(text) {
+  const lower = normalize(text);
+
+  if (/[áéíóúñ¿¡]/i.test(text) || lower.includes("que")) {
+    return { label: "Spanish — LATAM (Neutral)" };
+  }
+
+  return { label: "American English" };
+}
+
+function updateDetection() {
+  const text = el("userInput").value.trim();
+  const card = el("detectedCard");
+
+  confirmedInputLanguage = null;
+
+  if (!text) {
+    card.classList.add("hidden");
+    return;
+  }
+
+  const detected = detectInput(text);
+
+  detectedSelection = detected;
+  el("detectedLanguageDialect").innerText =
+    "Detected: " + detected.label;
+
+  card.classList.remove("hidden");
+}
+
+/* ---------- BUTTONS ---------- */
+
+function keepDetected() {
+  confirmedInputLanguage = detectedSelection.label;
+}
+
+function toggleDetectedChange() {
+  el("changeDetectedWrap").classList.toggle("hidden");
+}
+
+/* ---------- TRANSLATE ---------- */
+
+async function translateText() {
+  const input = el("userInput").value.trim();
+  const target = el("targetSearch").value.trim();
+
+  if (!input || !target) {
+    alert("Enter text + target");
+    return;
+  }
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: input,
+        target: target
+      })
+    });
+
+    const data = await res.json();
+
+    el("output").value = data.output || "";
+    el("additionalInfo").value = data.additional_information || "";
+
+    el("additionalInfoSection").classList.remove("hidden");
+
+  } catch {
+    el("output").value = "Error";
+  }
+}
+
+/* ---------- COPY ---------- */
+
+function copyTranslation() {
+  const box = el("output");
+  box.select();
+  document.execCommand("copy");
+}
+
+/* ---------- INIT ---------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* DARK MODE LOAD */
+  if (localStorage.getItem("darkMode") === "on") {
     document.body.classList.add("dark");
   }
 
-  const siteLanguage = el("siteLanguage");
-  if (siteLanguage) {
-    siteLanguage.value = savedLang;
-    siteLanguage.addEventListener("change", (e) => applySiteLanguage(e.target.value));
-  }
+  /* EVENTS */
+  el("userInput").addEventListener("input", updateDetection);
+  el("keepDetectedButton").addEventListener("click", keepDetected);
+  el("changeDetectedButton").addEventListener("click", toggleDetectedChange);
+  el("translateButton").addEventListener("click", translateText);
+  el("copyButton").addEventListener("click", copyTranslation);
+  el("darkModeButton").addEventListener("click", toggleDarkMode);
 
-  applySiteLanguage(savedLang);
-
-  const contextToggle = el("contextToggle");
-  if (contextToggle) {
-    el("contextSection")?.classList.toggle("hidden", !contextToggle.checked);
-    setSectionDisabled(el("contextSection"), !contextToggle.checked);
-
-    contextToggle.addEventListener("change", (e) => {
-      el("contextSection")?.classList.toggle("hidden", !e.target.checked);
-      setSectionDisabled(el("contextSection"), !e.target.checked);
-    });
-  }
-
-  el("userInput")?.addEventListener("input", updateDetection);
-  el("keepDetectedButton")?.addEventListener("click", keepDetected);
-  el("changeDetectedButton")?.addEventListener("click", toggleDetectedChange);
-  el("translateButton")?.addEventListener("click", translateText);
-  el("copyButton")?.addEventListener("click", copyTranslation);
-  el("darkModeButton")?.addEventListener("click", toggleDarkMode);
-
-  setupSearch("targetSearch", "targetSuggestions", (item) => {
-    targetSelection = item;
-    el("targetSearch").value = localizeLanguageLabel(item.label);
-    closeSuggestions(el("targetSuggestions"), "target");
-    updateTranslateState();
-  }, "target");
-
-  setupSearch("detectedSearch", "detectedSuggestions", (item) => {
-    confirmedInputLanguage = item.label;
-    confirmationMode = "chosen";
-    detectedSelection = { label: item.label };
-    el("detectedSearch").value = localizeLanguageLabel(item.label);
-    closeSuggestions(el("detectedSuggestions"), "detected");
-    el("changeDetectedWrap")?.classList.add("hidden");
-    setConfirmedDisplay(item.label);
-    styleConfirmationRow();
-    updateTranslateState();
-  }, "detected");
-
-  if (el("translateButton")) el("translateButton").disabled = true;
-  if (el("additionalInfoSection")) el("additionalInfoSection").classList.add("hidden");
-
-  styleConfirmationRow();
-  updateTranslateState();
 });
