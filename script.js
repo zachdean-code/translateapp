@@ -12,6 +12,7 @@ const keepDetectedButton = document.getElementById("keepDetectedButton");
 const changeDetectedButton = document.getElementById("changeDetectedButton");
 const changeDetectedWrap = document.getElementById("changeDetectedWrap");
 const detectedSearch = document.getElementById("detectedSearch");
+const detectedSuggestions = document.getElementById("detectedSuggestions");
 
 const contextToggle = document.getElementById("contextToggle");
 const contextSection = document.getElementById("contextSection");
@@ -20,6 +21,7 @@ const contextTone = document.getElementById("contextTone");
 const contextSituation = document.getElementById("contextSituation");
 
 const targetSearch = document.getElementById("targetSearch");
+const targetSuggestions = document.getElementById("targetSuggestions");
 const translateButton = document.getElementById("translateButton");
 
 const output = document.getElementById("output");
@@ -40,13 +42,57 @@ const additionalInfo = document.getElementById("additionalInfo");
 // === STATE ===
 let detectedSelection = null;
 let confirmedInputLanguage = null;
-let confirmationMode = null;
+let targetMatches = [];
+let targetActiveIndex = -1;
+
+// === LANGUAGE CATALOG ===
+const targetCatalog = [
+  { label: "American English", aliases: ["english", "en", "english american"] },
+  { label: "British English", aliases: ["english british"] },
+  { label: "Australian English", aliases: ["english australian"] },
+
+  { label: "Spanish — LATAM (Neutral)", aliases: ["spanish", "espanol", "español", "es", "latam", "latam spanish", "latin american spanish"] },
+  { label: "Spanish — Mexican", aliases: ["mexican spanish"] },
+  { label: "Spanish — Central American", aliases: ["central american spanish"] },
+  { label: "Spanish — Caribbean", aliases: ["caribbean spanish"] },
+  { label: "Spanish — Peruvian", aliases: ["peruvian spanish"] },
+  { label: "Spanish — Argentine", aliases: ["argentine spanish"] },
+  { label: "Spanish — Chilean", aliases: ["chilean spanish"] },
+  { label: "Spanish — General Colombian", aliases: ["general colombian spanish", "colombian spanish"] },
+  { label: "Spanish — Venezuelan", aliases: ["venezuelan spanish"] },
+
+  { label: "Colombian Spanish — Paisa (Medellín)", aliases: ["paisa", "paisa spanish", "paisa spanish medellin", "medellin spanish"] },
+  { label: "Colombian Spanish — Rolo (Bogotá)", aliases: ["rolo", "rolo spanish", "bogota spanish"] },
+  { label: "Colombian Spanish — Cali", aliases: ["cali", "cali spanish"] },
+  { label: "Colombian Spanish — Santander", aliases: ["santander", "santander spanish"] },
+
+  { label: "French", aliases: ["francais", "français", "fr"] },
+  { label: "German", aliases: ["deutsch", "de"] },
+  { label: "Italian", aliases: ["italiano", "it"] },
+
+  { label: "Brazilian Portuguese", aliases: ["portuguese brazil", "brazilian portuguese"] },
+  { label: "European Portuguese", aliases: ["portuguese portugal", "european portuguese"] },
+
+  { label: "Modern Standard Arabic", aliases: ["arabic", "msa", "modern standard arabic"] },
+  { label: "Egyptian Arabic", aliases: ["egyptian arabic"] },
+
+  { label: "Iranian Persian — Farsi", aliases: ["farsi", "persian"] },
+  { label: "Afghan Persian — Dari", aliases: ["dari"] },
+  { label: "Tajik Persian — Tajik", aliases: ["tajik"] },
+
+  { label: "Hindi", aliases: ["hi"] },
+  { label: "Indonesian", aliases: ["id"] },
+  { label: "Filipino (Tagalog)", aliases: ["filipino", "tagalog", "tl"] },
+  { label: "Swahili", aliases: ["sw"] },
+  { label: "Amharic", aliases: ["am"] },
+  { label: "Turkish", aliases: ["tr"] },
+  { label: "Russian", aliases: ["ru"] },
+  { label: "Japanese", aliases: ["ja"] },
+  { label: "Korean", aliases: ["ko"] },
+  { label: "Mandarin Chinese", aliases: ["chinese", "zh", "mandarin"] }
+];
 
 // === HELPERS ===
-function el(id) {
-  return document.getElementById(id);
-}
-
 function normalize(value) {
   return (value || "")
     .toLowerCase()
@@ -55,18 +101,35 @@ function normalize(value) {
     .trim();
 }
 
-function showElement(node, displayValue = "block") {
-  if (!node) return;
-  node.classList.remove("hidden");
-  node.hidden = false;
-  node.style.display = displayValue;
+function tokenize(value) {
+  return normalize(value)
+    .split(/[\s—()\/,.:;!?-]+/)
+    .filter(Boolean);
 }
 
-function hideElement(node) {
-  if (!node) return;
-  node.classList.add("hidden");
-  node.hidden = true;
-  node.style.display = "none";
+function showElement(el, displayValue = "block") {
+  if (!el) return;
+  el.classList.remove("hidden");
+  el.hidden = false;
+  el.style.display = displayValue;
+}
+
+function hideElement(el) {
+  if (!el) return;
+  el.classList.add("hidden");
+  el.hidden = true;
+  el.style.display = "none";
+}
+
+function setTextareaValue(el, value) {
+  if (!el) return;
+  el.value = value || "";
+}
+
+function clearSuggestions(el) {
+  if (!el) return;
+  el.innerHTML = "";
+  hideElement(el);
 }
 
 function setSectionDisabled(section, disabled) {
@@ -129,6 +192,149 @@ function updateTranslateButtonState() {
   }
 }
 
+// === TARGET SEARCH ===
+function scoreTargetMatch(item, query) {
+  const q = normalize(query);
+  if (!q) return 1000;
+
+  const label = normalize(item.label);
+  const aliases = (item.aliases || []).map(normalize);
+
+  if (label === q) return 0;
+  if (aliases.includes(q)) return 1;
+  if (label.startsWith(q)) return 2;
+
+  for (const alias of aliases) {
+    if (alias.startsWith(q)) return 3;
+  }
+
+  for (const word of tokenize(item.label)) {
+    if (word.startsWith(q)) return 4;
+  }
+
+  for (const alias of aliases) {
+    for (const word of tokenize(alias)) {
+      if (word.startsWith(q)) return 5;
+    }
+  }
+
+  if (label.includes(q)) return 6;
+
+  for (const alias of aliases) {
+    if (alias.includes(q)) return 7;
+  }
+
+  return 9999;
+}
+
+function findTargetMatches(value) {
+  const q = normalize(value);
+
+  if (!q) return targetCatalog.slice(0, 12);
+
+  return targetCatalog
+    .map((item) => ({ item, score: scoreTargetMatch(item, q) }))
+    .filter((row) => row.score < 9999)
+    .sort((a, b) => (a.score !== b.score ? a.score - b.score : a.item.label.localeCompare(b.item.label)))
+    .map((row) => row.item)
+    .slice(0, 12);
+}
+
+function renderTargetSuggestions(matches) {
+  if (!targetSuggestions) return;
+
+  targetSuggestions.innerHTML = "";
+
+  if (!matches.length) {
+    clearSuggestions(targetSuggestions);
+    return;
+  }
+
+  targetMatches = matches;
+  targetActiveIndex = -1;
+
+  matches.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "suggestionItem";
+    div.textContent = item.label;
+
+    div.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+      targetSearch.value = item.label;
+      clearSuggestions(targetSuggestions);
+      updateTranslateButtonState();
+    });
+
+    targetSuggestions.appendChild(div);
+  });
+
+  showElement(targetSuggestions, "block");
+}
+
+function highlightTargetSuggestion() {
+  const items = targetSuggestions?.querySelectorAll(".suggestionItem") || [];
+  items.forEach((item, index) => {
+    item.classList.toggle("activeSuggestion", index === targetActiveIndex);
+  });
+
+  if (targetActiveIndex >= 0 && items[targetActiveIndex]) {
+    items[targetActiveIndex].scrollIntoView({ block: "nearest" });
+  }
+}
+
+function initTargetSuggestions() {
+  if (!targetSearch) return;
+
+  targetSearch.addEventListener("focus", () => {
+    renderTargetSuggestions(findTargetMatches(targetSearch.value));
+  });
+
+  targetSearch.addEventListener("click", () => {
+    renderTargetSuggestions(findTargetMatches(targetSearch.value));
+  });
+
+  targetSearch.addEventListener("input", () => {
+    renderTargetSuggestions(findTargetMatches(targetSearch.value));
+    updateTranslateButtonState();
+  });
+
+  targetSearch.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (!targetMatches.length) {
+        renderTargetSuggestions(findTargetMatches(targetSearch.value));
+      }
+      if (!targetMatches.length) return;
+      targetActiveIndex = (targetActiveIndex + 1) % targetMatches.length;
+      highlightTargetSuggestion();
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!targetMatches.length) return;
+      targetActiveIndex = targetActiveIndex <= 0 ? targetMatches.length - 1 : targetActiveIndex - 1;
+      highlightTargetSuggestion();
+    }
+
+    if (event.key === "Enter") {
+      if (targetMatches[targetActiveIndex]) {
+        event.preventDefault();
+        targetSearch.value = targetMatches[targetActiveIndex].label;
+        clearSuggestions(targetSuggestions);
+        updateTranslateButtonState();
+      }
+    }
+
+    if (event.key === "Escape") {
+      clearSuggestions(targetSuggestions);
+    }
+  });
+
+  targetSearch.addEventListener("blur", () => {
+    setTimeout(() => clearSuggestions(targetSuggestions), 120);
+  });
+}
+
 // === TARGET LANGUAGE / DIALECT MAPPING ===
 function getTargetConfig(raw) {
   const value = normalize(raw);
@@ -151,26 +357,19 @@ function getTargetConfig(raw) {
 
     "spanish — mexican": { targetLanguage: "Spanish", dialect: "Spanish — Mexican" },
     "mexican spanish": { targetLanguage: "Spanish", dialect: "Spanish — Mexican" },
-
     "spanish — central american": { targetLanguage: "Spanish", dialect: "Spanish — Central American" },
     "central american spanish": { targetLanguage: "Spanish", dialect: "Spanish — Central American" },
-
     "spanish — caribbean": { targetLanguage: "Spanish", dialect: "Spanish — Caribbean" },
     "caribbean spanish": { targetLanguage: "Spanish", dialect: "Spanish — Caribbean" },
-
     "spanish — peruvian": { targetLanguage: "Spanish", dialect: "Spanish — Peruvian" },
     "peruvian spanish": { targetLanguage: "Spanish", dialect: "Spanish — Peruvian" },
-
     "spanish — argentine": { targetLanguage: "Spanish", dialect: "Spanish — Argentine" },
     "argentine spanish": { targetLanguage: "Spanish", dialect: "Spanish — Argentine" },
-
     "spanish — chilean": { targetLanguage: "Spanish", dialect: "Spanish — Chilean" },
     "chilean spanish": { targetLanguage: "Spanish", dialect: "Spanish — Chilean" },
-
     "spanish — general colombian": { targetLanguage: "Spanish", dialect: "Spanish — General Colombian" },
     "general colombian spanish": { targetLanguage: "Spanish", dialect: "Spanish — General Colombian" },
     "colombian spanish": { targetLanguage: "Spanish", dialect: "Spanish — General Colombian" },
-
     "spanish — venezuelan": { targetLanguage: "Spanish", dialect: "Spanish — Venezuelan" },
     "venezuelan spanish": { targetLanguage: "Spanish", dialect: "Spanish — Venezuelan" },
 
@@ -502,17 +701,15 @@ function updateDetection() {
   hideElement(changeDetectedWrap);
 
   if (!text) {
-    detectedInputLanguage = "";
     updateTranslateButtonState();
     return;
   }
 
   detectedSelection = detectInput(text);
-  detectedInputLanguage = detectedSelection.label;
 
   detectedLanguageDialect.textContent = isSpanishUI()
-    ? `Idioma detectado: ${detectedInputLanguage}`
-    : `Detected language: ${detectedInputLanguage}`;
+    ? `Idioma detectado: ${detectedSelection.label}`
+    : `Detected language: ${detectedSelection.label}`;
 
   showElement(detectedCard, "block");
   updateTranslateButtonState();
@@ -583,7 +780,7 @@ async function translateText() {
   }
 
   if (!input || !target) {
-    alert(isSpanishUI() ? "Escribe texto y un idioma." : "Enter text and choose a language");
+    alert(isSpanishUI() ? "Escribe texto y elige un idioma." : "Enter text and choose a language");
     return;
   }
 
@@ -617,7 +814,7 @@ async function translateText() {
 
   } catch (err) {
     console.error(err);
-    output.value = isSpanishUI() ? "Error" : "Error";
+    output.value = "Error";
   } finally {
     button.disabled = false;
     button.innerText = isSpanishUI() ? "Traducir" : "Translate";
@@ -628,7 +825,6 @@ async function translateText() {
 // === COPY ===
 async function copyTranslation() {
   const text = output?.value || "";
-
   if (!text) return;
 
   try {
@@ -643,6 +839,7 @@ async function copyTranslation() {
 function init() {
   initTheme();
   initDetectedLanguageUI();
+  initTargetSuggestions();
   updateContextVisibility();
   updatePronunciationVisibility();
   clearResults();
@@ -692,18 +889,6 @@ function init() {
 
   siteLanguage?.addEventListener("change", () => {
     applyTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
-
-    if (detectedInputLanguage && !confirmedInputLanguage) {
-      detectedLanguageDialect.textContent = isSpanishUI()
-        ? `Idioma detectado: ${detectedInputLanguage}`
-        : `Detected language: ${detectedInputLanguage}`;
-    }
-
-    if (confirmedInputLanguage) {
-      detectedLanguageDialect.textContent = isSpanishUI()
-        ? `Idioma confirmado: ${confirmedInputLanguage}`
-        : `Input language confirmed: ${confirmedInputLanguage}`;
-    }
   });
 
   updateTranslateButtonState();
