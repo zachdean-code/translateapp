@@ -63,4 +63,33 @@ Traducción con sensibilidad dialectal • Claridad cultural<br>
 © 2026 CCTLA-TBD, LLC<br>
 Patente pendiente.`
   }
+};    description: "Traducción con sensibilidad dialectal y claridad cultural",
+    labels: {
+      siteLanguage: "Idioma del sitio",
+      inputText: "Texto de entrada",
+      changeInputLanguage: "Cambiar idioma de entrada a:",
+      translateTo: "Traducir a",
+      translation: "Traducción",
+      additionalInformation: "Información adicional",
+      enhancedContext: "Modo de contexto mejorado"
+    },
+    buttons: {
+      keep: "Mantener",
+      change: "Cambiar",
+      translate: "Traducir",
+      translating: "Traduciendo...",
+      copy: "Copiar",
+      dark: "🌙 Oscuro",
+      light: "☀️ Claro"
+    },
+    alerts: {
+      confirmInput: "Confirma primero el idioma detectado.",
+      enterTextAndLanguage: "Escribe texto y elige un idioma."
+    },
+    footer: `<strong>Traductor Intercultural™</strong>
+Más que traducción — comunicación intercultural real<br>
+Traducción con sensibilidad dialectal • Claridad cultural<br>
+© 2026 CCTLA-TBD, LLC<br>
+Patente pendiente.`
+  }
 };
