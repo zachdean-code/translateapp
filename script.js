@@ -1,40 +1,176 @@
 // === API ===
 const API_URL = "https://translateapp-1.onrender.com/translate";
 
-// === ELEMENTS ===
-const siteLanguage = document.getElementById("siteLanguage");
-const darkModeButton = document.getElementById("darkModeButton");
+// === STATE ===
+let detectedSelection = null;
+let confirmedInputLanguage = null;
+let confirmationMode = null;
+let targetSelection = null;
 
-const userInput = document.getElementById("userInput");
-const detectedCard = document.getElementById("detectedCard");
-const detectedLanguageDialect = document.getElementById("detectedLanguageDialect");
-const keepDetectedButton = document.getElementById("keepDetectedButton");
-const changeDetectedButton = document.getElementById("changeDetectedButton");
-const changeDetectedWrap = document.getElementById("changeDetectedWrap");
-const detectedSearch = document.getElementById("detectedSearch");
-const detectedSuggestions = document.getElementById("detectedSuggestions");
+// === HELPERS ===
+function el(id) { return document.getElementById(id); }
 
-const contextToggle = document.getElementById("contextToggle");
-const contextSection = document.getElementById("contextSection");
-const contextAudience = document.getElementById("contextAudience");
-const contextTone = document.getElementById("contextTone");
-const contextSituation = document.getElementById("contextSituation");
+function normalize(value) {
+  return (value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
 
-const targetSearch = document.getElementById("targetSearch");
-const targetSuggestions = document.getElementById("targetSuggestions");
-const translateButton = document.getElementById("translateButton");
+// === TARGET MAPPING (CRITICAL FIX) ===
+function getTargetConfig(label) {
+  if (!label) return { targetLanguage: "English", dialect: "Standard" };
 
-const output = document.getElementById("output");
-const copyButton = document.getElementById("copyButton");
+  if (label.includes("Spanish")) {
+    return { targetLanguage: "Spanish", dialect: label };
+  }
 
-const pronToggle = document.getElementById("pronToggle");
-const pronunciationSection = document.getElementById("pronunciationSection");
-const pronunciation = document.getElementById("pronunciation");
-const speakNormal = document.getElementById("speakNormal");
-const speakSlow = document.getElementById("speakSlow");
+  if (label.includes("English")) {
+    return { targetLanguage: "English", dialect: label };
+  }
 
-const contextOutputSection = document.getElementById("contextOutputSection");
-const contextOutput = document.getElementById("contextOutput");
+  if (label.includes("Portuguese")) {
+    return { targetLanguage: "Portuguese", dialect: label };
+  }
+
+  return { targetLanguage: label, dialect: "Standard" };
+}
+
+// === CONTEXT MAPPING ===
+function getToneValue() {
+  const map = {
+    casual: "casual and natural",
+    formal: "formal and polished",
+    respectful: "respectful and clear",
+    playful: "playful and natural",
+    urgent: "urgent and direct"
+  };
+  return map[el("contextTone")?.value] || "natural";
+}
+
+function getAudienceValue() {
+  const map = {
+    friend: "friend",
+    romantic: "romantic interest",
+    professional: "professional contact",
+    stranger: "stranger",
+    service: "service employee"
+  };
+  return map[el("contextAudience")?.value] || "general";
+}
+
+function getGoalValue() {
+  const map = {
+    travel: "travel communication",
+    business: "professional communication",
+    social: "natural conversation",
+    conflict: "resolve issue clearly",
+    flirting: "romantic or flirty communication"
+  };
+  return map[el("contextSituation")?.value] || "translate accurately";
+}
+
+// === BUILD PAYLOAD ===
+function buildRequestPayload() {
+  const targetLabel = targetSelection?.label || "";
+  const targetConfig = getTargetConfig(targetLabel);
+  const enhanced = !!el("contextToggle")?.checked;
+
+  return {
+    text: el("userInput")?.value.trim() || "",
+    target: targetLabel,
+
+    targetLanguage: targetConfig.targetLanguage,
+    dialect: targetConfig.dialect,
+
+    sourceLanguage: confirmedInputLanguage || "",
+
+    tone: enhanced ? getToneValue() : "natural",
+    audience: enhanced ? getAudienceValue() : "general",
+    goal: enhanced ? getGoalValue() : "translate accurately",
+
+    includeAdditionalInformation: true
+  };
+}
+
+// === TRANSLATE ===
+async function translateText() {
+  const input = el("userInput")?.value.trim();
+  const target = targetSelection?.label;
+
+  if (!confirmedInputLanguage) {
+    alert("Confirm input language first");
+    return;
+  }
+
+  if (!input || !target) {
+    alert("Enter text and choose a language");
+    return;
+  }
+
+  const button = el("translateButton");
+  const output = el("output");
+
+  try {
+    button.disabled = true;
+    button.innerText = "Translating...";
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildRequestPayload())
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error);
+
+    output.value = data.output || "";
+
+    const info = data.additional_information || "";
+    const infoBox = el("additionalInfo");
+
+    if (info && infoBox) {
+      infoBox.value = info;
+      el("additionalInfoSection").classList.remove("hidden");
+    } else {
+      el("additionalInfoSection").classList.add("hidden");
+    }
+
+  } catch (err) {
+    console.error(err);
+    output.value = "Error";
+  } finally {
+    button.disabled = false;
+    button.innerText = "Translate";
+  }
+}
+
+// === DETECTION (simplified, keep yours if preferred) ===
+function detectInput(text) {
+  const t = normalize(text);
+
+  if (/[áéíóúñ¿¡]/i.test(text)) {
+    return { label: "Spanish — LATAM (Neutral)" };
+  }
+
+  return { label: "American English" };
+}
+
+function updateDetection() {
+  const text = el("userInput").value.trim();
+  if (!text) return;
+
+  detectedSelection = detectInput(text);
+  confirmedInputLanguage = detectedSelection.label;
+}
+
+// === INIT ===
+document.addEventListener("DOMContentLoaded", () => {
+  el("userInput")?.addEventListener("input", updateDetection);
+  el("translateButton")?.addEventListener("click", translateText);
+});const contextOutput = document.getElementById("contextOutput");
 
 const additionalInfoSection = document.getElementById("additionalInfoSection");
 const additionalInfo = document.getElementById("additionalInfo");
