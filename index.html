@@ -4,16 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cross-Cultural Translator</title>
-
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#122071">
 </head>
-
 <body>
   <div class="container">
 
-    <!-- TOP BAR -->
     <div class="topBar">
       <div class="languageGroup">
         <label for="siteLanguage">Site Language</label>
@@ -36,57 +33,60 @@
       Dialect-aware translation and cultural clarity
     </p>
 
-    <!-- MAIN -->
     <div class="translatorRow">
 
-      <!-- LEFT -->
       <div class="inputColumn">
 
         <label id="inputLabel" for="userInput">Input Text</label>
         <textarea id="userInput"></textarea>
 
-        <!-- DETECTED -->
         <div id="detectedCard" class="detectedCard hidden">
           <div id="detectedLanguageDialect"></div>
 
           <div class="detectedButtons">
-            <button id="keepDetectedButton" type="button">Keep</button>
-            <button id="changeDetectedButton" type="button">Change</button>
+            <button id="keepDetectedButton" class="keepButton" type="button">
+              Keep
+            </button>
+
+            <button id="changeDetectedButton" class="changeButton" type="button">
+              Change
+            </button>
           </div>
         </div>
 
-        <!-- CHANGE -->
         <div id="changeDetectedWrap" class="hidden">
           <label for="detectedSearch">Change input language to:</label>
 
           <div class="searchWrap">
-            <input id="detectedSearch" type="text" autocomplete="off">
+            <input
+              id="detectedSearch"
+              type="text"
+              autocomplete="off"
+            >
             <div id="detectedSuggestions" class="suggestions"></div>
           </div>
         </div>
 
-        <!-- CONTEXT -->
         <div class="contextToggleRow">
           <input id="contextToggle" type="checkbox">
           <label for="contextToggle">Enhanced Context Mode</label>
         </div>
 
         <div id="contextSection" class="hidden">
-
           <div>
             <label for="contextAudience">Who</label>
             <select id="contextAudience">
               <option value=""></option>
               <option value="friend">Friend</option>
-              <option value="romantic">Romantic</option>
-              <option value="professional">Professional</option>
+              <option value="romantic">Romantic interest</option>
+              <option value="professional">Boss / Professional</option>
               <option value="stranger">Stranger</option>
-              <option value="service">Service Worker</option>
+              <option value="service">Service Employee</option>
             </select>
           </div>
 
           <div>
-            <label for="contextTone">Tone</label>
+            <label for="contextTone">Intent / Tone</label>
             <select id="contextTone">
               <option value=""></option>
               <option value="casual">Casual</option>
@@ -108,28 +108,33 @@
               <option value="flirting">Flirting</option>
             </select>
           </div>
-
         </div>
 
-        <!-- TARGET -->
         <label for="targetSearch">Translate To</label>
 
         <div class="searchWrap">
-          <input id="targetSearch" type="text" autocomplete="off">
+          <input
+            id="targetSearch"
+            type="text"
+            autocomplete="off"
+          >
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-        <button id="translateButton" type="button">Translate</button>
+        <button id="translateButton" class="primaryButton" type="button">
+          Translate
+        </button>
 
       </div>
 
-      <!-- RIGHT -->
       <div class="outputColumn">
 
         <label for="output">Translation</label>
         <textarea id="output" readonly></textarea>
 
-        <button id="copyButton" type="button">Copy</button>
+        <button id="copyButton" class="copyButton" type="button">
+          Copy
+        </button>
 
         <div id="additionalInfoSection" class="hidden">
           <label for="additionalInfo">Additional Information</label>
@@ -144,12 +149,10 @@
 
   </div>
 
-  <!-- SCRIPT ORDER IS CRITICAL -->
   <script src="helpers.js"></script>
   <script src="languageCatalog.js"></script>
   <script src="uiText.js"></script>
   <script src="contextConfig.js"></script>
   <script src="script.js"></script>
-
 </body>
 </html>
