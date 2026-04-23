@@ -79,6 +79,18 @@ function clearSuggestions(el) {
   hideElement(el);
 }
 
+function setSectionDisabled(section, disabled) {
+  if (!section) return;
+  const controls = section.querySelectorAll("input, select, textarea, button");
+  controls.forEach((control) => {
+    control.disabled = disabled;
+  });
+}
+
+function isSpanishUI() {
+  return (siteLanguage?.value || "en") === "es";
+}
+
 function setAdditionalInfo(text) {
   const clean = (text || "").trim();
 
@@ -104,77 +116,62 @@ function clearResults() {
   hideElement(additionalInfoSection);
 }
 
-function setSectionDisabled(section, disabled) {
-  if (!section) return;
-  const controls = section.querySelectorAll("input, select, textarea, button");
-  controls.forEach((control) => {
-    control.disabled = disabled;
-  });
-}
-
-function isSpanishUI() {
-  return (siteLanguage?.value || "en") === "es";
-}
-
-function sanitizeForSpeech(text) {
-  return (text || "")
-    .replace(/[¿¡]/g, "")
-    .replace(/[.,;:!?()"']/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function normalizePronunciationStyle(text) {
-  return (text || "")
-    .replace(/\|/g, " ")
-    .replace(/\s+/g, " ")
-    .replace(/\s*-\s*/g, "-")
-    .trim();
-}
-
 function updateTranslateButtonState() {
   if (!translateButton) return;
 
   const hasInput = !!(userInput?.value || "").trim();
   const hasTarget = !!selectedTargetLanguage;
-  const hasDetected = !!(confirmedInputLanguage || detectedInputLanguage);
+  const hasInputLanguage = !!(confirmedInputLanguage || detectedInputLanguage);
 
-  translateButton.disabled = !(hasInput && hasTarget && hasDetected);
+  translateButton.disabled = !(hasInput && hasTarget && hasInputLanguage);
 }
 
 // === TARGET LANGUAGE / DIALECT RESOLUTION ===
-function getTargetConfig(raw) {
+function resolveTargetConfig(raw) {
   const value = normalize(raw);
 
   const map = {
+    english: { targetLanguage: "English", dialect: "American English" },
+    en: { targetLanguage: "English", dialect: "American English" },
     "american english": { targetLanguage: "English", dialect: "American English" },
-    "english": { targetLanguage: "English", dialect: "American English" },
     "english — american": { targetLanguage: "English", dialect: "American English" },
     "british english": { targetLanguage: "English", dialect: "British English" },
     "english — british": { targetLanguage: "English", dialect: "British English" },
     "australian english": { targetLanguage: "English", dialect: "Australian English" },
     "english — australian": { targetLanguage: "English", dialect: "Australian English" },
 
-    "spanish": { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
+    spanish: { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
+    espanol: { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
+    español: { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
+    es: { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
+    latam: { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
     "latam spanish": { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
     "latin american spanish": { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
     "latin american spanish (neutral)": { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
     "spanish — latam (neutral)": { targetLanguage: "Spanish", dialect: "Spanish — LATAM (Neutral)" },
+
     "spanish — mexican": { targetLanguage: "Spanish", dialect: "Spanish — Mexican" },
     "mexican spanish": { targetLanguage: "Spanish", dialect: "Spanish — Mexican" },
+
     "spanish — central american": { targetLanguage: "Spanish", dialect: "Spanish — Central American" },
     "central american spanish": { targetLanguage: "Spanish", dialect: "Spanish — Central American" },
+
     "spanish — caribbean": { targetLanguage: "Spanish", dialect: "Spanish — Caribbean" },
     "caribbean spanish": { targetLanguage: "Spanish", dialect: "Spanish — Caribbean" },
+
     "spanish — peruvian": { targetLanguage: "Spanish", dialect: "Spanish — Peruvian" },
     "peruvian spanish": { targetLanguage: "Spanish", dialect: "Spanish — Peruvian" },
+
     "spanish — argentine": { targetLanguage: "Spanish", dialect: "Spanish — Argentine" },
     "argentine spanish": { targetLanguage: "Spanish", dialect: "Spanish — Argentine" },
+
     "spanish — chilean": { targetLanguage: "Spanish", dialect: "Spanish — Chilean" },
     "chilean spanish": { targetLanguage: "Spanish", dialect: "Spanish — Chilean" },
+
     "spanish — general colombian": { targetLanguage: "Spanish", dialect: "Spanish — General Colombian" },
     "general colombian spanish": { targetLanguage: "Spanish", dialect: "Spanish — General Colombian" },
     "colombian spanish": { targetLanguage: "Spanish", dialect: "Spanish — General Colombian" },
+
     "spanish — venezuelan": { targetLanguage: "Spanish", dialect: "Spanish — Venezuelan" },
     "venezuelan spanish": { targetLanguage: "Spanish", dialect: "Spanish — Venezuelan" },
 
@@ -196,68 +193,193 @@ function getTargetConfig(raw) {
     "santander spanish": { targetLanguage: "Spanish", dialect: "Colombian Spanish — Santander" },
     "spanish — santander": { targetLanguage: "Spanish", dialect: "Colombian Spanish — Santander" },
 
-    "french": { targetLanguage: "French", dialect: "Standard" },
-    "francais": { targetLanguage: "French", dialect: "Standard" },
-    "français": { targetLanguage: "French", dialect: "Standard" },
-    "german": { targetLanguage: "German", dialect: "Standard" },
-    "deutsch": { targetLanguage: "German", dialect: "Standard" },
-    "italian": { targetLanguage: "Italian", dialect: "Standard" },
-    "italiano": { targetLanguage: "Italian", dialect: "Standard" },
+    french: { targetLanguage: "French", dialect: "Standard" },
+    francais: { targetLanguage: "French", dialect: "Standard" },
+    français: { targetLanguage: "French", dialect: "Standard" },
+    fr: { targetLanguage: "French", dialect: "Standard" },
 
+    german: { targetLanguage: "German", dialect: "Standard" },
+    deutsch: { targetLanguage: "German", dialect: "Standard" },
+    de: { targetLanguage: "German", dialect: "Standard" },
+
+    italian: { targetLanguage: "Italian", dialect: "Standard" },
+    italiano: { targetLanguage: "Italian", dialect: "Standard" },
+    it: { targetLanguage: "Italian", dialect: "Standard" },
+
+    portuguese: { targetLanguage: "Portuguese", dialect: "Standard" },
+    portugues: { targetLanguage: "Portuguese", dialect: "Standard" },
+    português: { targetLanguage: "Portuguese", dialect: "Standard" },
+    pt: { targetLanguage: "Portuguese", dialect: "Standard" },
     "brazilian portuguese": { targetLanguage: "Portuguese", dialect: "Brazilian Portuguese" },
     "european portuguese": { targetLanguage: "Portuguese", dialect: "European Portuguese" },
-    "portuguese": { targetLanguage: "Portuguese", dialect: "Standard" },
 
+    arabic: { targetLanguage: "Arabic", dialect: "Modern Standard Arabic" },
+    ar: { targetLanguage: "Arabic", dialect: "Modern Standard Arabic" },
     "modern standard arabic": { targetLanguage: "Arabic", dialect: "Modern Standard Arabic" },
-    "arabic": { targetLanguage: "Arabic", dialect: "Modern Standard Arabic" },
     "egyptian arabic": { targetLanguage: "Arabic", dialect: "Egyptian Arabic" },
 
-    "iranian persian — farsi": { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
-    "farsi": { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
-    "persian": { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
-    "afghan persian — dari": { targetLanguage: "Persian", dialect: "Afghan Persian — Dari" },
-    "dari": { targetLanguage: "Persian", dialect: "Afghan Persian — Dari" },
-    "tajik persian — tajik": { targetLanguage: "Persian", dialect: "Tajik Persian — Tajik" },
-    "tajik": { targetLanguage: "Persian", dialect: "Tajik Persian — Tajik" },
+    hindi: { targetLanguage: "Hindi", dialect: "Standard" },
+    hi: { targetLanguage: "Hindi", dialect: "Standard" },
 
-    "hindi": { targetLanguage: "Hindi", dialect: "Standard" },
-    "indonesian": { targetLanguage: "Indonesian", dialect: "Standard" },
-    "filipino (tagalog)": { targetLanguage: "Tagalog", dialect: "Filipino (Tagalog)" },
-    "filipino": { targetLanguage: "Tagalog", dialect: "Filipino (Tagalog)" },
-    "tagalog": { targetLanguage: "Tagalog", dialect: "Filipino (Tagalog)" },
-    "swahili": { targetLanguage: "Swahili", dialect: "Standard" },
-    "amharic": { targetLanguage: "Amharic", dialect: "Standard" },
-    "turkish": { targetLanguage: "Turkish", dialect: "Standard" },
-    "russian": { targetLanguage: "Russian", dialect: "Standard" },
-    "japanese": { targetLanguage: "Japanese", dialect: "Standard" },
-    "korean": { targetLanguage: "Korean", dialect: "Standard" },
-    "mandarin chinese": { targetLanguage: "Chinese", dialect: "Mandarin Chinese" },
-    "chinese": { targetLanguage: "Chinese", dialect: "Mandarin Chinese" }
+    indonesian: { targetLanguage: "Indonesian", dialect: "Standard" },
+    id: { targetLanguage: "Indonesian", dialect: "Standard" },
+
+    tagalog: { targetLanguage: "Tagalog", dialect: "Filipino (Tagalog)" },
+    filipino: { targetLanguage: "Tagalog", dialect: "Filipino (Tagalog)" },
+    tl: { targetLanguage: "Tagalog", dialect: "Filipino (Tagalog)" },
+
+    swahili: { targetLanguage: "Swahili", dialect: "Standard" },
+    sw: { targetLanguage: "Swahili", dialect: "Standard" },
+
+    amharic: { targetLanguage: "Amharic", dialect: "Standard" },
+    am: { targetLanguage: "Amharic", dialect: "Standard" },
+
+    farsi: { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
+    persian: { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
+    fa: { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
+    "iranian persian — farsi": { targetLanguage: "Persian", dialect: "Iranian Persian — Farsi" },
+    "afghan persian — dari": { targetLanguage: "Persian", dialect: "Afghan Persian — Dari" },
+    dari: { targetLanguage: "Persian", dialect: "Afghan Persian — Dari" },
+    "tajik persian — tajik": { targetLanguage: "Persian", dialect: "Tajik Persian — Tajik" },
+    tajik: { targetLanguage: "Persian", dialect: "Tajik Persian — Tajik" },
+
+    turkish: { targetLanguage: "Turkish", dialect: "Standard" },
+    tr: { targetLanguage: "Turkish", dialect: "Standard" },
+
+    russian: { targetLanguage: "Russian", dialect: "Standard" },
+    ru: { targetLanguage: "Russian", dialect: "Standard" },
+
+    japanese: { targetLanguage: "Japanese", dialect: "Standard" },
+    ja: { targetLanguage: "Japanese", dialect: "Standard" },
+
+    korean: { targetLanguage: "Korean", dialect: "Standard" },
+    ko: { targetLanguage: "Korean", dialect: "Standard" },
+
+    chinese: { targetLanguage: "Chinese", dialect: "Mandarin Chinese" },
+    zh: { targetLanguage: "Chinese", dialect: "Mandarin Chinese" },
+    "mandarin chinese": { targetLanguage: "Chinese", dialect: "Mandarin Chinese" }
   };
 
-  if (map[value]) return map[value];
-
-  return {
-    targetLanguage: raw.trim() || "English",
+  return map[value] || {
+    targetLanguage: raw.trim(),
     dialect: "Standard"
   };
 }
 
-// === CONTEXT ===
-function updateContextVisibility() {
-  if (contextToggle?.checked) {
-    showElement(contextSection, "grid");
-    setSectionDisabled(contextSection, false);
-  } else {
-    hideElement(contextSection);
-    setSectionDisabled(contextSection, true);
+// === INPUT LANGUAGE DETECTION ===
+function detectInputLanguage(text) {
+  const lower = normalize(text);
+  const tokens = normalize(text).split(/[\s—()\/,.:;!?-]+/).filter(Boolean);
 
-    if (contextAudience) contextAudience.value = "";
-    if (contextTone) contextTone.value = "";
-    if (contextSituation) contextSituation.value = "";
+  if (/[\u0600-\u06FF]/.test(text)) return "Modern Standard Arabic";
+  if (/[\u0400-\u04FF]/.test(text)) return "Russian";
+  if (/[\u3040-\u30ff]/.test(text)) return "Japanese";
+  if (/[\u4e00-\u9fff]/.test(text)) return "Mandarin Chinese";
+  if (/[\uAC00-\uD7AF]/.test(text)) return "Korean";
+
+  if (
+    lower.includes("fag") ||
+    lower.includes("bloody") ||
+    lower.includes("cheers") ||
+    lower.includes("knackered") ||
+    lower.includes("loo") ||
+    lower.includes("uni") ||
+    lower.includes("flat") ||
+    lower.includes("lift") ||
+    lower.includes("holiday") ||
+    lower.includes("mum") ||
+    lower.includes("petrol")
+  ) {
+    return "British English";
   }
+
+  if (
+    lower.includes("arvo") ||
+    lower.includes("brekkie") ||
+    lower.includes("servo") ||
+    lower.includes("no worries")
+  ) {
+    return "Australian English";
+  }
+
+  if (
+    lower.includes("parce") ||
+    lower.includes("parcero") ||
+    lower.includes("que mas pues") ||
+    lower.includes("quiubo")
+  ) {
+    return "Colombian Spanish — Paisa (Medellín)";
+  }
+
+  if (
+    lower.includes("sumercé") ||
+    lower.includes("sumerce") ||
+    lower.includes("bacano")
+  ) {
+    return "Colombian Spanish — Rolo (Bogotá)";
+  }
+
+  if (
+    lower.includes("orale") ||
+    lower.includes("wey") ||
+    lower.includes("no manches")
+  ) {
+    return "Spanish — Mexican";
+  }
+
+  const spanishSignals = [
+    "hola", "como", "estas", "que", "para", "porque", "por", "favor",
+    "gracias", "buenos", "buenas", "dias", "noches", "tardes",
+    "amigo", "amiga", "con", "sin", "pero", "muy", "si", "tambien",
+    "quiero", "puedo", "necesito", "vamos", "bien", "mal"
+  ];
+
+  let count = 0;
+  for (const token of tokens) {
+    if (spanishSignals.includes(token)) count += 1;
+  }
+
+  if (/[áéíóúñ¿¡]/i.test(text) || count >= 1) {
+    return "Spanish — LATAM (Neutral)";
+  }
+
+  if (tokens.length < 2 && lower.length < 6) {
+    return "";
+  }
+
+  return "American English";
 }
 
+function updateDetectedLanguageState() {
+  const text = (userInput?.value || "").trim();
+
+  detectedInputLanguage = "";
+  confirmedInputLanguage = "";
+  hideElement(detectedCard);
+  hideElement(changeDetectedWrap);
+
+  if (!text) {
+    updateTranslateButtonState();
+    return;
+  }
+
+  const detected = detectInputLanguage(text);
+
+  if (!detected) {
+    updateTranslateButtonState();
+    return;
+  }
+
+  detectedInputLanguage = detected;
+  detectedLanguageDialect.textContent = isSpanishUI()
+    ? `Idioma detectado: ${detected}`
+    : `Detected language: ${detected}`;
+
+  showElement(detectedCard, "block");
+  updateTranslateButtonState();
+}
+
+// === CONTEXT ===
 function getAudienceValue() {
   if (!contextToggle?.checked) return "general";
 
@@ -280,6 +402,427 @@ function getToneValue() {
     formal: "formal and polished",
     respectful: "respectful and clear",
     playful: "playful and natural",
+    urgent: "urgent and direct"
+  };
+
+  return map[(contextTone?.value || "").trim()] || "natural";
+}
+
+function getGoalValue() {
+  if (!contextToggle?.checked) return "translate accurately";
+
+  const map = {
+    travel: "communicate clearly for travel or logistics",
+    business: "communicate professionally and clearly",
+    social: "communicate naturally and smoothly",
+    conflict: "resolve tension clearly and effectively",
+    flirting: "communicate with chemistry and natural attraction"
+  };
+
+  return map[(contextSituation?.value || "").trim()] || "translate accurately";
+}
+
+function updateContextVisibility() {
+  if (contextToggle?.checked) {
+    showElement(contextSection, "grid");
+    setSectionDisabled(contextSection, false);
+  } else {
+    hideElement(contextSection);
+    setSectionDisabled(contextSection, true);
+    if (contextAudience) contextAudience.value = "";
+    if (contextTone) contextTone.value = "";
+    if (contextSituation) contextSituation.value = "";
+  }
+}
+
+// === THEME ===
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+
+  document.documentElement.classList.toggle("dark", isDark);
+  document.body.classList.toggle("dark", isDark);
+
+  if (darkModeButton) {
+    if (isSpanishUI()) {
+      darkModeButton.textContent = isDark ? "☀️ Claro" : "🌙 Oscuro";
+    } else {
+      darkModeButton.textContent = isDark ? "☀️ Light" : "🌙 Dark";
+    }
+  }
+
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem("theme") || "light";
+  applyTheme(savedTheme);
+
+  darkModeButton?.addEventListener("click", () => {
+    const currentlyDark = document.documentElement.classList.contains("dark");
+    applyTheme(currentlyDark ? "light" : "dark");
+  });
+}
+
+// === PRONUNCIATION ===
+function englishPronunciationForSpanishReader(text) {
+  const specialWords = {
+    how: "jau",
+    are: "ar",
+    you: "yu",
+    hello: "jelou",
+    friend: "frend",
+    weather: "ueder",
+    today: "tudei",
+    what: "uat",
+    is: "is",
+    the: "de"
+  };
+
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      const clean = normalize(word).replace(/[^a-z]/g, "");
+      if (!clean) return "";
+      if (specialWords[clean]) return specialWords[clean];
+
+      return clean
+        .replace(/tion/g, "shon")
+        .replace(/sion/g, "shon")
+        .replace(/ough/g, "ou")
+        .replace(/augh/g, "au")
+        .replace(/th/g, "d")
+        .replace(/ph/g, "f")
+        .replace(/igh/g, "ai")
+        .replace(/ow/g, "au")
+        .replace(/ee/g, "i")
+        .replace(/oo/g, "u")
+        .replace(/ea/g, "i");
+    })
+    .filter(Boolean)
+    .join(" ");
+}
+
+function spanishPronunciationForEnglishReader(text) {
+  const specialWords = {
+    hola: "oh-LAH",
+    parcero: "par-SEH-roh",
+    gracias: "GRAH-syahs",
+    donde: "DOHN-deh",
+    esta: "ehs-TAH",
+    el: "ehl",
+    bano: "BAHN-yoh",
+    necesito: "neh-seh-SEE-toh",
+    hablar: "ah-BLAR",
+    contigo: "kohn-TEE-goh",
+    como: "KOH-moh",
+    estas: "ehs-TAHS",
+    clima: "KLEE-mah",
+    hoy: "oy",
+    puedo: "pweh-DOH",
+    tener: "teh-NEHR",
+    una: "oo-nah",
+    mejora: "meh-HOH-rah"
+  };
+
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      const raw = word.replace(/[^\p{L}]/gu, "");
+      const clean = normalize(raw).replace(/[^a-z]/g, "");
+      if (!clean) return "";
+      if (specialWords[clean]) return specialWords[clean];
+
+      let out = clean
+        .replace(/que/g, "keh")
+        .replace(/qui/g, "kee")
+        .replace(/gue/g, "geh")
+        .replace(/gui/g, "gee")
+        .replace(/ge/g, "heh")
+        .replace(/gi/g, "hee")
+        .replace(/ce/g, "seh")
+        .replace(/ci/g, "see")
+        .replace(/ll/g, "y")
+        .replace(/ñ/g, "ny")
+        .replace(/ch/g, "ch")
+        .replace(/j/g, "h")
+        .replace(/a/g, "ah")
+        .replace(/e/g, "eh")
+        .replace(/i/g, "ee")
+        .replace(/o/g, "oh")
+        .replace(/u/g, "oo");
+
+      out = out
+        .replace(/([a-z]{2,})(ah|eh|ee|oh|oo)/gi, "$1-$2")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      return out;
+    })
+    .filter(Boolean)
+    .join(" ");
+}
+
+function buildPronunciation(translatedText, sourceLanguage, targetLanguage) {
+  const source = normalize(sourceLanguage || "");
+  const target = normalize(targetLanguage || "");
+
+  if (!translatedText) return "";
+
+  if (source.includes("spanish") && target.includes("english")) {
+    return englishPronunciationForSpanishReader(translatedText);
+  }
+
+  if (source.includes("english") && target.includes("spanish")) {
+    return spanishPronunciationForEnglishReader(translatedText);
+  }
+
+  return "";
+}
+
+function updatePronunciationVisibility() {
+  const shouldShow = !!pronToggle?.checked && !!(output?.value || "").trim();
+
+  if (shouldShow) {
+    showElement(pronunciationSection, "flex");
+    if (speakNormal) speakNormal.disabled = false;
+    if (speakSlow) speakSlow.disabled = false;
+  } else {
+    hideElement(pronunciationSection);
+    if (speakNormal) speakNormal.disabled = true;
+    if (speakSlow) speakSlow.disabled = true;
+  }
+}
+
+// === DETECTED LANGUAGE UI ===
+function initDetectedLanguageUI() {
+  hideElement(detectedCard);
+  hideElement(changeDetectedWrap);
+  clearSuggestions(detectedSuggestions);
+
+  keepDetectedButton?.addEventListener("click", () => {
+    if (detectedInputLanguage) {
+      confirmedInputLanguage = detectedInputLanguage;
+      detectedLanguageDialect.textContent = isSpanishUI()
+        ? `Idioma confirmado: ${confirmedInputLanguage}`
+        : `Input language confirmed: ${confirmedInputLanguage}`;
+    }
+
+    hideElement(changeDetectedWrap);
+    updateTranslateButtonState();
+  });
+
+  changeDetectedButton?.addEventListener("click", () => {
+    showElement(changeDetectedWrap, "block");
+    detectedSearch?.focus();
+  });
+
+  detectedSearch?.addEventListener("input", () => {
+    clearSuggestions(detectedSuggestions);
+
+    const entered = (detectedSearch?.value || "").trim();
+    if (!entered) return;
+
+    confirmedInputLanguage = entered;
+    detectedLanguageDialect.textContent = isSpanishUI()
+      ? `Idioma elegido: ${confirmedInputLanguage}`
+      : `Input language chosen: ${confirmedInputLanguage}`;
+
+    showElement(detectedCard, "block");
+    updateTranslateButtonState();
+  });
+}
+
+// === TRANSLATE ===
+function buildRequestPayload(text) {
+  return {
+    text,
+    targetLanguage: selectedTargetLanguage,
+    dialect: selectedTargetDialect,
+    sourceLanguage: confirmedInputLanguage || detectedInputLanguage || "",
+    tone: getToneValue(),
+    audience: getAudienceValue(),
+    goal: getGoalValue(),
+    includeAdditionalInformation: true
+  };
+}
+
+async function runTranslation() {
+  const text = (userInput?.value || "").trim();
+  const targetRaw = (targetSearch?.value || "").trim();
+
+  if (!text) {
+    alert(isSpanishUI() ? "Primero escribe texto." : "Enter text first.");
+    userInput?.focus();
+    return;
+  }
+
+  if (!targetRaw) {
+    alert(isSpanishUI() ? "Primero escribe un idioma de destino." : "Enter a target language first.");
+    targetSearch?.focus();
+    return;
+  }
+
+  const targetConfig = resolveTargetConfig(targetRaw);
+  selectedTargetLanguage = targetConfig.targetLanguage;
+  selectedTargetDialect = targetConfig.dialect;
+
+  if (!confirmedInputLanguage && detectedInputLanguage) {
+    confirmedInputLanguage = detectedInputLanguage;
+  }
+
+  if (!confirmedInputLanguage) {
+    alert(isSpanishUI() ? "Primero confirma el idioma de entrada." : "Confirm the input language first.");
+    userInput?.focus();
+    return;
+  }
+
+  translateButton.disabled = true;
+  translateButton.textContent = isSpanishUI() ? "Traduciendo..." : "Translating...";
+
+  clearResults();
+
+  try {
+    const payload = buildRequestPayload(text);
+    console.log("Sending payload:", payload);
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    console.log("API response:", data);
+
+    if (!response.ok) {
+      throw new Error(data.error || `HTTP ${response.status}`);
+    }
+
+    const translatedText = data.output || "";
+    setTextareaValue(output, translatedText);
+    setAdditionalInfo(data.additional_information || "");
+
+    const pronunciationText = buildPronunciation(
+      translatedText,
+      confirmedInputLanguage,
+      selectedTargetLanguage
+    );
+
+    setTextareaValue(pronunciation, normalizePronunciationStyle(pronunciationText));
+    updatePronunciationVisibility();
+  } catch (error) {
+    console.error("Translation error:", error);
+    clearResults();
+    alert(`${isSpanishUI() ? "La traducción falló:" : "Translation failed:"} ${error.message}`);
+  } finally {
+    translateButton.disabled = false;
+    translateButton.textContent = isSpanishUI() ? "Traducir" : "Translate";
+    updateTranslateButtonState();
+  }
+}
+
+// === COPY ===
+async function copyTranslation() {
+  const text = output?.value || "";
+
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log("Copied translation.");
+  } catch (error) {
+    console.error("Copy failed:", error);
+  }
+}
+
+// === INIT ===
+function init() {
+  initTheme();
+  initDetectedLanguageUI();
+  updateContextVisibility();
+  updatePronunciationVisibility();
+  clearResults();
+
+  setSectionDisabled(contextSection, true);
+  if (speakNormal) speakNormal.disabled = true;
+  if (speakSlow) speakSlow.disabled = true;
+
+  contextToggle?.addEventListener("change", updateContextVisibility);
+  pronToggle?.addEventListener("change", updatePronunciationVisibility);
+
+  translateButton?.addEventListener("click", runTranslation);
+  copyButton?.addEventListener("click", copyTranslation);
+
+  speakNormal?.addEventListener("click", () => {
+    const text = sanitizeForSpeech(pronunciation?.value || output?.value || "");
+    if (!text) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.7;
+    window.speechSynthesis.speak(utterance);
+  });
+
+  speakSlow?.addEventListener("click", () => {
+    const text = sanitizeForSpeech(pronunciation?.value || output?.value || "");
+    if (!text) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.2;
+    window.speechSynthesis.speak(utterance);
+  });
+
+  userInput?.addEventListener("input", () => {
+    clearResults();
+    updateDetectedLanguageState();
+  });
+
+  userInput?.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault();
+      runTranslation();
+    }
+  });
+
+  targetSearch?.addEventListener("input", () => {
+    clearSuggestions(targetSuggestions);
+
+    const targetRaw = (targetSearch?.value || "").trim();
+    if (!targetRaw) {
+      selectedTargetLanguage = "";
+      selectedTargetDialect = "Standard";
+    } else {
+      const targetConfig = resolveTargetConfig(targetRaw);
+      selectedTargetLanguage = targetConfig.targetLanguage;
+      selectedTargetDialect = targetConfig.dialect;
+    }
+
+    updateTranslateButtonState();
+  });
+
+  siteLanguage?.addEventListener("change", () => {
+    applyTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+
+    if (detectedInputLanguage && !confirmedInputLanguage) {
+      detectedLanguageDialect.textContent = isSpanishUI()
+        ? `Idioma detectado: ${detectedInputLanguage}`
+        : `Detected language: ${detectedInputLanguage}`;
+    }
+
+    if (confirmedInputLanguage) {
+      detectedLanguageDialect.textContent = isSpanishUI()
+        ? `Idioma confirmado: ${confirmedInputLanguage}`
+        : `Input language confirmed: ${confirmedInputLanguage}`;
+    }
+  });
+
+  updateTranslateButtonState();
+}
+
+document.addEventListener("DOMContentLoaded", init);    playful: "playful and natural",
     urgent: "urgent and direct"
   };
 
