@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,13 +14,13 @@
     <div class="topBar">
       <div class="languageGroup">
         <label for="siteLanguage">Site Language</label>
-        <select id="siteLanguage" class="miniSelect" tabindex="14">
+        <select id="siteLanguage" class="miniSelect">
           <option value="en">English</option>
           <option value="es">Español</option>
         </select>
       </div>
 
-      <button id="darkModeButton" class="darkToggle" tabindex="15">🌙 Dark</button>
+      <button id="darkModeButton" class="darkToggle" type="button">🌙 Dark</button>
     </div>
 
     <h1>Cross-Cultural Translator™</h1>
@@ -39,17 +38,17 @@
       <div class="inputColumn">
         <label id="inputLabel" for="userInput">Input Text</label>
 
-        <textarea id="userInput" tabindex="1"></textarea>
+        <textarea id="userInput"></textarea>
 
         <div id="detectedCard" class="detectedCard hidden">
           <div id="detectedLanguageDialect"></div>
 
           <div class="detectedButtons">
-            <button id="keepDetectedButton" class="keepButton" tabindex="2">
+            <button id="keepDetectedButton" class="keepButton" type="button">
               Keep
             </button>
 
-            <button id="changeDetectedButton" class="changeButton" tabindex="3">
+            <button id="changeDetectedButton" class="changeButton" type="button">
               Change
             </button>
           </div>
@@ -63,21 +62,20 @@
               id="detectedSearch"
               type="text"
               autocomplete="off"
-              tabindex="4"
             >
             <div id="detectedSuggestions" class="suggestions"></div>
           </div>
         </div>
 
         <div class="contextToggleRow">
-          <input id="contextToggle" type="checkbox" tabindex="5">
+          <input id="contextToggle" type="checkbox">
           <label for="contextToggle">Enhanced Context Mode</label>
         </div>
 
         <div id="contextSection" class="hidden">
           <div>
             <label for="contextAudience">Who</label>
-            <select id="contextAudience" tabindex="6">
+            <select id="contextAudience">
               <option value=""></option>
               <option value="friend">Friend</option>
               <option value="romantic">Romantic interest</option>
@@ -89,7 +87,7 @@
 
           <div>
             <label for="contextTone">Intent / Tone</label>
-            <select id="contextTone" tabindex="7">
+            <select id="contextTone">
               <option value=""></option>
               <option value="casual">Casual</option>
               <option value="formal">Formal</option>
@@ -101,7 +99,7 @@
 
           <div>
             <label for="contextSituation">Situation</label>
-            <select id="contextSituation" tabindex="8">
+            <select id="contextSituation">
               <option value=""></option>
               <option value="travel">Travel</option>
               <option value="business">Business</option>
@@ -119,50 +117,49 @@
             id="targetSearch"
             type="text"
             autocomplete="off"
-            tabindex="9"
           >
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-<button id="translateButton" class="primaryButton" tabindex="10">
-  Translate
-</button>
-</div>
+        <button id="translateButton" class="primaryButton" type="button">
+          Translate
+        </button>
+      </div>
 
-<div class="outputColumn">
+      <div class="outputColumn">
 
-  <div class="translationHeader">
-    <label for="output">Translation</label>
+        <div class="translationHeader">
+          <label for="output">Translation</label>
 
-    <div class="toggleRow">
-      <input id="pronToggle" type="checkbox" tabindex="12">
-      <label id="pronToggleLabel" for="pronToggle">
-        Show Pronunciation
-      </label>
-    </div>
-  </div>
+          <div class="toggleRow">
+            <input id="pronToggle" type="checkbox">
+            <label id="pronToggleLabel" for="pronToggle">
+              Show Pronunciation
+            </label>
+          </div>
+        </div>
 
-  <textarea id="output" readonly tabindex="-1"></textarea>
+        <textarea id="output" readonly tabindex="-1"></textarea>
 
-  <button id="copyButton" class="copyButton" tabindex="11">
-    Copy
-  </button>
+        <button id="copyButton" class="copyButton" type="button">
+          Copy
+        </button>
 
-  <div id="contextOutputSection" class="hidden">
-    <label for="contextOutput">Context Adaptation</label>
-    <textarea id="contextOutput" readonly tabindex="-1"></textarea>
-  </div>
+        <div id="contextOutputSection" class="hidden">
+          <label for="contextOutput">Context Adaptation</label>
+          <textarea id="contextOutput" readonly tabindex="-1"></textarea>
+        </div>
 
-  <div id="pronunciationSection" class="hidden">
-    <label for="pronunciation">Pronunciation Guide</label>
-    <textarea id="pronunciation" readonly tabindex="-1"></textarea>
+        <div id="pronunciationSection" class="hidden">
+          <label for="pronunciation">Pronunciation Guide</label>
+          <textarea id="pronunciation" readonly tabindex="-1"></textarea>
 
-    <div class="buttonRow">
-      <button id="speakNormal" class="normalButton" tabindex="13">
-        Speak Normally
-      </button>
-      
-      <button id="speakSlow" class="slowButton" tabindex="14">
+          <div class="buttonRow">
+            <button id="speakNormal" class="normalButton" type="button">
+              Speak Normally
+            </button>
+
+            <button id="speakSlow" class="slowButton" type="button">
               Speak Slowly
             </button>
           </div>
