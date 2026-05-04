@@ -1,4 +1,4 @@
-const API_URL = "https://translateapp-1.onrender.com/translate";
+      const API_URL = "https://translateapp-1.onrender.com/translate";
 
 let detectedSelection = null;
 let confirmedInputLanguage = null;
