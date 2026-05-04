@@ -5,14 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cross-Cultural Translator</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#122071">
 </head>
-
 <body>
   <div class="container">
 
-    <!-- TOP BAR -->
     <div class="topBar">
       <div class="languageGroup">
         <label for="siteLanguage">Site Language</label>
@@ -22,74 +18,57 @@
         </select>
       </div>
 
-      <button id="darkModeButton" class="darkToggle" type="button">🌙 Dark</button>
+      <button id="darkModeButton" class="darkToggle">🌙 Dark</button>
     </div>
 
-    <!-- HEADER -->
     <h1>Cross-Cultural Translator™</h1>
-
     <p class="subtitle"></p>
     <p class="description"></p>
 
     <div class="translatorRow">
 
-      <!-- INPUT -->
       <div class="inputColumn">
 
-        <label id="inputLabel" for="userInput">Input Text</label>
+        <label id="inputLabel" for="userInput"></label>
         <textarea id="userInput"></textarea>
 
-        <!-- DETECTION CARD -->
         <div id="detectedCard" class="detectedCard hidden">
           <div id="detectedLanguageDialect"></div>
 
           <div class="detectedButtons">
-            <button id="keepDetectedButton" class="keepButton" type="button">
-              Keep
-            </button>
-
-            <button id="changeDetectedButton" class="changeButton" type="button">
-              Change
-            </button>
+            <button id="keepDetectedButton">Keep</button>
+            <button id="changeDetectedButton">Change</button>
           </div>
         </div>
 
-        <!-- CHANGE INPUT LANGUAGE -->
         <div id="changeDetectedWrap" class="hidden">
-          <label for="detectedSearch">Change input language to:</label>
-
+          <label for="detectedSearch"></label>
           <div class="searchWrap">
-            <input id="detectedSearch" type="text" autocomplete="off">
+            <input id="detectedSearch" type="text">
             <div id="detectedSuggestions" class="suggestions"></div>
           </div>
         </div>
 
-        <!-- TARGET -->
-        <label for="targetSearch">Translate To</label>
+        <label for="targetSearch"></label>
 
         <div class="searchWrap">
-          <input id="targetSearch" type="text" autocomplete="off">
+          <input id="targetSearch" type="text">
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-        <button id="translateButton" class="primaryButton" type="button">
-          Translate
-        </button>
+        <button id="translateButton"></button>
 
       </div>
 
-      <!-- OUTPUT -->
       <div class="outputColumn">
 
-        <label for="output">Translation</label>
-        <textarea id="output" readonly></textarea>
+        <label for="output"></label>
+        <textarea id="output" readonly tabindex="-1"></textarea>
 
-        <button id="copyButton" class="copyButton" type="button">
-          Copy
-        </button>
+        <button id="copyButton"></button>
 
         <div id="additionalInfoSection" class="hidden">
-          <label for="additionalInfo">Additional Information</label>
+          <label for="additionalInfo"></label>
           <textarea id="additionalInfo" readonly></textarea>
         </div>
 
@@ -97,16 +76,12 @@
 
     </div>
 
-    <!-- FOOTER -->
-    <footer id="footerText"></footer>
+    <div id="footerText"></div>
 
   </div>
 
-  <!-- 🔴 CRITICAL ORDER (DO NOT CHANGE) -->
-  <script src="helpers.js"></script>
   <script src="languageCatalog.js"></script>
   <script src="uiText.js"></script>
   <script src="script.js"></script>
-
 </body>
 </html>
