@@ -279,9 +279,18 @@ function chooseDetectedLanguage(item) {
     el("detectedSearch").value = localizedLanguage(item.label);
   }
 
-  el("changeDetectedWrap")?.classList.add("hidden");
   setConfirmedDisplay(item.label);
   confirmedInputButtons();
+
+  const wrap = el("changeDetectedWrap");
+  if (wrap) wrap.classList.add("hidden");
+
+  const box = el("detectedSuggestions");
+  if (box) {
+    box.innerHTML = "";
+    box.style.display = "none";
+  }
+}
 }
 
 /* ---------- TRANSLATE ---------- */
@@ -377,10 +386,18 @@ document.addEventListener("DOMContentLoaded", () => {
   el("copyButton")?.addEventListener("click", copyTranslation);
   el("darkModeButton")?.addEventListener("click", toggleDarkMode);
 
-  setupSearch("targetSearch", "targetSuggestions", (item) => {
-    targetSelection = item;
-    el("targetSearch").value = localizedLanguage(item.label);
-  });
+setupSearch("targetSearch", "targetSuggestions", (item) => {
+  targetSelection = item;
+
+  const input = el("targetSearch");
+  if (input) input.value = localizedLanguage(item.label);
+
+  const box = el("targetSuggestions");
+  if (box) {
+    box.innerHTML = "";
+    box.style.display = "none";
+  }
+});
 
   setupSearch("detectedSearch", "detectedSuggestions", chooseDetectedLanguage);
 
