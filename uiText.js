@@ -5,7 +5,7 @@ window.UI_TEXT = {
     subtitle: "Beyond translation — real cross-cultural communication",
     description: "Dialect-aware translation and cultural clarity",
     inputText: "Input Text",
-    detected: "Detected input language",
+    detected: "Detected language",
     confirmed: "Input language",
     keep: "Keep",
     change: "Change",
@@ -13,12 +13,13 @@ window.UI_TEXT = {
     translateTo: "Translate To",
     translate: "Translate",
     translating: "Translating...",
-    copy: "Copy",
     translation: "Translation",
+    copy: "Copy",
     additionalInfo: "Additional Information",
     confirmInputFirst: "Confirm input language first",
-    enterTextTarget: "Enter text + target"
+    enterTextTarget: "Enter text and choose a language"
   },
+
   es: {
     siteLanguage: "Idioma del sitio",
     title: "Cross-Cultural Translator™",
@@ -26,17 +27,17 @@ window.UI_TEXT = {
     description: "Traducción con sensibilidad dialectal y claridad cultural",
     inputText: "Texto de entrada",
     detected: "Idioma detectado",
-    confirmed: "Idioma de entrada",
+    confirmed: "Idioma seleccionado",
     keep: "Mantener",
     change: "Cambiar",
     changeInput: "Cambiar idioma de entrada a:",
     translateTo: "Traducir a",
     translate: "Traducir",
     translating: "Traduciendo...",
-    copy: "Copiar",
     translation: "Traducción",
+    copy: "Copiar",
     additionalInfo: "Información adicional",
-    confirmInputFirst: "Confirma primero el idioma de entrada",
-    enterTextTarget: "Escribe texto y elige un idioma"
+    confirmInputFirst: "Confirma primero el idioma",
+    enterTextTarget: "Escribe texto y elige idioma"
   }
 };
