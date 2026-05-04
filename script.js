@@ -2,7 +2,6 @@ const API_URL = "https://translateapp-1.onrender.com/translate";
 
 let detectedSelection = null;
 let confirmedInputLanguage = null;
-let confirmationMode = null;
 let targetSelection = null;
 
 /* ---------- HELPERS ---------- */
@@ -19,15 +18,15 @@ function normalize(value) {
     .trim();
 }
 
-/* ---------- LANGUAGE LIST ---------- */
+/* ---------- LANGUAGE DATA ---------- */
 
 const languageCatalog = [
   { label: "American English", aliases: ["english"] },
   { label: "Spanish — LATAM (Neutral)", aliases: ["spanish", "latam"] },
   { label: "Spanish — Mexican", aliases: ["mexican"] },
-  { label: "Spanish — Venezuelan", aliases: ["venezuelan"] },
+  { label: "Spanish — Venezuelan", aliases: ["venez"] },
 
-  { label: "Colombian Spanish — Paisa (Medellín)", aliases: ["paisa", "medellin"] },
+  { label: "Colombian Spanish — Paisa (Medellín)", aliases: ["paisa", "medellin", "pa"] },
   { label: "Colombian Spanish — Rolo (Bogotá)", aliases: ["rolo", "bogota"] },
   { label: "Colombian Spanish — Cali", aliases: ["cali"] },
   { label: "Colombian Spanish — Santander", aliases: ["santander"] },
@@ -35,7 +34,7 @@ const languageCatalog = [
   { label: "French", aliases: [] },
   { label: "German", aliases: [] },
   { label: "Italian", aliases: [] },
-  { label: "Portuguese", aliases: [] },
+  { label: "Portuguese", aliases: ["portuguese"] },
   { label: "Japanese", aliases: [] }
 ];
 
@@ -44,19 +43,23 @@ const languageCatalog = [
 function findMatches(query) {
   const q = normalize(query);
 
+  if (!q) return languageCatalog;
+
   return languageCatalog.filter(item => {
     const label = normalize(item.label);
     const aliases = item.aliases.map(normalize);
 
-    return (
-      label.includes(q) ||
-      aliases.some(a => a.includes(q))
-    );
-  }).slice(0, 8);
+    return label.includes(q) || aliases.some(a => a.includes(q));
+  });
 }
 
 function renderSuggestions(container, matches, onPick) {
   container.innerHTML = "";
+
+  if (!matches.length) {
+    container.style.display = "none";
+    return;
+  }
 
   matches.forEach(item => {
     const div = document.createElement("div");
@@ -66,10 +69,13 @@ function renderSuggestions(container, matches, onPick) {
     div.addEventListener("mousedown", () => {
       onPick(item);
       container.innerHTML = "";
+      container.style.display = "none";
     });
 
     container.appendChild(div);
   });
+
+  container.style.display = "block";
 }
 
 function setupSearch(inputId, suggestionId, onPick) {
@@ -79,18 +85,16 @@ function setupSearch(inputId, suggestionId, onPick) {
   if (!input || !box) return;
 
   input.addEventListener("input", () => {
-    const matches = findMatches(input.value);
-    renderSuggestions(box, matches, onPick);
+    renderSuggestions(box, findMatches(input.value), onPick);
   });
 
   input.addEventListener("focus", () => {
-    const matches = findMatches(input.value);
-    renderSuggestions(box, matches, onPick);
+    renderSuggestions(box, findMatches(input.value), onPick);
   });
 
   document.addEventListener("click", (e) => {
     if (!input.contains(e.target) && !box.contains(e.target)) {
-      box.innerHTML = "";
+      box.style.display = "none";
     }
   });
 }
@@ -121,6 +125,7 @@ function updateDetection() {
   const detected = detectInput(text);
 
   detectedSelection = detected;
+
   el("detectedLanguageDialect").innerText =
     "Detected: " + detected.label;
 
@@ -130,11 +135,21 @@ function updateDetection() {
 /* ---------- BUTTONS ---------- */
 
 function keepDetected() {
+  if (!detectedSelection) return;
+
   confirmedInputLanguage = detectedSelection.label;
+
+  el("detectedLanguageDialect").innerText =
+    "Confirmed: " + confirmedInputLanguage;
 }
 
 function toggleDetectedChange() {
-  el("changeDetectedWrap").classList.toggle("hidden");
+  const wrap = el("changeDetectedWrap");
+  wrap.classList.toggle("hidden");
+
+  if (!wrap.classList.contains("hidden")) {
+    el("detectedSearch").focus();
+  }
 }
 
 /* ---------- TRANSLATE ---------- */
@@ -178,7 +193,8 @@ async function translateText() {
       el("additionalInfoSection").classList.add("hidden");
     }
 
-  } catch {
+  } catch (err) {
+    console.error(err);
     el("output").value = "Error";
   }
 }
@@ -215,8 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
   el("translateButton").addEventListener("click", translateText);
   el("copyButton").addEventListener("click", copyTranslation);
   el("darkModeButton").addEventListener("click", toggleDarkMode);
-
-  /* DROPDOWNS */
 
   setupSearch("targetSearch", "targetSuggestions", (item) => {
     targetSelection = item;
