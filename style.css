@@ -374,4 +374,17 @@ label[for="targetSearch"] {
     flex-direction: column;
     align-items: stretch;
   }
+/* FORCE PRIMARY BUTTON COLORS (ONLY THESE) */
+
+#translateButton,
+.primaryButton {
+  background: #2f64de !important; /* blue */
+  color: white !important;
+}
+
+#copyButton,
+.copyButton {
+  background: #16a34a !important; /* green */
+  color: white !important;
+}
 }
