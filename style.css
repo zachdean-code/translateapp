@@ -364,4 +364,22 @@ label[for="targetSearch"] {
     flex-direction: column;
     align-items: stretch;
   }
+#translateButton {
+  background: #2f64de;
+  color: white;
+}
+
+#copyButton {
+  background: #dc2626;
+  color: white;
+}
+
+#keepDetectedButton {
+  background: #15803d;
+  color: white;
+}
+
+#changeDetectedButton {
+  background: #b45309;
+  color: white;
 }
