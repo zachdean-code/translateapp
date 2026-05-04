@@ -1349,3 +1349,13 @@ label[for="targetSearch"] {
 .outputColumn > label {
   margin-bottom: 0 !important;
 }
+.suggestionItem {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestionItem:hover,
+.activeSuggestion {
+  background: #1e293b;
+  color: white;
+}
