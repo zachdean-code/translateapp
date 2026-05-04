@@ -170,24 +170,28 @@ button:disabled {
   cursor: not-allowed;
 }
 
+#translateButton,
 .primaryButton {
-  background: #2f64de;
-  color: white;
+  background: #2f64de !important;
+  color: white !important;
 }
 
+#copyButton,
 .copyButton {
-  background: #188a3c;
-  color: white;
+  background: #15803d !important;
+  color: white !important;
 }
 
+#keepDetectedButton,
 .keepButton {
-  background: #16a34a;
-  color: white;
+  background: #15803d !important;
+  color: white !important;
 }
 
+#changeDetectedButton,
 .changeButton {
-  background: #b45309;
-  color: white;
+  background: #dc2626 !important;
+  color: white !important;
   white-space: nowrap;
 }
 
@@ -285,7 +289,13 @@ button:disabled {
 }
 
 .detectedCard.confirmed .keepButton {
-  display: none;
+  display: none !important;
+}
+
+.detectedCard.confirmed .changeButton,
+.detectedCard.confirmed #changeDetectedButton {
+  background: #dc2626 !important;
+  color: white !important;
 }
 
 #output {
@@ -344,48 +354,6 @@ label[for="targetSearch"] {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-}
-#translateButton {
-  background: #2f64de;
-  color: white;
-}
-
-#copyButton {
-  background: #dc2626;
-  color: white;
-}
-
-#keepDetectedButton {
-  background: #15803d;
-  color: white;
-}
-
-#changeDetectedButton {
-  background: #b45309;
-  color: white;
-}
-#translateButton,
-.primaryButton {
-  background: #2f64de !important;
-  color: white !important;
-}
-
-#copyButton,
-.copyButton {
-  background: #dc2626 !important;
-  color: white !important;
-}
-
-#keepDetectedButton,
-.keepButton {
-  background: #15803d !important;
-  color: white !important;
-}
-
-#changeDetectedButton,
-.changeButton {
-  background: #b45309 !important;
-  color: white !important;
 }
 
 @media (max-width: 760px) {
