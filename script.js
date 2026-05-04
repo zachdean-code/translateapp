@@ -1,4 +1,4 @@
-  const API_URL = "https://translateapp-1.onrender.com/translate";
+const API_URL = "https://translateapp-1.onrender.com/translate";
 
 let detectedSelection = null;
 let confirmedInputLanguage = null;
@@ -16,6 +16,16 @@ function normalize(value) {
     .trim();
 }
 
+function getCatalog() {
+  if (typeof languageCatalog !== "undefined") return languageCatalog;
+  return window.languageCatalog || [];
+}
+
+function getLanguageTranslations() {
+  if (typeof TARGET_LANGUAGE_TRANSLATIONS !== "undefined") return TARGET_LANGUAGE_TRANSLATIONS;
+  return window.TARGET_LANGUAGE_TRANSLATIONS || {};
+}
+
 function t(key) {
   const lang = el("siteLanguage")?.value || "en";
   return window.UI_TEXT?.[lang]?.[key] || key;
@@ -23,7 +33,8 @@ function t(key) {
 
 function localizedLanguage(label) {
   const lang = el("siteLanguage")?.value || "en";
-  return window.TARGET_LANGUAGE_TRANSLATIONS?.[lang]?.[label] || label;
+  const translations = getLanguageTranslations();
+  return translations?.[lang]?.[label] || label;
 }
 
 /* ---------- SITE LANGUAGE ---------- */
@@ -33,6 +44,15 @@ function applySiteLanguage(lang) {
 
   const siteLabel = document.querySelector('label[for="siteLanguage"]');
   if (siteLabel) siteLabel.innerText = t("siteLanguage");
+
+  const title = document.querySelector("h1");
+  if (title) title.innerText = t("title");
+
+  const subtitle = document.querySelector(".subtitle");
+  if (subtitle) subtitle.innerText = t("subtitle");
+
+  const description = document.querySelector(".description");
+  if (description) description.innerText = t("description");
 
   if (el("inputLabel")) el("inputLabel").innerText = t("inputText");
   if (el("keepDetectedButton")) el("keepDetectedButton").innerText = t("keep");
@@ -64,8 +84,8 @@ function applySiteLanguage(lang) {
     el("targetSearch").value = localizedLanguage(targetSelection.label);
   }
 
-  if (detectedSelection && el("detectedSearch")) {
-    el("detectedSearch").value = localizedLanguage(detectedSelection.label);
+  if (confirmedInputLanguage && el("detectedSearch")) {
+    el("detectedSearch").value = localizedLanguage(confirmedInputLanguage);
   }
 }
 
@@ -73,27 +93,30 @@ function applySiteLanguage(lang) {
 
 function toggleDarkMode() {
   document.body.classList.toggle("dark");
-
   localStorage.setItem(
     "darkMode",
     document.body.classList.contains("dark") ? "on" : "off"
   );
 }
 
-/* ---------- SEARCH / DROPDOWNS ---------- */
+/* ---------- DROPDOWNS ---------- */
 
 function findMatches(query) {
   const q = normalize(query);
-
-  const catalog = window.languageCatalog || [];
+  const catalog = getCatalog();
 
   if (!q) return catalog;
 
   return catalog.filter(item => {
     const label = normalize(item.label);
+    const localized = normalize(localizedLanguage(item.label));
     const aliases = (item.aliases || []).map(normalize);
 
-    return label.includes(q) || aliases.some(alias => alias.includes(q));
+    return (
+      label.includes(q) ||
+      localized.includes(q) ||
+      aliases.some(alias => alias.includes(q))
+    );
   });
 }
 
@@ -135,6 +158,10 @@ function setupSearch(inputId, suggestionId, onPick) {
     renderSuggestions(box, findMatches(input.value), onPick);
   });
 
+  input.addEventListener("click", () => {
+    renderSuggestions(box, findMatches(input.value), onPick);
+  });
+
   input.addEventListener("input", () => {
     renderSuggestions(box, findMatches(input.value), onPick);
   });
@@ -158,18 +185,40 @@ function detectInput(text) {
   return { label: "American English" };
 }
 
-function setDetectedDisplay(label) {
-  if (!el("detectedLanguageDialect")) return;
+function resetInputButtons() {
+  const keep = el("keepDetectedButton");
+  const change = el("changeDetectedButton");
 
-  el("detectedLanguageDialect").innerText =
-    t("detected") + ": " + localizedLanguage(label);
+  if (keep) keep.style.display = "";
+  if (change) {
+    change.style.background = "";
+    change.style.color = "";
+  }
+}
+
+function confirmedInputButtons() {
+  const keep = el("keepDetectedButton");
+  const change = el("changeDetectedButton");
+
+  if (keep) keep.style.display = "none";
+  if (change) {
+    change.style.background = "#6b7280";
+    change.style.color = "white";
+  }
+}
+
+function setDetectedDisplay(label) {
+  const display = el("detectedLanguageDialect");
+  if (!display) return;
+
+  display.innerText = t("detected") + ": " + localizedLanguage(label);
 }
 
 function setConfirmedDisplay(label) {
-  if (!el("detectedLanguageDialect")) return;
+  const display = el("detectedLanguageDialect");
+  if (!display) return;
 
-  el("detectedLanguageDialect").innerText =
-    t("confirmed") + ": " + localizedLanguage(label);
+  display.innerText = t("confirmed") + ": " + localizedLanguage(label);
 }
 
 function updateDetection() {
@@ -177,6 +226,7 @@ function updateDetection() {
   const card = el("detectedCard");
 
   confirmedInputLanguage = null;
+  resetInputButtons();
 
   if (!text) {
     detectedSelection = null;
@@ -189,13 +239,18 @@ function updateDetection() {
   card?.classList.remove("hidden");
 }
 
-/* ---------- BUTTONS ---------- */
-
 function keepDetected() {
   if (!detectedSelection) return;
 
   confirmedInputLanguage = detectedSelection.label;
   setConfirmedDisplay(confirmedInputLanguage);
+  confirmedInputButtons();
+
+  if (el("detectedSearch")) {
+    el("detectedSearch").value = localizedLanguage(confirmedInputLanguage);
+  }
+
+  el("changeDetectedWrap")?.classList.add("hidden");
 }
 
 function toggleDetectedChange() {
@@ -205,15 +260,35 @@ function toggleDetectedChange() {
   wrap.classList.toggle("hidden");
 
   if (!wrap.classList.contains("hidden")) {
-    el("detectedSearch")?.focus();
+    const input = el("detectedSearch");
+    if (input) {
+      input.value = confirmedInputLanguage
+        ? localizedLanguage(confirmedInputLanguage)
+        : "";
+      input.focus();
+      renderSuggestions(el("detectedSuggestions"), findMatches(input.value), chooseDetectedLanguage);
+    }
   }
+}
+
+function chooseDetectedLanguage(item) {
+  confirmedInputLanguage = item.label;
+  detectedSelection = item;
+
+  if (el("detectedSearch")) {
+    el("detectedSearch").value = localizedLanguage(item.label);
+  }
+
+  el("changeDetectedWrap")?.classList.add("hidden");
+  setConfirmedDisplay(item.label);
+  confirmedInputButtons();
 }
 
 /* ---------- TRANSLATE ---------- */
 
 async function translateText() {
   const input = el("userInput")?.value.trim() || "";
-  const target = targetSelection?.label || el("targetSearch")?.value.trim() || "";
+  const target = targetSelection?.label || "";
 
   if (!confirmedInputLanguage) {
     alert(t("confirmInputFirst"));
@@ -307,13 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
     el("targetSearch").value = localizedLanguage(item.label);
   });
 
-  setupSearch("detectedSearch", "detectedSuggestions", (item) => {
-    confirmedInputLanguage = item.label;
-    detectedSelection = item;
-    el("detectedSearch").value = localizedLanguage(item.label);
-    el("changeDetectedWrap")?.classList.add("hidden");
-    setConfirmedDisplay(item.label);
-  });
+  setupSearch("detectedSearch", "detectedSuggestions", chooseDetectedLanguage);
 
   applySiteLanguage(el("siteLanguage")?.value || "en");
 });
