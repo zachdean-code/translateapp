@@ -383,3 +383,27 @@ label[for="targetSearch"] {
   background: #b45309;
   color: white;
 }
+#translateButton,
+.primaryButton {
+  background: #2f64de !important;
+  color: white !important;
+}
+
+#copyButton,
+.copyButton {
+  background: #dc2626 !important;
+  color: white !important;
+}
+
+#keepDetectedButton,
+.keepButton {
+  background: #15803d !important;
+  color: white !important;
+}
+
+#changeDetectedButton,
+.changeButton {
+  background: #b45309 !important;
+  color: white !important;
+}
+}
