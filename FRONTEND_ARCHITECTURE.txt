@@ -1,0 +1,216 @@
+CROSS-CULTURAL TRANSLATOR™
+FRONTEND_ARCHITECTURE.txt
+
+PURPOSE
+This document defines the website/app frontend architecture.
+It does not define backend prompt strategy or personal ChatGPT workflow.
+
+CURRENT FRONTEND TYPE
+Static frontend using:
+- index.html
+- style.css
+- script.js
+- modular JavaScript support files
+
+CURRENT FRONTEND HOSTING
+Vercel
+
+CURRENT API ENDPOINT
+https://translateapp-1.onrender.com/translate
+
+FRONTEND RESPONSIBILITIES
+The frontend owns:
+- page structure
+- user input collection
+- site language selection
+- input language detection UI
+- Keep / Change source-language confirmation flow
+- target language searchable dropdown
+- keyboard navigation
+- context selection UI
+- localStorage preferences
+- payload assembly
+- displaying translation results
+- displaying additional information
+- copy behavior
+- pronunciation display behavior
+- visual interactions
+
+The frontend does NOT own:
+- translation philosophy
+- dialect execution
+- emotional transfer logic
+- final model prompt composition
+- OpenAI API calls
+- safety/API error handling
+- backend schema enforcement
+
+FILE RESPONSIBILITIES
+index.html
+- page structure only
+- semantic containers
+- input/output elements
+- script and stylesheet loading
+- no major application logic
+
+style.css
+- all styling
+- colors
+- spacing
+- layout
+- responsive behavior
+- buttons
+- dropdowns
+- detected-card layout
+- focus/hover behavior
+
+script.js
+- application orchestration
+- event listeners
+- UI state
+- detection confirmation
+- target selection
+- API fetch
+- response rendering
+- localStorage reads/writes
+- keyboard navigation
+
+languageCatalog.js
+- supported target languages
+- dialect options
+- aliases
+- localized language display labels
+- search/ranking source data
+
+uiText.js
+- site UI text
+- English and Spanish UI strings
+- labels, alerts, headings, buttons
+
+contextConfig.js
+- audience options
+- tone options
+- communication goal options
+- enhanced-context mappings
+
+pronunciation.js
+- pronunciation rendering support
+- speech helper logic
+- supported pronunciation direction behavior
+
+helpers.js
+- shared utility helpers
+- normalization
+- show/hide helpers
+- generic formatting helpers
+
+TARGET LANGUAGE SEARCH
+Target language should remain a searchable input, not a standard select dropdown.
+Dialect options should remain independent searchable options.
+
+Desired ranking order:
+1. Exact label match
+2. Exact alias match
+3. Label startsWith
+4. Alias startsWith
+5. Dialect relevance
+6. Includes match
+7. Prior selection boost
+8. Default popularity
+
+Example: typing "col" should prioritize:
+1. Spanish — General Colombian
+2. Colombian Spanish — Paisa (Medellín)
+3. Colombian Spanish — Rolo (Bogotá)
+4. Colombian Spanish — Cali
+5. Colombian Spanish — Santander
+
+Example: typing "pa" should prioritize Paisa above generic matches.
+
+DETECTION FLOW
+Detection suggests; user confirms.
+
+Rules:
+- Auto-detect should not silently lock source language.
+- Keep confirms detected language.
+- Change opens searchable source-language override.
+- Manual override suppresses auto-detect until input changes significantly or user clears input.
+- Short phrases should be treated as low-confidence where possible.
+- Mixed-language input may show likely primary language and optionally note mixed-language risk.
+- Changing source language should not auto-translate.
+- Translation waits for explicit submit.
+
+SITE LANGUAGE
+Current supported UI languages:
+- English
+- Spanish
+
+uiText.js should scale with:
+window.UI_TEXT.en
+window.UI_TEXT.es
+Future:
+window.UI_TEXT.pt
+window.UI_TEXT.fr
+
+Dialect labels should localize through languageCatalog.js or its localized label map.
+
+LOCAL STORAGE
+Frontend may store:
+- siteLanguage
+- last target language
+- last dialect
+- last tone
+- last audience
+- last situation/context mode
+
+Backend remains stateless until account-based persistence exists.
+
+FRONTEND PAYLOAD DIRECTION
+Current frontend payload is minimal:
+{
+  "text": "...",
+  "target": "..."
+}
+
+Future structured payload should become:
+{
+  "text": "...",
+  "sourceLanguage": "...",
+  "targetLanguage": "...",
+  "dialect": "...",
+  "tone": "...",
+  "audience": "...",
+  "goal": "...",
+  "contextMode": "...",
+  "outputMode": "translation",
+  "includeAdditionalInformation": true
+}
+
+Frontend should send structured fields, not a long natural-language prompt.
+Backend composes final model instructions.
+
+ERROR HANDLING UX
+If backend fails:
+- show user-facing error
+- keep input intact
+- reset translate button text
+- log technical error to console
+
+If timeout occurs:
+- show message similar to: Server is waking up or request timed out. Try again.
+
+If additional information is empty:
+- keep additional info section hidden
+
+If pronunciation is unavailable:
+- hide pronunciation section or show a concise unavailable message
+
+DO NOT DO IN FRONTEND
+Do not:
+- hardcode large translation philosophy rules
+- duplicate translation_strategy.txt behavior
+- hardcode pronunciation maps in script.js
+- collapse modular files into one giant file
+- rewrite CSS during logic work
+- silently remove UI elements
+- replace searchable language input with native select without approval

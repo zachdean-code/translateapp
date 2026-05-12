@@ -1,0 +1,86 @@
+FRONTEND_UPLOAD_NOTES.txt
+
+PURPOSE
+This frontend upload set is intended for the Vercel/static frontend side of Cross-Cultural Translator™.
+
+UPLOAD LOCATION
+Upload the root files in this bundle to the frontend project root unless your current project uses a different static-public folder structure.
+
+ROOT FILES INCLUDED
+- index.html
+- style.css
+- script.js
+- helpers.js
+- contextConfig.js
+- languageCatalog.js
+- uiText.js
+- pronunciation.js
+
+DOCS INCLUDED
+- docs/FRONTEND_ARCHITECTURE.txt
+- docs/UI_UX_RULES.txt
+- docs/FRONTEND_UPLOAD_NOTES.txt
+
+IMPORTANT ACTIVE FILE NOTE
+translations.js is not included in this upload set because the current active index.html does not load translations.js. UI text is owned by uiText.js.
+
+WHAT CHANGED
+- index.html now loads all active modular frontend files in a safe order.
+- script.js now sends a structured payload compatible with the backend architecture.
+- script.js now supports working Change, Copy, Dark/Light, localStorage for site language/theme/last target, and safer error handling.
+- languageCatalog.js keeps language/dialect catalog ownership and adds ranking support for better search behavior.
+- helpers.js and pronunciation.js are namespaced to avoid global function collisions.
+- contextConfig.js provides current default structured context values without exposing new UI controls yet.
+- style.css is preserved from the current uploaded visual baseline to avoid visual regression.
+
+WHAT DID NOT CHANGE
+- No visual redesign was intentionally introduced.
+- No new large context panel was added.
+- No personal ChatGPT workflow logic was added.
+- No backend code is included here.
+
+CURRENT PAYLOAD BEHAVIOR
+The frontend now sends:
+- text
+- sourceLanguage
+- targetLanguage
+- target
+- dialect
+- tone
+- audience
+- situation
+- goal
+- contextMode
+- outputMode
+- includeAdditionalInformation
+
+The visible UI still remains simple. Advanced context controls can be added later after this baseline is confirmed working.
+
+UPLOAD ORDER
+1. index.html
+2. style.css
+3. helpers.js
+4. contextConfig.js
+5. languageCatalog.js
+6. uiText.js
+7. pronunciation.js
+8. script.js
+9. docs files, if using /docs/
+
+POST-UPLOAD TESTS
+1. Open frontend URL.
+2. Confirm title/subtitle load.
+3. Type English text.
+4. Confirm detected language appears.
+5. Press Keep.
+6. Search target language, e.g. "paisa".
+7. Select target.
+8. Press Translate.
+9. Confirm output appears.
+10. Press Copy.
+11. Test Change input language.
+12. Test Site Language switch.
+13. Test Dark/Light button.
+
+ROLLBACK NOTE
+If Vercel deploy fails, restore the previous frontend files and verify script loading order first.

@@ -1,0 +1,124 @@
+CROSS-CULTURAL TRANSLATOR™
+UI_UX_RULES.txt
+
+PURPOSE
+This document protects the website/app visual and interaction system from regressions.
+It applies to frontend UI/UX only.
+
+DESIGN PRINCIPLE
+The app should feel professional, modern, clear, and visually stable.
+Do not casually redesign existing UI.
+
+CSS PROTECTION RULE
+style.css is protected.
+Do not simplify, shorten, reorganize, or rewrite style.css unless the change is explicitly scoped and approved.
+
+FORBIDDEN VISUAL REGRESSIONS
+Do not unintentionally change:
+- colors
+- button colors
+- font family
+- font size
+- font weight
+- spacing
+- padding
+- margins
+- border radius
+- container width
+- textarea sizing
+- dropdown z-index
+- hover behavior
+- focus behavior
+- responsive breakpoints
+- detected-card layout
+- suggestion-item behavior
+- primary/copy/keep/change button styling
+
+CURRENT VISUAL IDENTITY
+The current app uses:
+- dark blue professional background
+- rounded containers
+- bright primary button accents
+- green copy/keep actions
+- red change action
+- dark dropdown/input surfaces
+- large two-column desktop layout
+- one-column responsive layout on smaller screens
+
+PRIMARY INTERACTION COMPONENTS
+Protected components:
+- site language selector
+- dark mode button area
+- title/subtitle/description area
+- input textarea
+- detected language card
+- Keep / Change buttons
+- detected-language search dropdown
+- target-language search dropdown
+- translate button
+- output textarea
+- copy button
+- additional information section
+
+DETECTED CARD RULES
+The detected card must remain readable and stable.
+Important behavior:
+- detected language text wraps normally
+- Keep and Change buttons remain aligned
+- confirmed state should visually distinguish selected input language
+- Change should remain available after confirmation
+- long language/dialect names must not break layout
+
+DROPDOWN RULES
+Search suggestions must:
+- appear above surrounding content using high z-index
+- remain readable on dark background
+- support hover and active keyboard state
+- not be clipped by parent containers
+- not create horizontal overflow
+
+KEYBOARD ACCESSIBILITY
+Language search should support:
+- ArrowDown
+- ArrowUp
+- Enter to select
+- click outside to close
+
+Focus-visible styling should remain clear.
+
+RESPONSIVE RULES
+Desktop:
+- two-column input/output layout
+
+Smaller screens:
+- single-column layout
+- readable spacing
+- no horizontal overflow
+- buttons remain usable
+
+Do not alter breakpoints without explicit reason.
+
+COPY / OUTPUT RULES
+Output textarea should remain readable and copyable.
+Additional Information should remain hidden unless populated.
+
+COLOR LOCKS
+Primary translation button should stay blue.
+Copy button should stay green.
+Keep button should stay green.
+Change button should stay red.
+
+If color values need adjustment, document exact before/after values and reason.
+
+CSS CLEANUP RULE
+If duplicated CSS is found:
+- do not blindly delete it
+- identify whether duplicate is protecting a previous regression
+- remove only after confirming final visual state remains unchanged
+
+CHANGE REVIEW RULE
+Before changing style.css, identify:
+- affected selectors
+- intended visible change
+- possible regression risk
+- what will remain unchanged
