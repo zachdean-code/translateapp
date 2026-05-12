@@ -277,9 +277,17 @@ function updateDetection() {
   lastDetectedInput = text;
 
   card.classList.remove("confirmed");
-  showElement(el("keepDetectedButton"), "inline-block");
   hideElement(el("changeDetectedWrap"));
 
+  if (!detectedSelection.label || detectedSelection.confidence === "low") {
+    detectedSelection = null;
+    hideElement(el("keepDetectedButton"));
+    el("detectedLanguageDialect").innerText = `${t("detected")}: ${t("confirmManually")}`;
+    showElement(card);
+    return;
+  }
+
+  showElement(el("keepDetectedButton"), "inline-block");
   el("detectedLanguageDialect").innerText = `${t("detected")}: ${localizedLanguage(detectedSelection.label)}`;
   showElement(card);
 }

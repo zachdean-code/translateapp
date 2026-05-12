@@ -271,21 +271,23 @@ button:disabled {
 }
 
 .detectedCard.confirmed {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
-  column-gap: 12px;
-  row-gap: 8px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .detectedCard.confirmed #detectedLanguageDialect {
+  flex: 1 1 auto;
   max-width: 100%;
 }
 
 .detectedCard.confirmed .detectedButtons {
+  flex: 0 0 auto;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 0;
+  min-width: auto;
 }
 
 .detectedCard.confirmed .keepButton {
@@ -294,8 +296,10 @@ button:disabled {
 
 .detectedCard.confirmed .changeButton,
 .detectedCard.confirmed #changeDetectedButton {
-  background: #dc2626 !important;
+  background: #64748b !important;
   color: white !important;
+  padding: 10px 16px;
+  border-radius: 14px;
 }
 
 #output {
