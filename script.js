@@ -239,11 +239,28 @@ function highlight(box, index) {
 
 function detectInput(text) {
   const normalized = normalize(text);
-  const hasSpanishMarkers = /[áéíóúñ¿¡]/i.test(text);
-  const spanishWords = /\b(que|porque|hola|gracias|usted|ustedes|para|pero|como|estoy|quiero|necesito|mañana|tambien|también)\b/i.test(normalized);
+  const compact = normalized.replace(/[^a-z0-9]+/g, "");
+  const wordCount = normalized.split(/\s+/).filter(Boolean).length;
 
-  if (hasSpanishMarkers || spanishWords) return { label: "Spanish — LATAM (Neutral)", confidence: "medium" };
-  return { label: "American English", confidence: "medium" };
+  // Very short input is not enough to detect reliably.
+  // Do not default one-letter/fragment input to American English.
+  if (compact.length < 3) {
+    return { label: null, confidence: "low" };
+  }
+
+  const hasSpanishMarkers = /[áéíóúñ¿¡]/i.test(text);
+  const spanishWords = /\b(que|porque|hola|gracias|usted|ustedes|para|pero|como|estoy|quiero|necesito|mañana|tambien|también|buenos|buenas|dias|días|tarde|noche)\b/i.test(normalized);
+  const englishWords = /\b(the|and|you|your|are|how|hello|thanks|thank|please|today|tomorrow|want|need|hope|good|great|morning|night)\b/i.test(normalized);
+
+  if (hasSpanishMarkers || spanishWords) {
+    return { label: "Spanish — LATAM (Neutral)", confidence: "medium" };
+  }
+
+  if (englishWords || wordCount >= 2 || compact.length >= 8) {
+    return { label: "American English", confidence: "medium" };
+  }
+
+  return { label: null, confidence: "low" };
 }
 
 function inputChangedSignificantly(previous, current) {
@@ -281,9 +298,7 @@ function updateDetection() {
 
   if (!detectedSelection.label || detectedSelection.confidence === "low") {
     detectedSelection = null;
-    hideElement(el("keepDetectedButton"));
-    el("detectedLanguageDialect").innerText = `${t("detected")}: ${t("confirmManually")}`;
-    showElement(card);
+    hideElement(card);
     return;
   }
 
@@ -396,7 +411,6 @@ async function translateText() {
       hideElement(el("additionalInfoSection"));
     }
 
-    localStorage.setItem("lastTargetLanguage", targetSelection.label);
   } catch (error) {
     console.error("Translation error:", error);
     alert(error.message || t("genericError"));
@@ -453,17 +467,12 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSearch("targetSearch", "targetSuggestions", (item) => {
     targetSelection = item;
     el("targetSearch").value = localizedLanguage(item.label);
-    localStorage.setItem("lastTargetLanguage", item.label);
-  }, () => localStorage.getItem("lastTargetLanguage"));
+  }, () => null);
 
   setupSearch("detectedSearch", "detectedSuggestions", setConfirmedInputLanguage, () => confirmedInputLanguage);
 
-  const lastTarget = localStorage.getItem("lastTargetLanguage");
-  if (lastTarget) {
-    const found = (window.languageCatalog || []).find((item) => item.label === lastTarget);
-    if (found) {
-      targetSelection = found;
-      el("targetSearch").value = localizedLanguage(found.label);
-    }
-  }
+  // Target language should start empty. Do not auto-fill old target choices.
+  localStorage.removeItem("lastTargetLanguage");
+  targetSelection = null;
+  if (el("targetSearch")) el("targetSearch").value = "";
 });
