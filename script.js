@@ -6,6 +6,7 @@ let confirmedInputLanguage = null;
 let targetSelection = null;
 let lastDetectedInput = "";
 let lastTranslationOutput = "";
+let currentTranslationMode = "simple";
 
 function el(id) {
   return document.getElementById(id);
@@ -98,6 +99,8 @@ function applySiteLanguage(lang) {
   if (el("situationLabel")) el("situationLabel").innerText = t("situation");
   if (el("situationInput")) el("situationInput").placeholder = t("situationPlaceholder");
   if (el("includeInfoLabel")) el("includeInfoLabel").innerText = t("includeInfo");
+  if (el("simpleModeButton")) el("simpleModeButton").innerText = t("simpleMode");
+  if (el("enhancedModeButton")) el("enhancedModeButton").innerText = t("enhancedMode");
   if (el("pronunciationToggleLabel")) el("pronunciationToggleLabel").innerText = t("pronunciationToggleLabel");
   if (el("pronunciationLabel")) el("pronunciationLabel").innerText = t("pronunciation");
   if (el("speakNormalButton")) el("speakNormalButton").innerText = t("speakNormal");
@@ -130,6 +133,24 @@ function refreshDisplayedLanguageNames() {
     el("detectedLanguageDialect").innerText = `${t("confirmed")}: ${localizedLanguage(confirmedInputLanguage)}`;
   } else if (detectedSelection && el("detectedLanguageDialect")) {
     el("detectedLanguageDialect").innerText = `${t("detected")}: ${localizedLanguage(detectedSelection.label)}`;
+  }
+}
+
+/* ---------- MODE CONTROLS ---------- */
+
+function setTranslationMode(mode) {
+  currentTranslationMode = mode === "enhanced" ? "enhanced" : "simple";
+
+  el("simpleModeButton")?.classList.toggle("active", currentTranslationMode === "simple");
+  el("enhancedModeButton")?.classList.toggle("active", currentTranslationMode === "enhanced");
+
+  const panel = el("contextPanel");
+  if (!panel) return;
+
+  if (currentTranslationMode === "enhanced") {
+    showElement(panel, "grid");
+  } else {
+    hideElement(panel);
   }
 }
 
@@ -301,23 +322,27 @@ function highlight(box, index) {
 /* ---------- DETECTION ---------- */
 
 function detectInput(text) {
-  const normalized = normalize(text);
+  const raw = text || "";
+  const normalized = normalize(raw);
   const compact = normalized.replace(/[^a-z0-9]+/g, "");
-  const wordCount = normalized.split(/\s+/).filter(Boolean).length;
+  const words = normalized.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
 
-  if (compact.length < 3) {
+  if (compact.length < 3 || wordCount < 2) {
     return { label: null, confidence: "low" };
   }
 
-  const hasSpanishMarkers = /[áéíóúñ¿¡]/i.test(text);
-  const paisaMarkers = /\b(parce|parcero|parcera|que mas|q mas|quiubo|quihubo|gonorrea|pues parce)\b/i.test(normalized);
-  const roloMarkers = /\b(sumerc[eé]|sumerce|ala|chino|china|parce pero)\b/i.test(normalized);
-  const argentineMarkers = /\b(vos sos|sos|che|boludo|boluda|laburo)\b/i.test(normalized);
-  const mexicanMarkers = /\b(que onda|qué onda|wey|güey|no manches|órale|orale)\b/i.test(normalized);
-  const spanishWords = /\b(que|qué|porque|hola|gracias|usted|ustedes|para|pero|como|cómo|estoy|quiero|necesito|mañana|manana|tambien|también|buenos|buenas|dias|días|tarde|noche)\b/i.test(normalized);
+  const hasSpanishMarkers = /[áéíóúñ¿¡]/i.test(raw);
+  const contains = (phrases) => phrases.some((phrase) => normalized.includes(phrase));
 
-  const australianMarkers = /\b(gday|g'day|aussie|arvo|reckon|no worries mate|mate)\b/i.test(normalized) && /\b(gday|g'day|aussie|arvo|no worries)\b/i.test(normalized);
-  const britishMarkers = /\b(cheers mate|cheers|queue|colour|favour|mum|bloody|brilliant|proper|rubbish|mate)\b/i.test(normalized) && !australianMarkers;
+  const paisaMarkers = contains(["parce", "parcero", "parcera", "que mas", "q mas", "quiubo", "quihubo", "pues parce"]);
+  const roloMarkers = contains(["sumerce", "sumercé", "ala ", "chino", "china"]);
+  const argentineMarkers = contains(["vos sos", " sos ", "che ", "boludo", "boluda", "laburo"]);
+  const mexicanMarkers = contains(["que onda", "wey", "güey", "guey", "no manches", "orale", "órale"]);
+  const spanishWords = /\b(que|porque|hola|gracias|usted|ustedes|para|pero|como|estoy|quiero|necesito|manana|tambien|buenos|buenas|dias|tarde|noche)\b/i.test(normalized);
+
+  const australianMarkers = contains(["g'day", "gday", "aussie", "arvo", "no worries", "fair dinkum"]);
+  const britishMarkers = contains(["cheers mate", "bloody", "brilliant", "proper", "rubbish", "queue", "colour", "favour"]) || /\bmum\b/i.test(normalized);
   const englishWords = /\b(the|and|you|your|are|how|hello|thanks|thank|please|today|tomorrow|want|need|hope|good|great|morning|night|i|we|they|he|she|it)\b/i.test(normalized);
 
   if (paisaMarkers) return { label: "Colombian Spanish — Paisa (Medellín)", confidence: "medium" };
@@ -327,7 +352,7 @@ function detectInput(text) {
   if (hasSpanishMarkers || spanishWords) return { label: "Spanish — LATAM (Neutral)", confidence: "medium" };
   if (australianMarkers) return { label: "Australian English", confidence: "medium" };
   if (britishMarkers) return { label: "British English", confidence: "medium" };
-  if (englishWords || wordCount >= 3 || compact.length >= 12) return { label: "American English", confidence: "medium" };
+  if (englishWords || wordCount >= 4 || compact.length >= 16) return { label: "American English", confidence: "medium" };
 
   return { label: null, confidence: "low" };
 }
@@ -417,21 +442,25 @@ function getTargetDialect(label) {
 
 function buildPayload(input) {
   const targetLabel = targetSelection?.label || "";
-  const situationText = el("situationInput")?.value.trim() || "general communication";
+  const enhanced = currentTranslationMode === "enhanced";
+  const situationText = enhanced
+    ? (el("situationInput")?.value.trim() || "general communication")
+    : "simple direct translation";
 
   return {
     text: input,
-    sourceLanguage: confirmedInputLanguage || "Auto-detected or user-confirmed",
+    sourceLanguage: confirmedInputLanguage || "User-confirmed source language",
     targetLanguage: targetLabel,
     target: targetLabel,
     dialect: getTargetDialect(targetLabel),
-    tone: selectedContextValue("toneSelect", "tone", "natural"),
-    audience: selectedContextValue("audienceSelect", "audience", "general"),
+    tone: enhanced ? selectedContextValue("toneSelect", "tone", "natural") : "natural and clear",
+    audience: enhanced ? selectedContextValue("audienceSelect", "audience", "general") : "general audience",
     situation: situationText,
-    goal: selectedContextValue("goalSelect", "goal", "translate"),
-    contextMode: selectedContextValue("contextModeSelect", "contextMode", "normal"),
+    goal: enhanced ? selectedContextValue("goalSelect", "goal", "translate") : "translate accurately",
+    contextMode: enhanced ? selectedContextValue("contextModeSelect", "contextMode", "normal") : "normal",
     outputMode: window.CONTEXT_CONFIG?.outputMode?.translate || "translate",
-    includeAdditionalInformation: !!el("includeInfoToggle")?.checked
+    includeAdditionalInformation: enhanced ? !!el("includeInfoToggle")?.checked : false,
+    uiMode: currentTranslationMode
   };
 }
 
@@ -559,6 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
   applyTheme(localStorage.getItem("theme") || "default");
   populateContextSelects(true);
   applySiteLanguage(lang);
+  setTranslationMode("simple");
 
   el("siteLanguage")?.addEventListener("change", (event) => applySiteLanguage(event.target.value));
   el("darkModeButton")?.addEventListener("click", () => {
@@ -570,6 +600,8 @@ document.addEventListener("DOMContentLoaded", () => {
   el("changeDetectedButton")?.addEventListener("click", openDetectedChange);
   el("translateButton")?.addEventListener("click", translateText);
   el("copyButton")?.addEventListener("click", copyOutput);
+  el("simpleModeButton")?.addEventListener("click", () => setTranslationMode("simple"));
+  el("enhancedModeButton")?.addEventListener("click", () => setTranslationMode("enhanced"));
   el("pronToggle")?.addEventListener("change", updatePronunciation);
   el("speakNormalButton")?.addEventListener("click", () => speakOutput(1));
   el("speakSlowButton")?.addEventListener("click", () => speakOutput(0.75));

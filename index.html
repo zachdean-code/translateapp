@@ -56,7 +56,12 @@
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-        <div id="contextPanel" class="contextPanel">
+        <div class="modeToggle" role="group" aria-label="Translation mode">
+          <button id="simpleModeButton" class="modeButton active" type="button"></button>
+          <button id="enhancedModeButton" class="modeButton" type="button"></button>
+        </div>
+
+        <div id="contextPanel" class="contextPanel hidden">
           <div class="contextControl">
             <label for="audienceSelect" id="audienceLabel"></label>
             <select id="audienceSelect"></select>

@@ -480,3 +480,25 @@ label[for="targetSearch"] {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- SIMPLE / ENHANCED MODE ---------- */
+.modeToggle {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.modeButton {
+  background: #334155;
+  color: white;
+  border: 1px solid #526988;
+  padding: 11px 16px;
+  border-radius: 14px;
+}
+
+.modeButton.active {
+  background: #2f64de !important;
+  color: white !important;
+  border-color: #60a5fa;
+}
