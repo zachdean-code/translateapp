@@ -35,13 +35,6 @@ window.CONTEXT_CONFIG = {
   },
 
   outputMode: {
-    translate: "translate",
-    naturalize: "naturalize while preserving meaning",
-    concise: "make concise while preserving meaning"
+    translate: "translate"
   }
 };
-
-/* Backward-compatible names for older code paths. */
-window.CONTEXT_AUDIENCE_MAP = window.CONTEXT_CONFIG.audience;
-window.CONTEXT_TONE_MAP = window.CONTEXT_CONFIG.tone;
-window.CONTEXT_GOAL_MAP = window.CONTEXT_CONFIG.goal;
