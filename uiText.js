@@ -9,15 +9,21 @@ window.UI_TEXT = {
     confirmed: "Input language",
     keep: "Keep",
     change: "Change",
+    dark: "🌙 Dark",
+    light: "☀️ Light",
     changeInput: "Change input language to:",
     translateTo: "Translate To",
     translate: "Translate",
     translating: "Translating...",
     translation: "Translation",
     copy: "Copy",
+    copied: "Copied",
     additionalInfo: "Additional Information",
     confirmInputFirst: "Confirm input language first",
-    enterTextTarget: "Enter text and choose a language"
+    enterTextTarget: "Enter text and choose a language",
+    serverTimeout: "Server is waking up or request timed out. Try again.",
+    genericError: "Something went wrong. Please try again.",
+    footer: "Built for real-world cross-cultural communication."
   },
 
   es: {
@@ -30,14 +36,20 @@ window.UI_TEXT = {
     confirmed: "Idioma seleccionado",
     keep: "Mantener",
     change: "Cambiar",
+    dark: "🌙 Oscuro",
+    light: "☀️ Claro",
     changeInput: "Cambiar idioma de entrada a:",
     translateTo: "Traducir a",
     translate: "Traducir",
     translating: "Traduciendo...",
     translation: "Traducción",
     copy: "Copiar",
+    copied: "Copiado",
     additionalInfo: "Información adicional",
     confirmInputFirst: "Confirma primero el idioma",
-    enterTextTarget: "Escribe texto y elige idioma"
+    enterTextTarget: "Escribe texto y elige idioma",
+    serverTimeout: "El servidor está despertando o la solicitud tardó demasiado. Inténtalo otra vez.",
+    genericError: "Algo salió mal. Inténtalo otra vez.",
+    footer: "Creado para comunicación intercultural de la vida real."
   }
 };
