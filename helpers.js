@@ -1,54 +1,37 @@
-window.AppHelpers = (() => {
-  function normalize(value) {
+window.AppHelpers = {
+  normalize(value) {
     return (value || "")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .trim();
-  }
+  },
 
-  function tokenize(value) {
-    return normalize(value)
+  tokenize(value) {
+    return this.normalize(value)
       .split(/[\s—()\/,.:;!?-]+/)
       .filter(Boolean);
-  }
+  },
 
-  function showElement(el, displayValue = "block") {
+  showElement(el, displayValue = "block") {
     if (!el) return;
     el.classList.remove("hidden");
     el.hidden = false;
     el.style.display = displayValue;
-  }
+  },
 
-  function hideElement(el) {
+  hideElement(el) {
     if (!el) return;
     el.classList.add("hidden");
     el.hidden = true;
     el.style.display = "none";
-  }
+  },
 
-  function setSectionDisabled(section, disabled) {
+  setSectionDisabled(section, disabled) {
     if (!section) return;
     const controls = section.querySelectorAll("input, select, textarea, button");
     controls.forEach((control) => {
       control.disabled = disabled;
     });
   }
-
-  function debounce(fn, wait = 150) {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn(...args), wait);
-    };
-  }
-
-  return {
-    normalize,
-    tokenize,
-    showElement,
-    hideElement,
-    setSectionDisabled,
-    debounce
-  };
-})();
+};

@@ -56,7 +56,39 @@
           <div id="targetSuggestions" class="suggestions"></div>
         </div>
 
-        <button id="translateButton" class="primaryButton" type="button"></button>
+        <div id="contextPanel" class="contextPanel">
+          <div class="contextControl">
+            <label for="audienceSelect" id="audienceLabel"></label>
+            <select id="audienceSelect"></select>
+          </div>
+
+          <div class="contextControl">
+            <label for="toneSelect" id="toneLabel"></label>
+            <select id="toneSelect"></select>
+          </div>
+
+          <div class="contextControl">
+            <label for="goalSelect" id="goalLabel"></label>
+            <select id="goalSelect"></select>
+          </div>
+
+          <div class="contextControl">
+            <label for="contextModeSelect" id="contextModeLabel"></label>
+            <select id="contextModeSelect"></select>
+          </div>
+
+          <div class="contextControl fullWidth">
+            <label for="situationInput" id="situationLabel"></label>
+            <input id="situationInput" type="text" autocomplete="off">
+          </div>
+
+          <label class="inlineCheck" for="includeInfoToggle">
+            <input id="includeInfoToggle" type="checkbox" checked>
+            <span id="includeInfoLabel"></span>
+          </label>
+        </div>
+
+        <button id="translateButton" type="button"></button>
 
       </div>
 
@@ -65,7 +97,21 @@
         <label for="output"></label>
         <textarea id="output" readonly tabindex="-1"></textarea>
 
-        <button id="copyButton" class="copyButton" type="button"></button>
+        <button id="copyButton" type="button"></button>
+
+        <label class="inlineCheck" for="pronToggle">
+          <input id="pronToggle" type="checkbox">
+          <span id="pronunciationToggleLabel"></span>
+        </label>
+
+        <div id="pronunciationSection" class="hidden">
+          <label for="pronunciationOutput" id="pronunciationLabel"></label>
+          <textarea id="pronunciationOutput" readonly></textarea>
+          <div class="pronunciationButtons">
+            <button id="speakNormalButton" type="button"></button>
+            <button id="speakSlowButton" type="button"></button>
+          </div>
+        </div>
 
         <div id="additionalInfoSection" class="hidden">
           <label for="additionalInfo"></label>
@@ -81,9 +127,9 @@
   </div>
 
   <script src="helpers.js"></script>
-  <script src="contextConfig.js"></script>
   <script src="languageCatalog.js"></script>
   <script src="uiText.js"></script>
+  <script src="contextConfig.js"></script>
   <script src="pronunciation.js"></script>
   <script src="script.js"></script>
 </body>

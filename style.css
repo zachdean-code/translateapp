@@ -392,3 +392,91 @@ label[for="targetSearch"] {
   color: white !important;
 }
 }
+
+
+/* ---------- CONTEXT CONTROLS ---------- */
+.contextPanel {
+  border: 1px solid #3564a2;
+  border-radius: 18px;
+  background: #243d64;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.contextControl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.contextControl label {
+  font-size: 14px;
+  margin: 0;
+}
+
+.contextControl select,
+.contextControl input[type="text"] {
+  min-height: 48px;
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.contextControl.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.inlineCheck {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #f3f4f6;
+}
+
+.inlineCheck input {
+  width: auto;
+  accent-color: #2f64de;
+}
+
+.detectedCard.confirmed .changeButton,
+.detectedCard.confirmed #changeDetectedButton {
+  background: #4b5563 !important;
+  color: white !important;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.detectedCard.confirmed {
+  min-height: auto;
+}
+
+#pronunciationSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#pronunciationOutput {
+  min-height: 96px;
+}
+
+.pronunciationButtons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pronunciationButtons button {
+  background: #334155;
+  color: white;
+}
+
+@media (max-width: 760px) {
+  .contextPanel {
+    grid-template-columns: 1fr;
+  }
+}

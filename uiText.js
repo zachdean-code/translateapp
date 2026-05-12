@@ -9,8 +9,6 @@ window.UI_TEXT = {
     confirmed: "Input language",
     keep: "Keep",
     change: "Change",
-    dark: "🌙 Dark",
-    light: "☀️ Light",
     changeInput: "Change input language to:",
     translateTo: "Translate To",
     translate: "Translate",
@@ -21,9 +19,54 @@ window.UI_TEXT = {
     additionalInfo: "Additional Information",
     confirmInputFirst: "Confirm input language first",
     enterTextTarget: "Enter text and choose a language",
-    serverTimeout: "Server is waking up or request timed out. Try again.",
     genericError: "Something went wrong. Please try again.",
-    footer: "Built for real-world cross-cultural communication."
+    dark: "🌙 Dark",
+    light: "☀️ Light",
+    footer: "Cross-Cultural Translator™",
+    audience: "Who are you talking to?",
+    tone: "Tone / intent",
+    goal: "Situation type",
+    contextMode: "Communication mode",
+    situation: "Extra context (optional)",
+    situationPlaceholder: "Example: texting a friend, hotel front desk, romantic message, work email...",
+    includeInfo: "Show cultural / tone notes when useful",
+    pronunciationToggleLabel: "Show Pronunciation",
+    pronunciation: "Pronunciation",
+    speakNormal: "Speak Normally",
+    speakSlow: "Speak Slowly",
+    typeMoreToDetect: "Type a little more to detect language",
+    unsupportedPronunciation: "Pronunciation is not available for this language pair yet.",
+    audienceOptions: {
+      general: "General",
+      friend: "Friend",
+      romantic: "Romantic interest",
+      professional: "Professional / boss",
+      stranger: "Stranger",
+      service: "Service employee"
+    },
+    toneOptions: {
+      natural: "Natural and clear",
+      casual: "Casual",
+      formal: "Formal",
+      respectful: "Respectful",
+      playful: "Playful",
+      urgent: "Urgent / direct"
+    },
+    goalOptions: {
+      translate: "General translation",
+      travel: "Travel / logistics",
+      business: "Business / professional",
+      social: "Social message",
+      conflict: "Conflict / tension",
+      flirting: "Flirting / chemistry"
+    },
+    contextModeOptions: {
+      normal: "Normal",
+      romantic: "Romantic / flirty",
+      fictionalDialogue: "Fictional dialogue / novel",
+      professional: "Professional",
+      conflict: "Conflict / escalation"
+    }
   },
 
   es: {
@@ -33,11 +76,9 @@ window.UI_TEXT = {
     description: "Traducción con sensibilidad dialectal y claridad cultural",
     inputText: "Texto de entrada",
     detected: "Idioma detectado",
-    confirmed: "Idioma seleccionado",
+    confirmed: "Idioma de entrada",
     keep: "Mantener",
     change: "Cambiar",
-    dark: "🌙 Oscuro",
-    light: "☀️ Claro",
     changeInput: "Cambiar idioma de entrada a:",
     translateTo: "Traducir a",
     translate: "Traducir",
@@ -46,10 +87,55 @@ window.UI_TEXT = {
     copy: "Copiar",
     copied: "Copiado",
     additionalInfo: "Información adicional",
-    confirmInputFirst: "Confirma primero el idioma",
-    enterTextTarget: "Escribe texto y elige idioma",
-    serverTimeout: "El servidor está despertando o la solicitud tardó demasiado. Inténtalo otra vez.",
-    genericError: "Algo salió mal. Inténtalo otra vez.",
-    footer: "Creado para comunicación intercultural de la vida real."
+    confirmInputFirst: "Confirma primero el idioma de entrada",
+    enterTextTarget: "Escribe texto y elige un idioma",
+    genericError: "Algo salió mal. Inténtalo de nuevo.",
+    dark: "🌙 Oscuro",
+    light: "☀️ Claro",
+    footer: "Cross-Cultural Translator™",
+    audience: "¿Con quién estás hablando?",
+    tone: "Tono / intención",
+    goal: "Tipo de situación",
+    contextMode: "Modo de comunicación",
+    situation: "Contexto extra (opcional)",
+    situationPlaceholder: "Ejemplo: mensaje a un amigo, hotel, mensaje romántico, correo laboral...",
+    includeInfo: "Mostrar notas culturales / de tono cuando sean útiles",
+    pronunciationToggleLabel: "Mostrar pronunciación",
+    pronunciation: "Pronunciación",
+    speakNormal: "Hablar normal",
+    speakSlow: "Hablar lento",
+    typeMoreToDetect: "Escribe un poco más para detectar el idioma",
+    unsupportedPronunciation: "La pronunciación todavía no está disponible para este par de idiomas.",
+    audienceOptions: {
+      general: "General",
+      friend: "Amigo/a",
+      romantic: "Interés romántico",
+      professional: "Profesional / jefe",
+      stranger: "Desconocido/a",
+      service: "Empleado/a de servicio"
+    },
+    toneOptions: {
+      natural: "Natural y claro",
+      casual: "Casual",
+      formal: "Formal",
+      respectful: "Respetuoso",
+      playful: "Juguetón",
+      urgent: "Urgente / directo"
+    },
+    goalOptions: {
+      translate: "Traducción general",
+      travel: "Viaje / logística",
+      business: "Negocios / profesional",
+      social: "Mensaje social",
+      conflict: "Conflicto / tensión",
+      flirting: "Coqueteo / química"
+    },
+    contextModeOptions: {
+      normal: "Normal",
+      romantic: "Romántico / coqueto",
+      fictionalDialogue: "Diálogo ficticio / novela",
+      professional: "Profesional",
+      conflict: "Conflicto / escalación"
+    }
   }
 };
